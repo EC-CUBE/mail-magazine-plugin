@@ -99,7 +99,7 @@ class MailMagazineHistoryController
         // dtb_send_historyから対象レコード抽出
         // dtb_send_history.search_dataを逆シリアライズした上で、各変数をViewに渡す
 
-        if (!$id) {
+        if (is_null($id)) {
             throw new BadRequestHttpException();
         }
 
