@@ -82,6 +82,7 @@ class MailMagazineService
     public function createMailMagazineHistory($formData) {
 
         // メール配信先リストの取得
+        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($this->app);
         $customerList = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
             ->getCustomerBySearchData($formData);
 

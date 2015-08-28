@@ -125,6 +125,21 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
     }
 
     /**
+     * メールマガジンを受け取るカスタマーIDの配列を取得する
+     */
+    protected function getMailmagaCustomerIds() {
+        $mailmagaCustomerIds = array();
+
+        $MailmagaCustomers = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
+                                ->findBy(array('mailmaga_flg' => Constant::ENABLED));
+
+        foreach ($MailmagaCustomers as $MailmagaCustomer) {
+            $mailmagaCustomerIds[] = $MailmagaCustomer->getCustomerId();
+        }
+        return array_unique($mailmagaCustomerIds);
+    }
+
+    /**
      * 検索条件での検索を行う。
      * s
      * @param unknown $searchData
@@ -132,9 +147,21 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
      */
     public function getQueryBuilderBySearchData($searchData)
     {
+        // メルマガを受け取るカスタマーのIDを取得する
+        $mailmagaCustomerIds = $this->getMailmagaCustomerIds();
+
         $qb = $this->createQueryBuilder('c')
             ->select('c')
             ->andWhere('c.del_flg = 0');
+
+        // メルマガを受け取るカスタマーのみに絞る
+        if (count($mailmagaCustomerIds) > 0) {
+            // メルマガ送付カスタマーがいれば対象カスタマーのみ対象とする
+            $qb->andWhere($qb->expr()->in('c.id', $mailmagaCustomerIds));
+        } else {
+            // メルマガ送付カスタマーがいなければ強制的に非表示にする条件を追加する
+            $qb->andWhere('c.id < 0');
+        }
 
         if (!empty($searchData['multi']) && $searchData['multi']) {
             if (is_int($searchData['multi'])) {
