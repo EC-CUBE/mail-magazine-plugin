@@ -13,13 +13,6 @@ namespace Plugin\MailMagazine\Entity;
 
 class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
 {
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getMethod();
-    }
 
     /**
      * @var integer
