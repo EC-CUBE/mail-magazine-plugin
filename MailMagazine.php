@@ -168,7 +168,7 @@ class MailMagazine
         $app = &$this->app;
 
         $crawler = new Crawler($response->getContent());
-        $html  = $crawler->html();
+        $html  = $this->getHtml($crawler);
         $mode = $request->get('mode');
 
         try {
@@ -213,7 +213,7 @@ class MailMagazine
         $app = &$this->app;
 
         $crawler = new Crawler($response->getContent());
-        $html  = $crawler->html();
+        $html  = $this->getHtml($crawler);
         $mode = $request->get('mode');
 
         try {
@@ -356,5 +356,21 @@ class MailMagazine
 
         return $q->getSingleScalarResult();
     }
+
+	/**
+	 * 解析用HTMLを取得
+	 *
+	 * @param Crawler $crawler
+	 * @return string
+	 */
+	private function getHtml(Crawler $crawler)
+	{
+	    $html = '';
+	    foreach ($crawler as $domElement) {
+	        $domElement->ownerDocument->formatOutput = true;
+	        $html .= $domElement->ownerDocument->saveHTML();
+	    }
+	    return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
+	}
 
 }
