@@ -51,6 +51,7 @@ class MailMagazineController
 
         if ('POST' === $request->getMethod()) {
             // 検索ボタンクリック時の処理
+            $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
             $qb = $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
                 ->getQueryBuilderBySearchData($searchData);
 

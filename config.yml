@@ -1,8 +1,8 @@
 name: MailMagazine
 event: MailMagazine
 code: MailMagazine
-version: 0.0.1
-service: 
+version: 0.0.2
+service:
     - MailMagazineServiceProvider
 orm.path:
     - /Resource/doctrine

@@ -32,9 +32,8 @@ class Version201508072300 extends AbstractMigration
         $this->createPlgMailMagazineTemplate($schema);
         $this->createPlgSendCustomer($schema);
         $this->createPlgSendHistory($schema);
-
-        // create Sequence MailMagazine Plug-in
         $this->createPlgplgSendHistorySendIdSeq($schema);
+        $this->createPlgMailmagaCustomer($schema);
     }
 
     /**
@@ -49,25 +48,12 @@ class Version201508072300 extends AbstractMigration
         $schema->dropTable('plg_mailmaga_template');
         $schema->dropTable('plg_send_history');
         $schema->dropTable('plg_send_customer');
+        $schema->dropTable('plg_mailmaga_customer');
 
         // drop sequence.
         $schema->dropSequence('plg_mailmaga_template_template_id_seq');
         $schema->dropSequence('plg_send_history_send_id_seq');
-    }
-
-    public function postUp(Schema $schema)
-    {
-
-        $app = new \Eccube\Application();
-        $app->boot();
-        $pluginCode = 'MailMagazine';
-        $pluginName = 'メルマガ管理';
-        $datetime = date('Y-m-d H:i:s');
-        $insert = "INSERT INTO plg_mailmaga_plugin(
-                            plugin_code, plugin_name, create_date, update_date)
-                    VALUES ('$pluginCode', '$pluginName', '$datetime', '$datetime'
-                            );";
-        $this->connection->executeUpdate($insert);
+		$schema->dropSequence('plg_mailmaga_customer_id_seq');
     }
 
     protected function createPlgMailMagazinePlugin(Schema $schema)
@@ -234,13 +220,64 @@ class Version201508072300 extends AbstractMigration
         ));
         $table->setPrimaryKey(array('send_id'));
 
-        // TODO Indexの作成(creator_id)
+        // Indexの作成(send_id, customer_id)
         $table->addIndex(
-            array('creator_id')
+            array('send_id', 'creator_id')
         );
 
     }
 
+    /***
+     * plg_mailmaga_customerテーブルの作成
+     *
+     * CREATE SEQUENCE plg_mailmaga_customer_id_seq;
+     * CREATE TABLE plg_mailmaga_customer (
+     *   id integer DEFAULT nextval('plg_mailmaga_customer_id_seq'::regclass) NOT NULL PRIMARY KEY,
+     *   customer_id integer NOT NULL,
+     *   mailmag_flg smallint DEFAULT 0 NOT NULL,
+     *   del_flg smallint DEFAULT 0 NOT NULL,
+     *   create_date timestamp(0) without time zone NOT NULL,
+     *   update_date timestamp(0) without time zone NOT NULL
+     *);
+     *
+     * @param Schema $schema
+     */
+    protected function createPlgMailmagaCustomer(Schema $schema)
+    {
+        $table = $schema->createTable("plg_mailmaga_customer");
+        $table->addColumn('id', 'integer', array(
+            'autoincrement' => true,
+        ));
+
+        $table->addColumn('customer_id', 'integer', array(
+            'notnull' => true,
+        ));
+
+        $table->addColumn('mailmaga_flg', 'smallint', array(
+            'notnull' => true,
+            'unsigned' => false,
+            'default' => 0,
+        ));
+
+        $table->addColumn('del_flg', 'smallint', array(
+            'notnull' => true,
+            'unsigned' => false,
+            'default' => 0,
+        ));
+
+        $table->addColumn('create_date', 'datetime', array(
+            'notnull' => true,
+            'unsigned' => false,
+        ));
+
+        $table->addColumn('update_date', 'datetime', array(
+            'notnull' => true,
+            'unsigned' => false,
+        ));
+
+        $table->setPrimaryKey(array('id'));
+    }
+    
     /**
      * plg_send_history_send_id_seqの作成
      * @param Schema $schema
