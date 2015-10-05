@@ -67,8 +67,8 @@ class MailMagazine
         if(is_null($Customer)) {
             return;
         }
-        $mode = $request->get('mode');
-        $EntryForm = $this->app['form.factory']->createBuilder('entry', $Customer)->getForm();
+        $cloneCustomer = clone $Customer;
+        $EntryForm = $this->app['form.factory']->createBuilder('entry', $cloneCustomer)->getForm();
         $EntryForm->handleRequest($request);
         if($request->get('mode') != 'complete' || !$EntryForm->isValid()) {
             return;
