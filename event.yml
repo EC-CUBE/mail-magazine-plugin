@@ -1,15 +1,11 @@
 #
 # Event fock
 #
-
 eccube.event.render.entry.before:
     - [onRenderEntryBefore, NORMAL]
 eccube.event.controller.entry.after:
     - [onControllerEntryAfter, NORMAL]
-
-
 eccube.event.render.mypage_change.before:
     - [onRenderMypageChangeBefore, NORMAL]
 eccube.event.controller.mypage_change.after:
     - [onControllMypageChangeAfter, NORMAL]
-

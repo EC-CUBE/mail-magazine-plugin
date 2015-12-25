@@ -11,13 +11,14 @@
 
 namespace Plugin\MailMagazine;
 
+use Eccube\Common\Constant;
+use Eccube\Entity\Master\CustomerStatus;
 use Eccube\Event\RenderEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\DomCrawler\Crawler;
-use Eccube\Common\Constant;
-use Doctrine\ORM\Id\SequenceGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Id\SequenceGenerator;
 
 class MailMagazine
 {
@@ -39,6 +40,11 @@ class MailMagazine
      */
     public function onRenderMypageChangeBefore(FilterResponseEvent $event)
     {
+
+        if (!$this->app->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return;
+        }
+
         $request = $event->getRequest();
         $response = $event->getResponse();
 
@@ -48,12 +54,18 @@ class MailMagazine
         $response->setContent($html);
         $event->setResponse($response);
     }
+
     /**
      * マイページ会員情報編集 controll after
      * メルマガ送付情報を保存する.
      */
     public function onControllMypageChangeAfter()
     {
+
+        if (!$this->app->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return;
+        }
+
         $app = $this->app;
         $request = $this->app['request'];
 
@@ -64,18 +76,13 @@ class MailMagazine
 
         // Controller側のvalidationでエラーの場合には処理を続行しない
         $Customer = $app->user();
-        if(is_null($Customer)) {
-            return;
-        }
-        $mode = $request->get('mode');
-        $EntryForm = $this->app['form.factory']->createBuilder('entry', $Customer)->getForm();
-        $EntryForm->handleRequest($request);
-        if($request->get('mode') != 'complete' || !$EntryForm->isValid()) {
+        if (is_null($Customer)) {
             return;
         }
 
         // メルマガFormを取得する
-        $form = $this->getEntryMailmagaForm(false);
+        $builder = $app['form.factory']->createBuilder('entry');
+        $form = $builder->getForm();
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -86,7 +93,8 @@ class MailMagazine
             $customerId = $Customer->getId();
 
             // メルマガ送付情報を保存する
-            $this->saveMailmagaCustomer($customerId, $data['mailmaga_flg']);
+            $mailmagaFlg = $form->get('mailmaga_flg')->getData();
+            $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
         }
     }
 
@@ -136,8 +144,16 @@ class MailMagazine
         $confirmFlg = $this->isEntryConfirm($request);
 
         // メールマガジン送付フラグを取得する
-        $form = $this->getEntryMailmagaForm($confirmFlg);
+        $builder = $app['form.factory']->createBuilder('entry');
+        $form = $builder->getForm();
+
         $form->handleRequest($request);
+
+        if ($confirmFlg) {
+            $builder->setAttribute('freeze', true);
+            $form = $builder->getForm();
+            $form->handleRequest($request);
+        }
 
         if ($form->isValid()) {
 
@@ -148,7 +164,8 @@ class MailMagazine
 
             // メルマガ送付情報を保存する
             if(!is_null($customerId)) {
-                $this->saveMailmagaCustomer($customerId, $data['mailmaga_flg']);
+                $mailmagaFlg = $form->get('mailmaga_flg')->getData();
+                $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
             }
         }
     }
@@ -182,8 +199,16 @@ class MailMagazine
             }
 
             // Formの取得
-            $form = $this->getEntryMailmagaForm($confirmFlg);
+            $builder = $app['form.factory']->createBuilder('entry');
+            $form = $builder->getForm();
+
             $form->handleRequest($request);
+
+            if ($confirmFlg) {
+                $builder->setAttribute('freeze', true);
+                $form = $builder->getForm();
+                $form->handleRequest($request);
+            }
 
             // 追加先のノードを取得
             $nodeHtml  = $crawler->filter('.dl_table.not_required')->last()->html();
@@ -217,14 +242,15 @@ class MailMagazine
         $mode = $request->get('mode');
 
         try {
-            // Formの取得
-            $form = $this->getEntryMailmagaForm(false);
-
             // カスタマIDの取得
             $Customer = $app->user();
             if(is_null($Customer)) {
                 return $html;
             }
+
+            // Formの取得
+            $builder = $app['form.factory']->createBuilder('entry');
+            $form = $builder->getForm();
 
             if ('POST' === $this->app['request']->getMethod()) {
                 $form->handleRequest($request);
@@ -234,7 +260,7 @@ class MailMagazine
                 $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
 
                 if(!is_null($MailmagaCustomer)) {
-                    $form->setData(array('mailmaga_flg' => $MailmagaCustomer->getMailmagaFlg()));
+                    $form->get('mailmaga_flg')->setData($MailmagaCustomer->getMailmagaFlg());
                 }
             }
 
@@ -269,7 +295,7 @@ class MailMagazine
         $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $customerId));
 
         // メルマガ送付情報がない場合は新規に作成する
-        if(is_null($MailmagaCustomer)) {
+        if (is_null($MailmagaCustomer)) {
             $MailmagaCustomer = new \Plugin\MailMagazine\Entity\MailmagaCustomer();
             $MailmagaCustomer->setCustomerId($customerId);
             $MailmagaCustomer->setDelFlg(Constant::DISABLED);
@@ -279,37 +305,6 @@ class MailMagazine
         $MailmagaCustomer->setUpdateDate(new \DateTime());
 
         $MailmagaCustomerRepository->save($MailmagaCustomer);
-    }
-
-    /**
-     * メルマガ送付Formを取得する
-     * @param unknown $confirmFlg
-     */
-    protected function getEntryMailmagaForm($confirmFlg) {
-        $builder = $this->app['form.factory']->createNamedBuilder('mail_magazine_mailmaga_customer');
-        $options = array(
-            'label' => 'メールマガジン送付について',
-            'choices'   => array(1 => '受け取る', 0 => '受け取らない'),
-            'mapped' => true,
-            'expanded' => true,
-            'multiple' => false,
-            'required' => true,
-            'empty_value' => false,
-            'constraints' => array(
-                new Assert\NotBlank()
-            )
-        );
-
-        // confirmの場合はメールマガジン送付を入力不可にする
-        if($confirmFlg) {
-            $builder->setAttribute('freeze', true);
-            $options['expanded'] = false;
-        }
-
-        $builder->add('mailmaga_flg', 'choice', $options);
-        $form = $builder->getForm();
-
-        return $form;
     }
 
     /**
@@ -345,7 +340,7 @@ class MailMagazine
         // 仮会員のEntityを取得する.
         $CustomerStatus = $this->app['orm.em']
             ->getRepository('Eccube\Entity\Master\CustomerStatus')
-            ->find(1);
+            ->find(CustomerStatus::NONACTIVE);
 
         // customer_idを取得する.
         $dql = "SELECT MAX(e.id) AS currentid FROM \Eccube\Entity\Customer e
@@ -357,20 +352,20 @@ class MailMagazine
         return $q->getSingleScalarResult();
     }
 
-	/**
-	 * 解析用HTMLを取得
-	 *
-	 * @param Crawler $crawler
-	 * @return string
-	 */
-	private function getHtml(Crawler $crawler)
-	{
-	    $html = '';
-	    foreach ($crawler as $domElement) {
-	        $domElement->ownerDocument->formatOutput = true;
-	        $html .= $domElement->ownerDocument->saveHTML();
-	    }
-	    return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
-	}
+    /**
+     * 解析用HTMLを取得
+     *
+     * @param Crawler $crawler
+     * @return string
+     */
+    private function getHtml(Crawler $crawler)
+    {
+        $html = '';
+        foreach ($crawler as $domElement) {
+            $domElement->ownerDocument->formatOutput = true;
+            $html .= $domElement->ownerDocument->saveHTML();
+        }
+        return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
+    }
 
 }

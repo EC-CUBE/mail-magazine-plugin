@@ -147,6 +147,12 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             return $types;
         }));
 
+        // Form Extension
+        $app['form.type.extensions'] = $app->share($app->extend('form.type.extensions', function ($extensions) use ($app) {
+            $extensions[] = new \Plugin\MailMagazine\Form\Extension\EntryMailMagazineTypeExtension($app);
+            return $extensions;
+        }));
+
         // -----------------------------
         // サービス
         // -----------------------------

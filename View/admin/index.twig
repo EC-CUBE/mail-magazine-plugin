@@ -13,7 +13,7 @@
 
 {% extends 'default_frame.twig' %}
 
-{% set menus = ['mailmagazine', ''] %}
+{% set menus = ['mailmagazine', 'mailmagazine'] %}
 
 {% block title %}メルマガ管理{% endblock %}
 {% block sub_title %}配信内容設定{% endblock %}
@@ -249,7 +249,7 @@ function fnChangeActionSubmit(action) {
                                 {% for Customer in pagination %}
                                 <tr>
                                     <td class="member_id">{{ Customer.id }}</td>
-                                    <td class="member_name"><a href="#" onclick="fnChangeActionSubmit('{{ url('admin_customer_edit', { 'id': Customer.id}) }}');return false;">{{ Customer.name01 }}&nbsp;{{ Customer.name02 }}</a></td>
+                                    <td class="member_name"><a href="{{ url('admin_customer_edit', { 'id': Customer.id}) }}">{{ Customer.name01 }}&nbsp;{{ Customer.name02 }}</a></td>
                                     <td class="member_tel">{{ Customer.tel01 }}-{{ Customer.tel02 }}-{{ Customer.tel03 }}</td>
                                     <td class="member_mail">{{ Customer.email }}</td>
                                 </tr>
