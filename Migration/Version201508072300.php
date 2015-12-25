@@ -174,7 +174,7 @@ class Version201508072300 extends AbstractMigration
         $table = $schema->createTable("plg_send_history");
 
         $table->addColumn('send_id', 'integer', array(
-            'autoincrement' => true,
+            'notnull' => true
         ));
         $table->addColumn('creator_id', 'integer', array(
             'notnull' => false,
@@ -221,9 +221,9 @@ class Version201508072300 extends AbstractMigration
         ));
         $table->setPrimaryKey(array('send_id'));
 
-        // Indexの作成
+        // Indexの作成(send_id, customer_id)
         $table->addIndex(
-            array('creator_id')
+            array('send_id', 'creator_id')
         );
 
     }
