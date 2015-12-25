@@ -171,6 +171,131 @@ class MailMagazine
     }
 
 
+    public function onRenderAdminCustomerBefore(FilterResponseEvent $event)
+    {
+        if (!$this->app->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+
+        $crawler = new Crawler($response->getContent());
+        $html = $this->getHtml($crawler);
+
+        $form = $this->app['form.factory']->createBuilder('admin_customer')->getForm();
+
+        $id = $request->get('id');
+        if ($id) {
+            $Customer = $this->app['orm.em']
+                ->getRepository('Eccube\Entity\Customer')
+                ->find($id);
+
+            if (is_null($Customer)) {
+                return;
+            }
+
+                // DBからメルマガ送付情報を取得する
+                $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
+                $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
+
+                if(!is_null($MailmagaCustomer)) {
+                    $form->get('mailmaga_flg')->setData($MailmagaCustomer->getMailmagaFlg());
+                }
+        }
+
+        $form->handleRequest($request);
+
+        $parts = $this->app->renderView('MailMagazine/View/admin/mailmagazine.twig', array(
+            'form' => $form->createView()
+        ));
+
+
+        try {
+            $oldHtml = $crawler->filter('.form-horizontal .form-group')->last()->parents()->html();
+
+            $newHtml = $oldHtml . $parts;
+            $html = str_replace($oldHtml, $newHtml, $html);
+
+        } catch (\InvalidArgumentException $e) {
+        }
+
+//        return array(html_entity_decode($html, ENT_QUOTES, 'UTF-8'), $form);
+
+        $response->setContent($html);
+
+
+
+        $event->setResponse($response);
+
+    }
+
+
+    public function onControllerAdminCustomerAfter()
+    {
+        if (!$this->app->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        $app = $this->app;
+        $request = $this->app['request'];
+
+        // POST以外では処理を行わない
+        if ('POST' !== $request->getMethod()) {
+            return;
+        }
+
+        $id = $request->get('id');
+
+        if ($id) {
+            $Customer = $app['orm.em']
+                ->getRepository('Eccube\Entity\Customer')
+                ->find($id);
+
+            if (is_null($Customer)) {
+                return;
+            }
+            // 編集用にデフォルトパスワードをセット
+            $previous_password = $Customer->getPassword();
+            $Customer->setPassword($app['config']['default_password']);
+        // 新規登録
+        } else {
+            $Customer = $app['eccube.repository.customer']->newCustomer();
+            $CustomerAddress = new \Eccube\Entity\CustomerAddress();
+            $Customer->setBuyTimes(0);
+            $Customer->setBuyTotal(0);
+        }
+
+        // メルマガFormを取得する
+        $builder = $app['form.factory']->createBuilder('admin_customer', $Customer);
+        $form = $builder->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+
+            if ($Customer->getPassword() === $app['config']['default_password']) {
+                $Customer->setPassword($previous_password);
+            } else {
+                $Customer->setPassword(
+                    $app['eccube.repository.customer']->encryptPassword($app, $Customer)
+                );
+            }
+
+            $data = $form->getData();
+
+            // カスタマIDの取得
+            $customerId = $Customer->getId();
+
+            // // メルマガ送付情報を保存する
+            $mailmagaFlg = $form->get('mailmaga_flg')->getData();
+            $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
+        }
+
+    }
+
+
+
     // ===========================================================
     // クラス内メソッド
     // ===========================================================

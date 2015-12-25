@@ -22,7 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\EntityRepository;
 
-class EntryMailMagazineTypeExtension extends AbstractTypeExtension
+class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
 {
     private $app;
 
@@ -51,30 +51,8 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
             ;
     }
 
-    /*
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-
-        $freeze = $form->getConfig()->getAttribute('freeze');
-
-        if ($freeze) {
-            $value = $view->vars['form']->children['mailmaga_flg']->vars['data'];
-            $choices = $view->vars['form']->children['mailmaga_flg']->vars['choices'];
-            foreach ($choices as $choice) {
-                if ($choice->value == $value) {
-                    $view->vars['form']->children['mailmaga_flg']->vars['data'] = array('name' => $choice->label, 'id' => $value);
-                    break;
-                }
-            }
-        }
-
-    }
-
-
     public function getExtendedType()
     {
-        return 'entry';
+        return 'admin_customer';
     }
 }
