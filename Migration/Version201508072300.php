@@ -172,8 +172,9 @@ class Version201508072300 extends AbstractMigration
      */
     protected function createPlgSendHistory(Schema $schema) {
         $table = $schema->createTable("plg_send_history");
+
         $table->addColumn('send_id', 'integer', array(
-            'notnull' => true
+            'autoincrement' => true,
         ));
         $table->addColumn('creator_id', 'integer', array(
             'notnull' => false,
@@ -220,9 +221,9 @@ class Version201508072300 extends AbstractMigration
         ));
         $table->setPrimaryKey(array('send_id'));
 
-        // Indexの作成(send_id, customer_id)
+        // Indexの作成
         $table->addIndex(
-            array('send_id', 'creator_id')
+            array('creator_id')
         );
 
     }
@@ -277,7 +278,7 @@ class Version201508072300 extends AbstractMigration
 
         $table->setPrimaryKey(array('id'));
     }
-    
+
     /**
      * plg_send_history_send_id_seqの作成
      * @param Schema $schema
