@@ -172,6 +172,7 @@ class Version201508072300 extends AbstractMigration
      */
     protected function createPlgSendHistory(Schema $schema) {
         $table = $schema->createTable("plg_send_history");
+
         $table->addColumn('send_id', 'integer', array(
             'notnull' => true
         ));
@@ -277,7 +278,7 @@ class Version201508072300 extends AbstractMigration
 
         $table->setPrimaryKey(array('id'));
     }
-    
+
     /**
      * plg_send_history_send_id_seqの作成
      * @param Schema $schema

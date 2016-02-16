@@ -1,15 +1,21 @@
 #
 # Event fock
 #
-
 eccube.event.render.entry.before:
     - [onRenderEntryBefore, NORMAL]
 eccube.event.controller.entry.after:
     - [onControllerEntryAfter, NORMAL]
-
-
 eccube.event.render.mypage_change.before:
     - [onRenderMypageChangeBefore, NORMAL]
 eccube.event.controller.mypage_change.after:
     - [onControllMypageChangeAfter, NORMAL]
+eccube.event.render.admin_customer_new.before:
+    - [onRenderAdminCustomerBefore, NORMAL]
+eccube.event.controller.admin_customer_new.after:
+    - [onControllerAdminCustomerAfter, NORMAL]
+eccube.event.render.admin_customer_edit.before:
+    - [onRenderAdminCustomerBefore, NORMAL]
+eccube.event.controller.admin_customer_edit.after:
+    - [onControllerAdminCustomerAfter, NORMAL]
+
 

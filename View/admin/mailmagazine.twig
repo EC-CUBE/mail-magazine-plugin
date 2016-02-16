@@ -19,12 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #}
-<dl>
-<dt>{{ form_label(form.mailmaga_flg) }}<span class="required">必須</span></dt>
-<dd>
-    <div class="form-group form-inline">
-        {{ form_widget(form.mailmaga_flg) }}
-        {{ form_errors(form.mailmaga_flg) }}
+{# メールマガジン #}
+<div class="form-group">
+    {{ form_label(form.mailmaga_flg) }}
+    <div class="col-sm-9 col-lg-10">
+        <div class="form-inline">
+            {{ form_widget(form.mailmaga_flg) }}
+            {{ form_errors(form.mailmaga_flg) }}
+        </div>
     </div>
-</dd>
-</dl>
+</div>
