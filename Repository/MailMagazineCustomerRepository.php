@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Eccube\Common\Constant;
+use Eccube\Util\Str;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -163,17 +164,19 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
             $qb->andWhere('c.id < 0');
         }
 
-        if (!empty($searchData['multi']) && $searchData['multi']) {
-            if (is_int($searchData['multi'])) {
+        if (isset($searchData['multi']) && Str::isNotBlank($searchData['multi'])) {
+            //スペース除去
+            $clean_key_multi = preg_replace('/\s+|[　]+/u', '',$searchData['multi']);
+            if (preg_match('/^\d+$/', $clean_key_multi)) {
                 $qb
                     ->andWhere('c.id = :customer_id')
-                    ->setParameter('customer_id', $searchData['multi']);
+                    ->setParameter('customer_id', $clean_key_multi);
             } else {
                 $qb
                     ->andWhere('CONCAT(c.name01, c.name02) LIKE :name OR CONCAT(c.kana01, c.kana02) LIKE :kana OR c.email LIKE :email')
-                    ->setParameter('name', '%' . $searchData['multi'] . '%')
-                    ->setParameter('kana', '%' . $searchData['multi'] . '%')
-                    ->setParameter('email', '%' . $searchData['multi'] . '%');
+                    ->setParameter('name', '%' . $clean_key_multi . '%')
+                    ->setParameter('kana', '%' . $clean_key_multi . '%')
+                    ->setParameter('email', '%' . $clean_key_multi . '%');
             }
         }
 
