@@ -13,7 +13,6 @@ namespace Plugin\MailMagazine;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Master\CustomerStatus;
-use Eccube\Event\RenderEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\DomCrawler\Crawler;
@@ -85,17 +84,16 @@ class MailMagazine
         $form = $builder->getForm();
 
         $form->handleRequest($request);
-        if ($form->isValid()) {
-            $data = $form->getData();
 
-            // カスタマIDの取得
-            $Customer = $app->user();
-            $customerId = $Customer->getId();
+        $data = $form->getData();
 
-            // メルマガ送付情報を保存する
-            $mailmagaFlg = $form->get('mailmaga_flg')->getData();
-            $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
-        }
+        // カスタマIDの取得
+        $Customer = $app->user();
+        $customerId = $Customer->getId();
+
+        // メルマガ送付情報を保存する
+        $mailmagaFlg = $form->get('mailmaga_flg')->getData();
+        $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
     }
 
     // ===========================================================
@@ -136,7 +134,7 @@ class MailMagazine
             return;
         }
         $mode = $request->get('mode');
-        if($mode != 'complete') {
+        if ($mode != 'complete') {
             return;
         }
 
@@ -155,7 +153,7 @@ class MailMagazine
             $form->handleRequest($request);
         }
 
-        if ($form->isValid()) {
+        if ($mode == 'complete') {
 
             $data = $form->getData();
 
@@ -163,11 +161,12 @@ class MailMagazine
             $customerId = $this->getEntryCustomerId($request);
 
             // メルマガ送付情報を保存する
-            if(!is_null($customerId)) {
+            if (!is_null($customerId)) {
                 $mailmagaFlg = $form->get('mailmaga_flg')->getData();
                 $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
             }
         }
+
     }
 
 
@@ -185,102 +184,24 @@ class MailMagazine
 
         $form = $this->app['form.factory']->createBuilder('admin_customer')->getForm();
 
-        $id = $request->get('id');
-        if ($id) {
-            $Customer = $this->app['orm.em']
-                ->getRepository('Eccube\Entity\Customer')
-                ->find($id);
 
-            if (is_null($Customer)) {
-                return;
-            }
+        if ('POST' === $request->getMethod()) {
 
-                // DBからメルマガ送付情報を取得する
-                $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
-                $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
-
-                if(!is_null($MailmagaCustomer)) {
-                    $form->get('mailmaga_flg')->setData($MailmagaCustomer->getMailmagaFlg());
-                }
-        }
-
-        $form->handleRequest($request);
-
-        $parts = $this->app->renderView('MailMagazine/View/admin/mailmagazine.twig', array(
-            'form' => $form->createView()
-        ));
-
-
-        try {
-            $oldHtml = $crawler->filter('.form-horizontal .form-group')->last()->parents()->html();
-
-            $newHtml = $oldHtml . $parts;
-            $html = str_replace($oldHtml, $newHtml, $html);
-
-        } catch (\InvalidArgumentException $e) {
-        }
-
-//        return array(html_entity_decode($html, ENT_QUOTES, 'UTF-8'), $form);
-
-        $response->setContent($html);
-
-
-
-        $event->setResponse($response);
-
-    }
-
-
-    public function onControllerAdminCustomerAfter()
-    {
-        if (!$this->app->isGranted('ROLE_ADMIN')) {
-            return;
-        }
-
-        $app = $this->app;
-        $request = $this->app['request'];
-
-        // POST以外では処理を行わない
-        if ('POST' !== $request->getMethod()) {
-            return;
-        }
-
-        $id = $request->get('id');
-
-        if ($id) {
-            $Customer = $app['orm.em']
-                ->getRepository('Eccube\Entity\Customer')
-                ->find($id);
-
-            if (is_null($Customer)) {
-                return;
-            }
-            // 編集用にデフォルトパスワードをセット
-            $previous_password = $Customer->getPassword();
-            $Customer->setPassword($app['config']['default_password']);
-        // 新規登録
-        } else {
-            $Customer = $app['eccube.repository.customer']->newCustomer();
-            $CustomerAddress = new \Eccube\Entity\CustomerAddress();
-            $Customer->setBuyTimes(0);
-            $Customer->setBuyTotal(0);
-        }
-
-        // メルマガFormを取得する
-        $builder = $app['form.factory']->createBuilder('admin_customer', $Customer);
-        $form = $builder->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-
-            if ($Customer->getPassword() === $app['config']['default_password']) {
-                $Customer->setPassword($previous_password);
+            if ($request->attributes->get('id')) {
+                $id = $request->attributes->get('id');
             } else {
-                $Customer->setPassword(
-                    $app['eccube.repository.customer']->encryptPassword($app, $Customer)
-                );
+                $location = explode('/', $response->headers->get('location'));
+                $url = explode('/', $this->app->url('admin_customer_edit', array('id' => '0')));
+                $diffs = array_values(array_diff($location, $url));
+                $id = $diffs[0];
             }
+            $Customer = $this->app['eccube.repository.customer']->find($id);
+
+            // メルマガFormを取得する
+            $builder = $this->app['form.factory']->createBuilder('admin_customer', $Customer);
+            $form = $builder->getForm();
+
+            $form->handleRequest($request);
 
             $data = $form->getData();
 
@@ -290,11 +211,53 @@ class MailMagazine
             // // メルマガ送付情報を保存する
             $mailmagaFlg = $form->get('mailmaga_flg')->getData();
             $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
+
+        } else {
+
+
+            $id = $request->get('id');
+            if ($id) {
+                $Customer = $this->app['orm.em']
+                    ->getRepository('Eccube\Entity\Customer')
+                    ->find($id);
+
+                if (is_null($Customer)) {
+                    return;
+                }
+
+                // DBからメルマガ送付情報を取得する
+                $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
+                $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
+
+                if (!is_null($MailmagaCustomer)) {
+                    $form->get('mailmaga_flg')->setData($MailmagaCustomer->getMailmagaFlg());
+                }
+            }
+
+            $form->handleRequest($request);
+
+            $parts = $this->app->renderView('MailMagazine/View/admin/mailmagazine.twig', array(
+                'form' => $form->createView()
+            ));
+
+
+            try {
+                $oldHtml = $crawler->filter('.form-horizontal .form-group')->last()->parents()->html();
+
+                $newHtml = $oldHtml.$parts;
+                $html = str_replace($oldHtml, $newHtml, $html);
+
+            } catch (\InvalidArgumentException $e) {
+            }
+
+
+            $response->setContent($html);
+
+
+            $event->setResponse($response);
         }
 
     }
-
-
 
     // ===========================================================
     // クラス内メソッド
@@ -303,14 +266,15 @@ class MailMagazine
      * 会員新規登録画面に「メールマガジン送付について」項目を追加したHTMLを取得する.
      *
      * @param FilterResponseEvent $event
-     * @param Request $request
-     * @param Response $response
+     * @param Request             $request
+     * @param Response            $response
      */
-    protected function getNewEntryHtml($event, $request, $response) {
+    protected function getNewEntryHtml($event, $request, $response)
+    {
         $app = &$this->app;
 
         $crawler = new Crawler($response->getContent());
-        $html  = $this->getHtml($crawler);
+        $html = $this->getHtml($crawler);
         $mode = $request->get('mode');
 
         try {
@@ -336,14 +300,14 @@ class MailMagazine
             }
 
             // 追加先のノードを取得
-            $nodeHtml  = $crawler->filter('.dl_table.not_required')->last()->html();
+            $nodeHtml = $crawler->filter('.dl_table.not_required')->last()->html();
 
             // 追加する情報のHTMLを取得する.
             $parts = $this->app['twig']->render(
-                'MailMagazine/View/' . $twigName,
+                'MailMagazine/View/'.$twigName,
                 array('form' => $form->createView())
             );
-            $newNodeHtml = $nodeHtml . $parts;
+            $newNodeHtml = $nodeHtml.$parts;
 
             $html = str_replace($nodeHtml, $newNodeHtml, $html);
         } catch (\InvalidArgumentException $e) {
@@ -356,20 +320,21 @@ class MailMagazine
      * マイページ画面に「メールマガジン送付について」項目を追加したHTMLを取得する.
      *
      * @param FilterResponseEvent $event
-     * @param Request $request
-     * @param Response $response
+     * @param Request             $request
+     * @param Response            $response
      */
-    protected function getNewMypageChangeHtml($event, $request, $response) {
+    protected function getNewMypageChangeHtml($event, $request, $response)
+    {
         $app = &$this->app;
 
         $crawler = new Crawler($response->getContent());
-        $html  = $this->getHtml($crawler);
+        $html = $this->getHtml($crawler);
         $mode = $request->get('mode');
 
         try {
             // カスタマIDの取得
             $Customer = $app->user();
-            if(is_null($Customer)) {
+            if (is_null($Customer)) {
                 return $html;
             }
 
@@ -384,23 +349,23 @@ class MailMagazine
                 $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
                 $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
 
-                if(!is_null($MailmagaCustomer)) {
+                if (!is_null($MailmagaCustomer)) {
                     $form->get('mailmaga_flg')->setData($MailmagaCustomer->getMailmagaFlg());
                 }
             }
 
             // 追加先のノードを取得
-            if(!count($crawler->filter('.dl_table.not_required')->last())) {
+            if (!count($crawler->filter('.dl_table.not_required')->last())) {
                 return $html;
             }
-            $nodeHtml  = $crawler->filter('.dl_table.not_required')->last()->html();
+            $nodeHtml = $crawler->filter('.dl_table.not_required')->last()->html();
 
             // 追加する情報のHTMLを取得する.
             $parts = $this->app['twig']->render(
                 'MailMagazine/View/entry_add_mailmaga.twig',
                 array('form' => $form->createView())
             );
-            $newNodeHtml = $nodeHtml . $parts;
+            $newNodeHtml = $nodeHtml.$parts;
 
             $html = str_replace($nodeHtml, $newNodeHtml, $html);
         } catch (\InvalidArgumentException $e) {
@@ -414,7 +379,8 @@ class MailMagazine
      * @param unknown $customerId
      * @param unknown $mailmagaFlg
      */
-    protected function saveMailmagaCustomer($customerId, $mailmagaFlg) {
+    protected function saveMailmagaCustomer($customerId, $mailmagaFlg)
+    {
         // メルマガ送付情報を取得する
         $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
         $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $customerId));
@@ -436,14 +402,16 @@ class MailMagazine
      * 会員登録確認画面が確認する
      * @param unknown $request
      */
-    protected function isEntryConfirm($request) {
+    protected function isEntryConfirm($request)
+    {
         $mode = $request->get('mode');
 
         $Customer = $this->app['eccube.repository.customer']->newCustomer();
         $EntryForm = $this->app['form.factory']->createBuilder('entry', $Customer)->getForm();
         $EntryForm->handleRequest($request);
         // confirmの場合はメールマガジン送付を入力不可にする
-        if($mode == 'confirm' && $EntryForm->isValid()) {
+
+        if ($mode == 'confirm' && $EntryForm->isValid()) {
             return true;
         }
         return false;
@@ -454,7 +422,8 @@ class MailMagazine
      *
      * @param unknown $request
      */
-    protected function getEntryCustomerId($request) {
+    protected function getEntryCustomerId($request)
+    {
         // eMailは入力で重複チェックを行っているため整合性を保つ可能性が高い
 
         // EMailを取得する.
