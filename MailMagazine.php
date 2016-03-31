@@ -198,7 +198,7 @@ class MailMagazine
             $Customer = $this->app['eccube.repository.customer']->find($id);
 
             // メルマガFormを取得する
-            $builder = $this->app['form.factory']->createBuilder('admin_customer', $Customer);
+            $builder = $this->app['form.factory']->createBuilder('admin_customer');
             $form = $builder->getForm();
 
             $form->handleRequest($request);
