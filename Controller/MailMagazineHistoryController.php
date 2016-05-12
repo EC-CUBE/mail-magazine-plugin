@@ -68,7 +68,9 @@ class MailMagazineHistoryController
         // dtb_send_historyから対象レコード抽出
         // subject/bodyを抽出し、以下のViewへ渡す
         // パラメータ$idにマッチするデータが存在するか判定
-        if (is_null($id)) {
+        // for case $id='' it must throw exception
+        // if (is_null($id)) {
+        if (!$id) {
             throw new BadRequestHttpException();
         }
 
@@ -98,8 +100,9 @@ class MailMagazineHistoryController
     {
         // dtb_send_historyから対象レコード抽出
         // dtb_send_history.search_dataを逆シリアライズした上で、各変数をViewに渡す
-
-        if (is_null($id)) {
+        // for case $id='' it must throw exception
+        // if (is_null($id)) {
+        if (!$id) {
             throw new BadRequestHttpException();
         }
 

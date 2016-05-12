@@ -202,7 +202,9 @@ class MailMagazineTemplateController
                 $id = $data['id'];
                 // id の存在確認
                 // nullであれば一覧に戻る
-                if(is_null($id) || strlen($id) == 0) {
+                // catch other case, include $id=0
+                // if(is_null($id) || strlen($id) == 0) {
+                if(!$id) {
                     $app->addError('admin.mailmagazine.template.data.illegalaccess', 'admin');
 
                     // メルマガテンプレート一覧へリダイレクト
