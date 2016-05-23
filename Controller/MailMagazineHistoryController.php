@@ -68,10 +68,9 @@ class MailMagazineHistoryController
         // dtb_send_historyから対象レコード抽出
         // subject/bodyを抽出し、以下のViewへ渡す
         // パラメータ$idにマッチするデータが存在するか判定
-        // for case $id='' it must throw exception
-        // if (is_null($id)) {
         if (!$id) {
-            throw new BadRequestHttpException();
+            $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
+            return $app->redirect($app->url('admin_mail_magazine_history'));
         }
 
         // 配信履歴を取得する
@@ -100,10 +99,9 @@ class MailMagazineHistoryController
     {
         // dtb_send_historyから対象レコード抽出
         // dtb_send_history.search_dataを逆シリアライズした上で、各変数をViewに渡す
-        // for case $id='' it must throw exception
-        // if (is_null($id)) {
         if (!$id) {
-            throw new BadRequestHttpException();
+            $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
+            return $app->redirect($app->url('admin_mail_magazine_history'));
         }
 
         // 配信履歴を取得する
