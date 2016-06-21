@@ -77,7 +77,7 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             ->bind('admin_mail_magazine_confirm');
 
         // 配信内容配信
-        $app->match('/' . $app["config"]["admin_route"] . '/mail/commit', '\\Plugin\\MailMagazine\\Controller\\MailMagazineController::commit')
+        $app->match('/' . $app["config"]["admin_route"] . '/mail/commit/{id}', '\\Plugin\\MailMagazine\\Controller\\MailMagazineController::commit')
             ->value('id', null)->assert('id', '\d+|')
             ->bind('admin_mail_magazine_commit');
 

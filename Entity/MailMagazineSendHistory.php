@@ -33,6 +33,11 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     private $subject;
 
     /**
+     * @var integer
+     */
+    private $content_type;
+
+    /**
     * @var string
     */
     private $body;
@@ -366,5 +371,25 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     public function getCreator()
     {
         return $this->Creator;
+    }
+
+    /**
+     * Set type for mail (0: text, 1:HTML)
+     * @param $type
+     * @return $this
+     */
+    public function setContentType($type)
+    {
+        $this->content_type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type for mail (0: text, 1:HTML)
+     * @return int
+     */
+    public function getContentType()
+    {
+        return $this->content_type;
     }
 }

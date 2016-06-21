@@ -33,7 +33,12 @@
                     </tr>
                     <tr>
                         <th>本文</th>
-                        <td><xmp>{{ Template.body }}</xmp></td>
+                        <td>{% if Template.content_type %}
+                                {{ Template.body|raw }}
+                            {% else %}
+                                <xmp>{{ Template.body }}</xmp>
+                            {% endif %}
+                        </td>
                     </tr>
                 </tbody>
             </table>

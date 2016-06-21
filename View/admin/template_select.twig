@@ -25,7 +25,7 @@
     <script>
         $(function(){
             $("#mail_magazine_template").on("change", function(){
-                var id = $(this).val()
+                var id = $(this).val();
                 if (id) {
                     action= '{{ url('admin_mail_magazine_select') }}/' + id;
                 } else {
