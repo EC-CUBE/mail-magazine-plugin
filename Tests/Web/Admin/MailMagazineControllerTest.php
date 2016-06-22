@@ -75,6 +75,38 @@ class MailMagazineControllerTest extends MailMagazineCommon
         );
     }
 
+    public function testSelect_MailIdInvalid()
+    {
+        $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
+
+        $this->client->request(
+            'POST',
+            $this->app->url('admin_mail_magazine_select', array('id' => 999999)),
+            array('mail_magazine' => array(
+                'subject'  => 'Subject',
+                'body'     => 'body',
+                '_token'   => 'dummy',
+            ))
+        );
+    }
+
+    public function testConfirm_BadRequest()
+    {
+        $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException');
+
+        $MailTemplate = $this->createMagazineTemplate();
+
+        $this->client->request(
+            'GET',
+            $this->app->url('admin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
+            array('mail_magazine' => array(
+                'subject'  => $MailTemplate->getSubject(),
+                'body'     => $MailTemplate->getBody(),
+                '_token'   => 'dummy',
+            ))
+        );
+    }
+
     public function testConfirm_InValid()
     {
         $MailTemplate = $this->createMagazineTemplate();
@@ -100,11 +132,16 @@ class MailMagazineControllerTest extends MailMagazineCommon
             'POST',
             $this->app->url('admin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
+                'tel' => array(
+                    'tel01' => '',
+                    'tel02' => '',
+                    'tel03' => ''
+                ),
                 'id'       => $MailTemplate->getId(),
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
                 'body'     => $MailTemplate->getBody(),
-                '_token'   => 'dummy',
+                '_token'   => 'dummy'
             ))
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());

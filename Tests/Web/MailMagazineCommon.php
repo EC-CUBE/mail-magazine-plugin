@@ -27,7 +27,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
 
         $MailTemplate
             ->setSubject($fake->word)
-            ->setBody($fake->word);
+            ->setBody($fake->word)
+            ->setContentType(Constant::DISABLED);
         $MailTemplate->setDelFlg(Constant::DISABLED);
         $this->app['orm.em']->persist($MailTemplate);
         $this->app['orm.em']->flush();
@@ -135,7 +136,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         // serialize
         $SendHistory->setSearchData(base64_encode(serialize($formData)));
 
-        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_history']->createSendHistory($SendHistory);
+        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_history']->updateSendHistory($SendHistory);
 
         // send customer
         $this->createSendCustomer($SendHistory, $MailCustomer);

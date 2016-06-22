@@ -103,7 +103,7 @@ class MailMagazineController
             $Mail = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
 
             if (is_null($Mail)) {
-                throw new NotFoundHttpException();
+                throw new HttpException\NotFoundHttpException();
             }
 
             // テンプレートを表示する
