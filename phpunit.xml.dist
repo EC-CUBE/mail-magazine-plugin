@@ -25,8 +25,6 @@
             <directory suffix=".php">./</directory>
             <exclude>
                 <directory suffix=".php">./Migration</directory>
-                <directory suffix=".php">./Entity</directory>
-                <directory suffix=".php">./Service</directory>
                 <file>./PluginManager.php</file>
             </exclude>
         </whitelist>

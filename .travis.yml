@@ -7,13 +7,10 @@ cache:
     - $HOME/.composer/cache
 
 php:
+  - 5.3
   - 5.4
   - 5.5
   - 5.6
-
-branches:
-  only:
-    - dunglq_unittest
 
 env:
   # plugin code
