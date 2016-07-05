@@ -95,6 +95,8 @@ class MailMagazineController
 
         $newSubject = "";
         $newBody = "";
+        // default of content type
+        $newType = Constant::DISABLED;
 
         // テンプレートが選択されている場合はテンプレートデータを取得する
         if($id) {
@@ -108,12 +110,14 @@ class MailMagazineController
 
             // テンプレートを表示する
             $newSubject = $Mail->getSubject();
+            $newType = $Mail->getContentType();
             $newBody = $Mail->getBody();
         }
 
         return $app->render('MailMagazine/View/admin/template_select.twig', array(
                 'form' => $form->createView(),
                 'new_subject' => $newSubject,
+                'new_type' => $newType,
                 'new_body' => $newBody,
                 'id' => $id,
         ));
@@ -172,15 +176,16 @@ class MailMagazineController
             return $app->render('MailMagazine/View/admin/template_select.twig', array(
                     'form' => $form->createView(),
                     'new_subject' => $formData['subject'],
+                    'new_type' => $formData['content_type'],
                     'new_body' =>  $formData['body'],
                     'id' =>  $id,
             ));
-
         }
 
         return $app->render('MailMagazine/View/admin/confirm.twig', array(
                 'form' => $form->createView(),
                 'subject_itm' => $form['subject']->getData(),
+                'content_type_itm' => $form['content_type']->getData(),
                 'body_itm' => $form['body']->getData(),
                 'id' => $id,
         ));

@@ -34,6 +34,12 @@
                 document.form1.action = action;
                 document.form1.submit();
             });
+
+            $("#mail_magazine_content_type input").each(function (_e) {
+                if ($(this).attr("value") == {{new_type}}) {
+                    $(this).prop("checked", true);
+                }
+            });
         });
 
         function changeAction(action) {
@@ -59,6 +65,7 @@
 
                         {{ form_row(form.template) }}
                         {{ form_row(form.subject, {'value' : new_subject}) }}
+                        {{ form_row(form.content_type, {'value': new_type}) }}
                         {{ form_row(form.body, {'value' : new_body}) }}
 
                         <div style="display: none">

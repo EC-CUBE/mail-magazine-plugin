@@ -19,6 +19,11 @@ Plugin\MailMagazine\Entity\MailMagazineSendHistory:
         subject:
             type: text
             nullable: true
+        content_type:
+            type: smallint
+            nullable: true
+            options:
+                default: '0'
         body:
             type: text
             nullable: true

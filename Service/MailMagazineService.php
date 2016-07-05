@@ -94,12 +94,6 @@ class MailMagazineService
         $customerList = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
             ->getCustomerBySearchData($formData);
 
-        // Mail template
-        $MailTemplate = $this->app[self::REPOSITORY_MAIL_TEMPLATE]->find($formData['id']);
-        $contentType = Constant::DISABLED;
-        if ($MailTemplate) {
-            $contentType = $MailTemplate->getContentType();
-        }
         $currentDatetime = new \DateTime();
 
         // -----------------------------
@@ -109,7 +103,7 @@ class MailMagazineService
 
         // 登録値を設定する
         // Type for mail
-        $sendHistory->setContentType($contentType);
+        $sendHistory->setContentType($formData['content_type']);
         $sendHistory->setBody($formData['body']);
         $sendHistory->setSubject($formData['subject']);
         $sendHistory->setSendCount(count($customerList));

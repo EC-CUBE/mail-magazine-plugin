@@ -11,6 +11,7 @@
 
 namespace Plugin\MailMagazine\Tests\Web\Admin;
 
+use Eccube\Common\Constant;
 use Plugin\MailMagazine\Tests\Web\MailMagazineCommon;
 
 class MailMagazineControllerTest extends MailMagazineCommon
@@ -51,6 +52,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy',
             ))
@@ -69,6 +71,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy',
             ))
@@ -84,6 +87,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->app->url('admin_mail_magazine_select', array('id' => 999999)),
             array('mail_magazine' => array(
                 'subject'  => 'Subject',
+                'content_type'  => Constant::DISABLED,
                 'body'     => 'body',
                 '_token'   => 'dummy',
             ))
@@ -101,6 +105,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->app->url('admin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy',
             ))
@@ -117,6 +122,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy',
             ))
@@ -140,6 +146,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
                 'id'       => $MailTemplate->getId(),
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy'
             ))
@@ -155,6 +162,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $searchForm = $this->createSearchForm($MaiCustomer);
         $searchForm['template'] = $MailTemplate->getId();
         $searchForm['subject']  = $MailTemplate->getSubject();
+        $searchForm['content_type']  = $MailTemplate->getContentType();
         $searchForm['body']     = $MailTemplate->getBody();
 
         $this->client->request(

@@ -217,6 +217,17 @@ class MailMagazineType extends AbstractType
                 'label' => 'Subject',
                 'required' => true,
             ))
+            ->add('content_type', 'choice', array(
+                'label' => 'タイプ',
+                'required' => true,
+                'expanded' => true,
+                'multiple' => false,
+                'empty_value' => false,
+                'choices' => array(
+                    '0' => 'テキスト',
+                    '1' => 'HTML',
+                ),
+            ))
             ->add('body', 'textarea', array(
                 'label' => '本文',
                 'required' => true,

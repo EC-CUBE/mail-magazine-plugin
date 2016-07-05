@@ -35,7 +35,7 @@ class Version201606211454 extends AbstractMigration
         $table = $schema->getTable('plg_send_history');
 
         if (!$table->hasColumn('content_type')) {
-            $table->addColumn('content_type', 'smallint', array('NotNull' => true, 'Default' => 0));
+            $table->addColumn('content_type', 'smallint', array('NotNull' => false, 'Default' => 0));
         }
     }
 

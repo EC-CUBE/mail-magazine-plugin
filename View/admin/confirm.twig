@@ -50,9 +50,18 @@
                                     <td>{{ subject_itm }}</td>
                                 </tr>
                                 <tr>
+                                    <th>{{ form.content_type.vars.label }}</th>
+                                    <td>{{ form.content_type.vars.choices[content_type_itm].label }}</td>
+                                </tr>
+                                <tr>
                                     <th>本文</th>
-                                    <td><xmp>{{ body_itm }}</xmp></td>
-                                </td>
+                                    <td>{% if form.content_type.vars.value %}
+                                            {{ body_itm|raw }}
+                                        {% else %}
+                                            <xmp>{{ body_itm }}</xmp>
+                                        {% endif %}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div style="display: none">
