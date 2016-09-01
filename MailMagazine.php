@@ -169,7 +169,11 @@ class MailMagazine
 
     }
 
-
+    /**
+     * 会員管理 会員登録・編集のbefore
+     *
+     * @param FilterResponseEvent $event
+     */
     public function onRenderAdminCustomerBefore(FilterResponseEvent $event)
     {
         if (!$this->app->isGranted('ROLE_ADMIN')) {
@@ -184,8 +188,10 @@ class MailMagazine
 
         $form = $this->app['form.factory']->createBuilder('admin_customer')->getForm();
 
-
-        if ('POST' === $request->getMethod()) {
+        if ('POST' === $request->getMethod() && $response->headers->has('location')) {
+            // 保存成功時
+            // 3.0.9 未満では、EccubeEvents::ADMIN_CUSTOMER_EDIT_INDEX_COMPLETE
+            // が利用できないためPOST & リダイレクトありで保存成功とみなす
 
             if ($request->attributes->get('id')) {
                 $id = $request->attributes->get('id');
