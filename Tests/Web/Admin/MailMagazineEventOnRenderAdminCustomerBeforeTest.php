@@ -89,7 +89,6 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $updateFlg = Constant::DISABLED;
         $form = $this->createFormData();
         $form = array_merge($form, array(
-            'id' => $Customer->getId(),
             'mailmaga_flg' => $updateFlg,
         ));
         $this->client->request('POST',
@@ -105,5 +104,4 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->expected = $updateFlg;
         $this->verify();
     }
-
 }
