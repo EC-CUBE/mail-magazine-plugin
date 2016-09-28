@@ -77,7 +77,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $Order = $this->createOrder($MailCustomer);
         $order_detail = $Order->getOrderDetails();
         $old_date = new \DateTime('1980-01-01');
-
+        //because 誕生月 select box value start from 0. We need minus 1
+        $birth_month = $MailCustomer->getBirth()->format('n') - 1;
         return array(
             '_token'            => 'dummy',
             'multi'             => $MailCustomer->getId(),
@@ -100,7 +101,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'last_buy_end'      => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
             'customer_status'   => array($MailCustomer->getStatus()->getId()),
             'buy_product_code'  => $order_detail[0]->getProductName(),
-            'birth_month'       => null,
+            'birth_month'       => $birth_month,
         );
     }
 

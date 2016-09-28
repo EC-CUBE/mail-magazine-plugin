@@ -30,15 +30,14 @@ class MailMagazineControllerTest extends MailMagazineCommon
     public function testMailMagazineSearch()
     {
         $MaiCustomer =  $this->createMailMagazineCustomer();
-
         $searchForm = $this->createSearchForm($MaiCustomer);
         $crawler = $this->client->request(
             'POST',
             $this->app->url('admin_mail_magazine'),
             array('mail_magazine' => $searchForm)
         );
-        $crawler->filter('#search_form table')->html();
-        $this->assertTrue(true);
+
+        $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
     }
 
     public function testSelect()
