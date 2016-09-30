@@ -199,14 +199,14 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
                 ->setParameter('sexs', $sexs);
         }
         // birth_month
-        if (!empty($searchData['birth_month']) && $searchData['birth_month']) {
+        if (is_int($searchData['birth_month'])) {
             //TODO: http://docs.symfony.gr.jp/symfony2/cookbook/doctrine/custom_dql_functions.html
             //Birth month start from 0 so we need plus 1.
             $searchData['birth_month']++;
-            if($searchData['birth_month'] < 10)
+            $birthMonth = $searchData['birth_month'];
+            if ($searchData['birth_month'] < 10) {
                 $birthMonth = '0'.$searchData['birth_month'];
-            else
-                $birthMonth = $searchData['birth_month'];
+            }
             //because can not use SUBSTRING with timestamp field. Use concat for convert to date => String(can not use convert func in doctrine)
             $qb
                 ->andWhere("SUBSTRING(CONCAT(c.birth, '0'), 6, 2) = :birth_month")

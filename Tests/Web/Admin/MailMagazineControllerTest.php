@@ -27,16 +27,52 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testMailMagazineSearch()
+    public function testMailMagazineSearchWithBirthmonthLowOctorber()
     {
         $MaiCustomer =  $this->createMailMagazineCustomer();
-        $searchForm = $this->createSearchForm($MaiCustomer);
+        //test search with birth month < 10
+        $MaiCustomer->setBirth(new \DateTime('2016-09-19'));
+        $this->app['orm.em']->persist($MaiCustomer);
+        $this->app['orm.em']->flush();
+        //because 誕生月 select box value start from 0. We need minus 1
+        $birth_month = $MaiCustomer->getBirth()->format('n') - 1;
+        $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
         $crawler = $this->client->request(
             'POST',
             $this->app->url('admin_mail_magazine'),
             array('mail_magazine' => $searchForm)
         );
+        $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
+    }
 
+    public function testMailMagazineSearchWithBirthmonthHightOctorber()
+    {
+        $MaiCustomer =  $this->createMailMagazineCustomer();
+        //test search with birth month > 10
+        $MaiCustomer->setBirth(new \DateTime('2016-11-19'));
+        $this->app['orm.em']->persist($MaiCustomer);
+        $this->app['orm.em']->flush();
+        //because 誕生月 select box value start from 0. We need minus 1
+        $birth_month = $MaiCustomer->getBirth()->format('n') - 1;
+        $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
+        $crawler = $this->client->request(
+            'POST',
+            $this->app->url('admin_mail_magazine'),
+            array('mail_magazine' => $searchForm)
+        );
+        $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
+    }
+
+    public function testMailMagazineSearchWithBirthmonthNull()
+    {
+        $MaiCustomer =  $this->createMailMagazineCustomer();
+        $birth_month = null;
+        $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
+        $crawler = $this->client->request(
+            'POST',
+            $this->app->url('admin_mail_magazine'),
+            array('mail_magazine' => $searchForm)
+        );
         $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
     }
 
