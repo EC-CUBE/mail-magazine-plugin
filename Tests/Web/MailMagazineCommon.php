@@ -71,7 +71,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
 
     }
 
-    protected function createSearchForm(\Eccube\Entity\Customer $MailCustomer, $birth_month)
+    protected function createSearchForm(\Eccube\Entity\Customer $MailCustomer, $birth_month = null)
     {
         // create order
         $Order = $this->createOrder($MailCustomer);

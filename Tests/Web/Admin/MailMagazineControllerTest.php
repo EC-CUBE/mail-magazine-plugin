@@ -66,8 +66,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
     public function testMailMagazineSearchWithBirthmonthNull()
     {
         $MaiCustomer =  $this->createMailMagazineCustomer();
-        $birth_month = null;
-        $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
+        $searchForm = $this->createSearchForm($MaiCustomer);
         $crawler = $this->client->request(
             'POST',
             $this->app->url('admin_mail_magazine'),
