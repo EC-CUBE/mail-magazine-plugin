@@ -128,6 +128,7 @@ class MailMagazineService
         $sendHistory->setSubject($formData['subject']);
         $sendHistory->setSendCount(count($customerList));
         $sendHistory->setCompleteCount(0);
+        $sendHistory->setErrorCount(0);
         $sendHistory->setDelFlg(Constant::DISABLED);
 
         $sendHistory->setEndDate(null);
@@ -226,7 +227,7 @@ class MailMagazineService
      * @param int $sendId 履歴ID
      * @param int $offset 開始位置
      * @param int $max 最大数
-     * @return bool
+     * @return MailMagazineSendHistory 送信履歴
      */
     public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
     {
@@ -246,8 +247,8 @@ class MailMagazineService
             $this->markRetry($sendId);
         }
 
-        // 配信済数
-        $completeCount = $sendHistory->getCompleteCount();
+        // エラー数
+        $errorCount = $offset > 0 ? $sendHistory->getErrorCount() : 0;
 
         // 履歴ファイルと結果ファイル
         $fileHistory = $this->getHistoryFileName($sendId);
@@ -294,11 +295,11 @@ class MailMagazineService
             // メール送信成功時
             if($sendResult) {
                 fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$email.','.$name);
-                $completeCount++;
             }
             // メール送信失敗時
             else {
                 fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$email.','.$name);
+                $errorCount++;
             }
 
             $processCount++;
@@ -323,10 +324,11 @@ class MailMagazineService
 
         // 送信結果情報を更新する
         $sendHistory->setEndDate(new \DateTime());
-        $sendHistory->setCompleteCount($completeCount);
+        $sendHistory->setCompleteCount($offset > 0 ? $sendHistory->getCompleteCount() + $processCount : $processCount);
+        $sendHistory->setErrorCount($errorCount);
         $this->app[self::REPOSITORY_SEND_HISTORY]->updateSendHistory($sendHistory);
 
-        return true;
+        return $sendHistory;
     }
 
     /**

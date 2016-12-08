@@ -241,6 +241,13 @@ class MailMagazineController
         ));
     }
 
+    /**
+     * 配信前処理
+     * 配信履歴データを作成する
+     * @param Application $app
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function prepare(Application $app, Request $request)
     {
         if ('POST' != $request->getMethod()) {
@@ -254,7 +261,6 @@ class MailMagazineController
         $form->handleRequest($request);
         $data = $form->getData();
 
-        // 送信対象者をdtb_customerから取得する
         if (!$form->isValid()) {
             throw new BadRequestHttpException();
         }
@@ -262,7 +268,6 @@ class MailMagazineController
         // タイムアウトしないようにする
         set_time_limit(0);
 
-        // サービスの取得
         /** @var MailMagazineService $service */
         $service = $app['eccube.plugin.mail_magazine.service.mail'];
 
@@ -272,19 +277,20 @@ class MailMagazineController
             $app->addError('admin.mailmagazine.send.regist.failure', 'admin');
         }
 
+        // フラッシュスコープにIDを保持してリダイレクト後に送信処理を開始できるようにする
         $app['session']->getFlashBag()->add('eccube.plugin.mailmagazine.history', $sendId);
 
-        // 配信管理画面に遷移する
+        // 配信履歴画面に遷移する
         return $app->redirect($app->url('admin_mail_magazine_history'));
     }
 
     /**
      * 配信処理
      * 配信終了後配信履歴に遷移する
-     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる
+     * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる
      * @param Application $app
      * @param Request $request
-     * @param string $id
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function commit(Application $app, Request $request) {
 
@@ -293,10 +299,8 @@ class MailMagazineController
             throw new BadRequestHttpException();
         }
 
-
         // タイムアウトしないようにする
         set_time_limit(0);
-
 
         // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
         // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
@@ -308,60 +312,20 @@ class MailMagazineController
 
         /** @var MailMagazineService $service */
         $service = $app['eccube.plugin.mail_magazine.service.mail'];
-        $service->sendrMailMagazine($id, $offset, $max);
-
         /** @var MailMagazineSendHistory $sendHistory */
-        $sendHistory = $app[MailMagazineService::REPOSITORY_SEND_HISTORY]->find($id);
+        $sendHistory = $service->sendrMailMagazine($id, $offset, $max);
+
+        if ($sendHistory->isComplete()) {
+            $service->sendMailMagazineCompleateReportMail();
+        }
 
         return $app->json(array(
             'status' => true,
             'id' => $id,
             'total' => $sendHistory->getSendCount(),
-            'count' => $offset + 100,
+            'count' => $sendHistory->getCompleteCount(),
         ));
-
-//        // Formを取得する
-//        $form = $app['form.factory']
-//            ->createBuilder('mail_magazine', null)
-//            ->getForm();
-//        $form->handleRequest($request);
-//        $data = $form->getData();
-//
-//        // 送信対象者をdtb_customerから取得する
-//        if (!$form->isValid()) {
-//            throw new BadRequestHttpException();
-//        }
-//
-//        // タイムアウトしないようにする
-//        set_time_limit(0);
-//
-//        // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
-//        // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
-//        $app['swiftmailer.use_spool'] = false;
-//
-//        // サービスの取得
-//        /** @var MailMagazineService $service */
-//        $service = $app['eccube.plugin.mail_magazine.service.mail'];
-//
-//        // 配信履歴を登録する
-//        $sendId = $service->createMailMagazineHistory($data);
-//        if(is_null($sendId)) {
-//            $app->addError('admin.mailmagazine.send.regist.failure', 'admin');
-//        } else {
-//
-//            // 登録した配信履歴からメールを送信する
-//            $service->sendrMailMagazine($sendId);
-//
-//            // 送信完了メールを送信する
-//            $service->sendMailMagazineCompleateReportMail();
-//            $app->addSuccess('admin.mailmagazine.send.complete', 'admin');
-//        }
-//
-//
-//        // 配信管理画面に遷移する
-//        return $app->redirect($app->url('admin_mail_magazine_history'));
     }
-
 
     /**
     *

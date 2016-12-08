@@ -215,7 +215,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     /**
      * @return int
      */
-    public function getErrorCount(): int
+    public function getErrorCount()
     {
         return $this->error_count;
     }
@@ -224,7 +224,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      * @param int $errorCount
      * @return MailMagazineSendHistory
      */
-    public function setErrorCount(int $errorCount)
+    public function setErrorCount($errorCount)
     {
         $this->error_count = $errorCount;
         return $this;
@@ -389,5 +389,14 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     public function getCreator()
     {
         return $this->Creator;
+    }
+
+    /**
+     * 配信エラーの有無にかかわらず、すべて送信したかどうかの判定
+     * @return bool 配信完了した場合はtrue
+     */
+    public function isComplete()
+    {
+        return $this->getCompleteCount() == $this->getSendCount();
     }
 }

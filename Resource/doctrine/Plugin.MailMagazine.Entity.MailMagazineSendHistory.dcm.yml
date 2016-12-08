@@ -34,7 +34,7 @@ Plugin\MailMagazine\Entity\MailMagazineSendHistory:
                 default: '0'
         error_count:
             type: integer
-            nullable: true
+            nullable: false
             unsigned: false
             options:
                 default: '0'

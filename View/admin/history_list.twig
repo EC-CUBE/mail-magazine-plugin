@@ -22,7 +22,7 @@
 
 <script>
 function fnDelete(action) {
-    if (confirm('この履歴を削除しても宜しいですか？')) {
+    if (confirm('この履歴を削除してもよろしいですか？')) {
         document.form1.action = action;
         document.form1.submit();
     }
@@ -53,7 +53,7 @@ $(function () {
     var lock = false;
     $('.retry-btn').click(function(e) {
         e.preventDefault();
-        if (!lock && confirm('再送しますか？')) {
+        if (!lock && confirm('配信失敗と未配信のメールを再送します。\nよろしいですか？')) {
             lock = true;
             $('#sendModal').modal('show');
             var id = $(this).data('id');
@@ -68,7 +68,7 @@ $(function () {
         $('#send-progress').addClass('progress-bar-striped active');
         $('#send-status-message').text('');
     });
-    $('#sendModal').on('hide.bs.modal', function () {
+    $('#sendModal .btn-close').on('click', function() {
         location.reload(true);
     });
     {% if app.session.flashBag.has('eccube.plugin.mailmagazine.history') %}
@@ -124,9 +124,13 @@ $(function () {
                                             <td class=""><a href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;">確認</a></td>
                                             <td class="">{{ SendHistory.send_count }}</td>
                                             <td class="">{{ SendHistory.complete_count }}</td>
-                                            <td class=""></td>
+                                            <td class="">{{ SendHistory.error_count }}</td>
                                             <td class="">{{ SendHistory.send_count - SendHistory.complete_count }}</td>
-                                            <td class=""><a href="#" class="btn btn-sm btn-danger retry-btn" data-id="{{ SendHistory.id }}">再試行</a></td>
+                                            <td class="">
+                                                {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
+                                                    <a href="#" class="btn btn-sm btn-danger retry-btn" data-id="{{ SendHistory.id }}">再試行</a>
+                                                {% endif %}
+                                            </td>
                                             <td class=""><a href="?" onclick="fnDelete('{{ url('admin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">削除</a></td>
                                         </tr>
                                         {% endfor %}
@@ -167,7 +171,7 @@ $(function () {
                 <div id="send-status-message"></div>
             </div>
             <div class="modal-footer" style="display: none;">
-                <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+                <button type="button" class="btn btn-default btn-close">閉じる</button>
             </div>
         </div>
     </div>
