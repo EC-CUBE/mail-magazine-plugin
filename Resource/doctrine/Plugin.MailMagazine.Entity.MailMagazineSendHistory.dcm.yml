@@ -32,6 +32,12 @@ Plugin\MailMagazine\Entity\MailMagazineSendHistory:
             unsigned: false
             options:
                 default: '0'
+        error_count:
+            type: integer
+            nullable: true
+            unsigned: false
+            options:
+                default: '0'
         start_date:
             type: datetime
             nullable: true

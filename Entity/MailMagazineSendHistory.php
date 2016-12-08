@@ -18,8 +18,8 @@ namespace Plugin\MailMagazine\Entity;
 class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
 {
     /**
-    * @var integer
-    */
+     * @var integer
+     */
     private $id;
 
     /**
@@ -46,6 +46,11 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     * @var integer
     */
     private $complete_count;
+
+    /**
+     * @var integer
+     */
+    private $error_count;
 
     /**
     * @var \DateTime
@@ -205,6 +210,24 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     public function getCompleteCount()
     {
         return $this->complete_count;
+    }
+
+    /**
+     * @return int
+     */
+    public function getErrorCount(): int
+    {
+        return $this->error_count;
+    }
+
+    /**
+     * @param int $errorCount
+     * @return MailMagazineSendHistory
+     */
+    public function setErrorCount(int $errorCount)
+    {
+        $this->error_count = $errorCount;
+        return $this;
     }
 
     /**

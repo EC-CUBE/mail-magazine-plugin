@@ -31,6 +31,51 @@ function changeAction(action) {
     document.form1.action = action;
     document.form1.submit();
 }
+function sendMail(id, offset, token) {
+    $.post('{{ url('admin_mail_magazine_commit') }}', { id : id, offset: offset || 0, _token:token })
+        .done(function(res) {
+            $('#send-progress').css('width', (res.count / res.total * 100) + '%');
+            $('#send-status-message').text(res.count + ' / ' + res.total + ' 件処理完了');
+            if (res.count < res.total) {
+                sendMail(id, res.count);
+            } else {
+                $('.modal-title').text('送信完了');
+                $('#send-progress').removeClass('progress-bar-striped active');
+                $('.modal-footer').show();
+            }
+        })
+        .fail(function() {
+            alert('エラーが発生しました。');
+        });
+
+}
+$(function () {
+    var lock = false;
+    $('.retry-btn').click(function(e) {
+        e.preventDefault();
+        if (!lock && confirm('再送しますか？')) {
+            lock = true;
+            $('#sendModal').modal('show');
+            var id = $(this).data('id');
+            $.post('{{ url('admin_mail_magazine_history_retry') }}?id=' + id)
+                .done(function() { sendMail(id, 0); })
+                .fail(function() { alert('エラーが発生しました。'); });
+        }
+        return false;
+    });
+    $('#sendModal').on('show.bs.modal', function () {
+        $('.modal-title').text('送信中...');
+        $('#send-progress').addClass('progress-bar-striped active');
+        $('#send-status-message').text('');
+    });
+    $('#sendModal').on('hide.bs.modal', function () {
+        location.reload(true);
+    });
+    {% if app.session.flashBag.has('eccube.plugin.mailmagazine.history') %}
+    $('#sendModal').modal('show');
+    sendMail({{ app.session.flashBag.get('eccube.plugin.mailmagazine.history')[0] }}, 0);
+    {% endif %}
+})
 </script>
 {% endblock %}
 
@@ -61,7 +106,7 @@ function changeAction(action) {
                                             <th>配信済数</th>
                                             <th>配信失敗数</th>
                                             <th>未配信数</th>
-                                            <th>再試行数</th>
+                                            <th>再試行</th>
                                             <th>削除</th>
                                         </tr>
                                     </thead>
@@ -81,7 +126,7 @@ function changeAction(action) {
                                             <td class="">{{ SendHistory.complete_count }}</td>
                                             <td class=""></td>
                                             <td class="">{{ SendHistory.send_count - SendHistory.complete_count }}</td>
-                                            <td class=""></td>
+                                            <td class=""><a href="#" class="btn btn-sm btn-danger retry-btn" data-id="{{ SendHistory.id }}">再試行</a></td>
                                             <td class=""><a href="?" onclick="fnDelete('{{ url('admin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">削除</a></td>
                                         </tr>
                                         {% endfor %}
@@ -107,4 +152,24 @@ function changeAction(action) {
 {% endif %}
 </form>
 
+{% endblock %}
+{% block modal %}
+<div id="sendModal" class="modal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">送信中...</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div id="send-progress" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                </div>
+                <div id="send-status-message"></div>
+            </div>
+            <div class="modal-footer" style="display: none;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

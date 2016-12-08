@@ -13,14 +13,7 @@ namespace Plugin\MailMagazine\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\EntityRepository;
 
 class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
 {

@@ -13,7 +13,6 @@ namespace Plugin\MailMagazine\ServiceProvider;
 
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
-use Symfony\Component\Yaml\Yaml;
 
 class MailMagazineServiceProvider implements ServiceProviderInterface
 {
@@ -77,8 +76,10 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             ->bind('admin_mail_magazine_confirm');
 
         // 配信内容配信
+        $app->match('/' . $app["config"]["admin_route"] . '/mail/prepare', '\\Plugin\\MailMagazine\\Controller\\MailMagazineController::prepare')
+            ->bind('admin_mail_magazine_prepare');
+
         $app->match('/' . $app["config"]["admin_route"] . '/mail/commit', '\\Plugin\\MailMagazine\\Controller\\MailMagazineController::commit')
-            ->value('id', null)->assert('id', '\d+|')
             ->bind('admin_mail_magazine_commit');
 
         // ===========================================
@@ -135,6 +136,10 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
         $app->match('/' . $app["config"]["admin_route"] . '/mail/history/{id}/delete', '\\Plugin\\MailMagazine\\Controller\\MailMagazineHistoryController::delete')
             ->value('id', null)->assert('id', '\d+|')
             ->bind('admin_mail_magazine_history_delete');
+
+        // 配信履歴再試行
+        $app->match('/' . $app["config"]["admin_route"] . '/mail/history/retry', '\\Plugin\\MailMagazine\\Controller\\MailMagazineHistoryController::retry')
+            ->bind('admin_mail_magazine_history_retry');
 
         // 型登録
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {

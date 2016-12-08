@@ -13,7 +13,6 @@ namespace Plugin\MailMagazine\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\Id\SequenceGenerator;
 use Eccube\Common\Constant;
 
 /**

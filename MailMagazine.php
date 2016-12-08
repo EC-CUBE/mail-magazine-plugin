@@ -13,11 +13,9 @@ namespace Plugin\MailMagazine;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Master\CustomerStatus;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Id\SequenceGenerator;
 
 class MailMagazine
 {

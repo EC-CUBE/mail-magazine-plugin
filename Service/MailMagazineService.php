@@ -13,7 +13,34 @@ namespace Plugin\MailMagazine\Service;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
 
+/**
+ * メルマガ配信処理のサービスクラス。
+ *
+ * メルマガ配信処理を行います。
+ * 配信履歴はエンティティ`MailMagazineSendHistory`として永続化されますが、確実に大量のメールを配信するために配信ファイルと結果ファイルも使用します。
+ * 配信ファイルと結果ファイルは同じフォーマットで、以下のようなCSV形式になります。
+ * <ステータス>,<メールアドレス>,<会員名>
+ *
+ * ・配信ファイルについて
+ * メルマガ配信前に作成され、すべてのメールを送信完了後に(送信失敗メールがあったかにかかわらず)削除されます。
+ * 作成された配信ファイルのステータスはすべて`none`となります。
+ *
+ * ・結果ファイルについて
+ * メールを1件送信するごとに1行づつ追記していきます。
+ * 送信成功したメールは、ステータス`done`として結果ファイルに記録されます。
+ * 何らかの理由で送信失敗したメールは、ステータスを'error'として結果ファイルに記録されます。
+ *
+ * ・メール配信処理が途中で止まったときの再送
+ * 配信ファイルが残っているので、結果ファイルにある行以降の配信先に対してメールを送る。
+ *
+ * ・配信失敗したメールの再送
+ * 結果ファイルのステータスが`error`になっている配信先に対してメールを送る。
+ *
+ * @package Plugin\MailMagazine\Service
+ */
 class MailMagazineService
 {
     // ====================================
@@ -23,6 +50,8 @@ class MailMagazineService
     const REPOSITORY_SEND_CUSTOMER = 'eccube.plugin.mail_magazine.repository.mail_magazine_send_customer';
 
     // send_flagの定数
+    /** メール未送信 */
+    const SEND_FLAG_NONE = 0;
     /** メール送信成功 */
     const SEND_FLAG_SUCCESS = 1;
     /** メール送信失敗 */
@@ -42,7 +71,6 @@ class MailMagazineService
 
     /** @var \Eccube\Entity\BaseInfo */
     public $BaseInfo;
-
 
     public function __construct(Application $app)
     {
@@ -72,26 +100,28 @@ class MailMagazineService
     }
 
     /**
-     * 配信履歴を作成する
+     * 配信履歴の作成。
      *
-     * @param unknown $formData
-     * @return 採番されたsend_id
+     * 配信履歴データ(MailMagazineSendHistory)の作成と、配信履歴ファイルを作成します。
+     *
+     * @param array $formData
+     * @return int 採番されたsend_id
      *         エラー時はfalseを返す
-     * @throws Exception
      */
     public function createMailMagazineHistory($formData) {
 
         // メール配信先リストの取得
-        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($this->app);
-        $customerList = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
-            ->getCustomerBySearchData($formData);
+        /** @var MailMagazineCustomerRepository $mailMagazineCustomerRepository */
+        $mailMagazineCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer'];
+        $mailMagazineCustomerRepository->setApplication($this->app);
+        $customerList = $mailMagazineCustomerRepository->getCustomerBySearchData($formData);
 
         $currentDatetime = new \DateTime();
 
         // -----------------------------
         // dtb_send_historyを登録する
         // -----------------------------
-        $sendHistory = new \Plugin\MailMagazine\Entity\MailMagazineSendHistory();
+        $sendHistory = new MailMagazineSendHistory();
 
         // 登録値を設定する
         $sendHistory->setBody($formData['body']);
@@ -122,60 +152,138 @@ class MailMagazineService
             return null;
         }
 
-        // -----------------------------
-        // dtb_send_customerを登録する
-        // -----------------------------
         $sendId = $sendHistory->getId();
+        $fp = fopen($this->getHistoryFileName($sendId), "w");
         foreach($customerList as $customer) {
-            // Entityにデータを設定する
-            $sendCustomer = new \Plugin\MailMagazine\Entity\MailMagazineSendCustomer();
-
-            $sendCustomer->setSendId($sendId);
-            $sendCustomer->setCustomerId($customer->getId());
-            $sendCustomer->setEmail($customer->getEmail());
-            $sendCustomer->setName($customer->getName01() . " " . $customer->getName02());
-
-            $status = $this->app[self::REPOSITORY_SEND_CUSTOMER]->createSendCustomer($sendCustomer);
+            fwrite($fp, self::SEND_FLAG_NONE.','.$customer['email'].','.$customer['name01'] . ' ' . $customer['name02'].PHP_EOL);
         }
+        fclose($fp);
 
         return $sendId;
+    }
+
+    /**
+     * 履歴ファイルを結果ファイルにマージする。
+     * 例)
+     * ・履歴ファイル
+     * none,aaa@example.com,aaa
+     * none,bbb@example.com,bbb
+     * none,ccc@example.com,ccc
+     *
+     * ・結果ファイル
+     * done,aaa@example.com,aaa
+     *
+     * ・マージした結果ファイル
+     * done,aaa@example.com,aaa
+     * none,bbb@example.com,bbb
+     * none,ccc@example.com,ccc
+     *
+     * @param string|$fileHistory 履歴ファイル
+     * @param string|$fileResult 結果ファイル
+     */
+    private function mergeHistoryFile($fileHistory, $fileResult)
+    {
+        // 結果ファイルのバイト数
+        $resultBytes = filesize($fileResult);
+
+        // 結果ファイルのバイト数分、履歴ファイルを読み飛ばす
+        $fin = fopen($fileHistory, 'r');
+        fseek($fin, $resultBytes);
+
+        // 残りの履歴ファイルの内容を結果ファイルに追記する
+        $fout = fopen($fileResult, 'a');
+        while ($line = fgets($fin)) {
+            fwrite($fout, $line);
+        }
+
+        fclose($fin);
+        fclose($fout);
+    }
+
+    public function markRetry($sendId)
+    {
+        // 再送時の前処理
+        $fileHistory = $this->getHistoryFileName($sendId);
+        $fileResult = $this->getHistoryFileName($sendId, false);
+
+        // 履歴ファイルと結果ファイルが残っている場合 -> 未配信メールが残っている
+        // 履歴ファイルを結果ファイルにマージしてマージしたファイルを履歴ファイルとしてメール配信する。
+        if (file_exists($fileHistory) && file_exists($fileResult)) {
+            $this->mergeHistoryFile($fileHistory, $fileResult);
+            rename($fileResult, $fileHistory);
+        }
+        // 履歴ファイルは削除されていて、結果ファイルだけある場合 -> 送信失敗したメールを再送する
+        // 結果ファイルを履歴ファイルとしてメール配信する。
+        else if (!file_exists($fileHistory) && file_exists($fileResult)) {
+            rename($fileResult, $fileHistory);
+        }
     }
 
     /**
      * Send mailmagazine.
      * メールマガジンを送信する.
      *
-     * @param unknown $sendId
+     * @param int $sendId 履歴ID
+     * @param int $offset 開始位置
+     * @param int $max 最大数
+     * @return bool
      */
-    public function sendrMailMagazine($sendId)
+    public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
     {
         // 最後に送信したメール本文をクリアする
         $this->lastSendMailBody = "";
 
         // send_historyを取得する
+        /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $this->app[self::REPOSITORY_SEND_HISTORY]->find($sendId);
 
         if(is_null($sendHistory)) {
             // 削除されている場合は終了する
             return false;
         }
-        // send_customerを取得する
-        $sendCustomerList = $this->app[self::REPOSITORY_SEND_CUSTOMER]->getSendCustomerByNotSuccess($sendId);
 
-        // 配信済数を取得する
-        $compleateCount = $sendHistory->getCompleteCount();
+        if ($offset == 0) {
+            $this->markRetry($sendId);
+        }
 
-        // 取得したメルマガ配信者分メールを送信する
-        foreach ($sendCustomerList as $sendCustomer) {
-            // メール送信
-            $name = trim($sendCustomer->getName());
+        // 配信済数
+        $completeCount = $sendHistory->getCompleteCount();
+
+        // 履歴ファイルと結果ファイル
+        $fileHistory = $this->getHistoryFileName($sendId);
+        $fileResult = $this->getHistoryFileName($sendId, false);
+        $handleHistory = fopen($fileHistory, "r");
+        $handleResult = fopen($fileResult, "a");
+
+        // スキップ数
+        $skipCount = $offset;
+        // 処理数
+        $processCount = 0;
+
+        while ($line = fgets($handleHistory)) {
+
+            if ($skipCount-- > 0) {
+                continue;
+            }
+
+            if ($processCount >= $max) {
+                break;
+            }
+
+            list($status, $email, $name) = explode(",", $line, 3);
+            if ($status == self::SEND_FLAG_SUCCESS) {
+                fwrite($handleResult, $line);
+                $processCount++;
+                continue;
+            }
+
             $body = preg_replace('/{name}/', $name, $sendHistory->getBody());
             // 送信した本文を保持する
             $this->lastSendMailBody = $body;
             $mailData = array(
-                    'email' => $sendCustomer->getEmail(),
-                    'subject' => preg_replace('/{name}/', $name, $sendHistory->getSubject()),
-                    'body' => $body
+                'email' => $email,
+                'subject' => preg_replace('/{name}/', $name, $sendHistory->getSubject()),
+                'body' => $body
             );
             try {
                 $sendResult = $this->sendMail($mailData);
@@ -183,27 +291,39 @@ class MailMagazineService
                 $sendResult = false;
             }
 
-            if(!$sendResult) {
-                // メール送信失敗時
-                $sendFlag = self::SEND_FLAG_FAILURE;
-            } else {
-                // メール送信成功時
-                $sendFlag = self::SEND_FLAG_SUCCESS;
-                $compleateCount++;
+            // メール送信成功時
+            if($sendResult) {
+                fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$email.','.$name);
+                $completeCount++;
+            }
+            // メール送信失敗時
+            else {
+                fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$email.','.$name);
             }
 
-            // 履歴更新
-            $sendCustomer->setSendFlag($sendFlag);
-            try {
-                $this->app[self::REPOSITORY_SEND_CUSTOMER]->updateSendCustomer($sendCustomer);
-            }catch(\Exception $e) {
-                throw $e;
+            $processCount++;
+        }
+        fclose($handleResult);
+        fclose($handleHistory);
+
+        // 全部終わったら履歴ファイルを削除
+        if ($offset + $processCount >= $sendHistory->getSendCount()) {
+            $start = microtime(true);
+            $errorCount = 0;
+            $handleResult = fopen($fileResult, "r");
+            while ($line = fgets($handleResult)) {
+                if (substr($line, 0, 1) == self::SEND_FLAG_FAILURE) {
+                    $errorCount++;
+                }
             }
+            fclose($handleResult);
+            unlink($fileHistory);
+            log_info("error_count", array("error_count" => $errorCount, "time" => (microtime(true) - $start)));
         }
 
         // 送信結果情報を更新する
         $sendHistory->setEndDate(new \DateTime());
-        $sendHistory->setCompleteCount($compleateCount);
+        $sendHistory->setCompleteCount($completeCount);
         $this->app[self::REPOSITORY_SEND_HISTORY]->updateSendHistory($sendHistory);
 
         return true;
@@ -224,7 +344,25 @@ class MailMagazineService
                 'body' => $this->lastSendMailBody
         );
 
-        return $this->sendMail($mailData);;
+        try {
+            return $this->sendMail($mailData);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
+    public function getHistoryFileName($historyId, $input = true)
+    {
+        return $this->app['config']['plugin_temp_realdir'].'/mail_magazine_'.($input ? 'in' : 'out').'_'.$historyId.'.txt';
+    }
+
+    public function unlinkHistoryFiles($historyId)
+    {
+        foreach (array($this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)) as $f)
+        {
+            if (file_exists($f)) {
+                unlink($f);
+            }
+        }
+    }
 }

@@ -12,12 +12,12 @@
 namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
-use Eccube\Common\Constant;
+use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MailMagazineController
 {
@@ -241,18 +241,9 @@ class MailMagazineController
         ));
     }
 
-    /**
-     * 配信処理
-     * 配信終了後配信履歴に遷移する
-     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる
-     * @param Application $app
-     * @param Request $request
-     * @param string $id
-     */
-    public function commit(Application $app, Request $request, $id = null) {
-
-        // POSTでない場合は終了する
-        if ('POST' !== $request->getMethod()) {
+    public function prepare(Application $app, Request $request)
+    {
+        if ('POST' != $request->getMethod()) {
             throw new BadRequestHttpException();
         }
 
@@ -268,26 +259,107 @@ class MailMagazineController
             throw new BadRequestHttpException();
         }
 
+        // タイムアウトしないようにする
+        set_time_limit(0);
+
         // サービスの取得
+        /** @var MailMagazineService $service */
         $service = $app['eccube.plugin.mail_magazine.service.mail'];
 
         // 配信履歴を登録する
         $sendId = $service->createMailMagazineHistory($data);
         if(is_null($sendId)) {
             $app->addError('admin.mailmagazine.send.regist.failure', 'admin');
-        } else {
-
-            // 登録した配信履歴からメールを送信する
-            $service->sendrMailMagazine($sendId);
-
-            // 送信完了メールを送信する
-            $service->sendMailMagazineCompleateReportMail();
-            $app->addSuccess('admin.mailmagazine.send.complete', 'admin');
         }
 
+        $app['session']->getFlashBag()->add('eccube.plugin.mailmagazine.history', $sendId);
 
         // 配信管理画面に遷移する
         return $app->redirect($app->url('admin_mail_magazine_history'));
+    }
+
+    /**
+     * 配信処理
+     * 配信終了後配信履歴に遷移する
+     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる
+     * @param Application $app
+     * @param Request $request
+     * @param string $id
+     */
+    public function commit(Application $app, Request $request) {
+
+        // Ajax/POSTでない場合は終了する
+        if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
+            throw new BadRequestHttpException();
+        }
+
+
+        // タイムアウトしないようにする
+        set_time_limit(0);
+
+
+        // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
+        // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
+        $app['swiftmailer.use_spool'] = false;
+
+        $id = $request->get('id');
+        $offset = (int) $request->get('offset', 0);
+        $max = (int) $request->get('max', 100);
+
+        /** @var MailMagazineService $service */
+        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        $service->sendrMailMagazine($id, $offset, $max);
+
+        /** @var MailMagazineSendHistory $sendHistory */
+        $sendHistory = $app[MailMagazineService::REPOSITORY_SEND_HISTORY]->find($id);
+
+        return $app->json(array(
+            'status' => true,
+            'id' => $id,
+            'total' => $sendHistory->getSendCount(),
+            'count' => $offset + 100,
+        ));
+
+//        // Formを取得する
+//        $form = $app['form.factory']
+//            ->createBuilder('mail_magazine', null)
+//            ->getForm();
+//        $form->handleRequest($request);
+//        $data = $form->getData();
+//
+//        // 送信対象者をdtb_customerから取得する
+//        if (!$form->isValid()) {
+//            throw new BadRequestHttpException();
+//        }
+//
+//        // タイムアウトしないようにする
+//        set_time_limit(0);
+//
+//        // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
+//        // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
+//        $app['swiftmailer.use_spool'] = false;
+//
+//        // サービスの取得
+//        /** @var MailMagazineService $service */
+//        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+//
+//        // 配信履歴を登録する
+//        $sendId = $service->createMailMagazineHistory($data);
+//        if(is_null($sendId)) {
+//            $app->addError('admin.mailmagazine.send.regist.failure', 'admin');
+//        } else {
+//
+//            // 登録した配信履歴からメールを送信する
+//            $service->sendrMailMagazine($sendId);
+//
+//            // 送信完了メールを送信する
+//            $service->sendMailMagazineCompleateReportMail();
+//            $app->addSuccess('admin.mailmagazine.send.complete', 'admin');
+//        }
+//
+//
+//        // 配信管理画面に遷移する
+//        return $app->redirect($app->url('admin_mail_magazine_history'));
     }
 
 

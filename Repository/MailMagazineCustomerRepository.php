@@ -14,10 +14,10 @@ namespace Plugin\MailMagazine\Repository;
 use Doctrine\ORM\EntityRepository;
 use Eccube\Common\Constant;
 use Eccube\Util\Str;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Util\SecureRandom;
 
 /**
@@ -141,9 +141,7 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
     }
 
     /**
-     * 検索条件での検索を行う。
-     * s
-     * @param unknown $searchData
+     * @param $searchData
      * @return \Doctrine\ORM\QueryBuilder
      */
     public function getQueryBuilderBySearchData($searchData)
@@ -342,7 +340,7 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
         }
 
         // Order By
-        $qb->addOrderBy('c.update_date', 'DESC');
+        $qb->addOrderBy('c.id', 'ASC');
 
         return $qb;
     }
@@ -460,11 +458,11 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
 
     /**
      * 検索条件と一致したcustomerを取得する.
-     * @param unknown $searchData
-     * @return multitype:
+     * @param array $searchData
+     * @return array
      */
     public function getCustomerBySearchData($searchData) {
         $qb = $this->getQueryBuilderBySearchData($searchData);
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
     }
 }

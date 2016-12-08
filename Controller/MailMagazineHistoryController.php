@@ -13,6 +13,8 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -192,9 +194,31 @@ class MailMagazineHistoryController
         $app['orm.em']->persist($sendHistory);
         $app['orm.em']->flush();
 
+        /** @var MailMagazineService $service */
+        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        $service->unlinkHistoryFiles($id);
+
         $app->addSuccess('admin.mailmagazine.history.delete.sucesss', 'admin');
 
         // メルマガテンプレート一覧へリダイレクト
         return $app->redirect($app->url('admin_mail_magazine_history'));
+    }
+
+    public function retry(Application $app, Request $request)
+    {
+//        // Ajax/POSTでない場合は終了する
+//        if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
+//            throw new BadRequestHttpException();
+//        }
+
+        $id = $request->get('id');
+
+        /** @var MailMagazineSendHistory $sendHistory */
+        $sendHistory = $app[MailMagazineService::REPOSITORY_SEND_HISTORY]->find($id);
+        /** @var MailMagazineService $service */
+        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        $service->markRetry($id);
+
+        return $app->json(array('status' => true));
     }
 }
