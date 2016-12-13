@@ -89,7 +89,6 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $updateFlg = Constant::DISABLED;
         $form = $this->createFormData();
         $form = array_merge($form, array(
-            'id' => $Customer->getId(),
             'mailmaga_flg' => $updateFlg,
         ));
         $this->client->request('POST',
@@ -106,4 +105,28 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->verify();
     }
 
+    public function testOnRenderAdminCustomerBefore_EditPost_WithInvalidPostData()
+    {
+        $Customer = $this->createMailMagazineCustomer();
+        $updateFlg = Constant::DISABLED;
+        $form = $this->createFormData();
+        $form = array_merge($form, array(
+            // バリデーションエラーになるケース
+            'kana' => array('kana01' => 'invalid'),
+            'mailmaga_flg' => $updateFlg,
+        ));
+        $this->client->request('POST',
+            $this->app->url('admin_customer_edit', array('id' => $Customer->getId())),
+            array(
+                'admin_customer' => $form
+            )
+        );
+
+        $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
+            ->findOneBy(array('customer_id' => $Customer->getId()));
+        $this->actual = $MailCustomer->getMailmagaFlg();
+        $this->expected = $updateFlg;
+        // 保存されない
+        $this->assertNotEquals($this->actual, $this->expected);
+    }
 }
