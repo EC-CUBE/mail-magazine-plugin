@@ -200,7 +200,6 @@ class MailMagazineCustomerRepository extends EntityRepository implements UserPro
         }
         // birth_month
         if (is_int($searchData['birth_month'])) {
-            //TODO: http://docs.symfony.gr.jp/symfony2/cookbook/doctrine/custom_dql_functions.html
             //Birth month start from 0 so we need plus 1.
             $searchData['birth_month']++;
             $birthMonth = $searchData['birth_month'];

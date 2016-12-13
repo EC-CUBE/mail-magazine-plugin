@@ -170,4 +170,55 @@ class MailMagazineControllerTest extends MailMagazineCommon
 //        $this->verify();
         $this->cleanUpMailCatcherMessages();
     }
+
+    public function testPagination()
+    {
+        for ($i = 0; $i < 30; $i++) {
+            $this->createMailMagazineCustomer();
+        }
+        $searchForm = array(
+            '_token' => 'dummy',
+            'sex' => array("1"),
+            "multi" => "",
+            "customer_status" => array(),
+            "birth_month" => "",
+            "birth_start" => "",
+            "birth_end" => "",
+            "pref" => "",
+            "tel" => array(),
+            "create_date_start" => "",
+            "create_date_end" => "",
+            "update_date_start" => "",
+            "update_date_end" => "",
+            "buy_total_start" => "",
+            "buy_total_end" => "",
+            "buy_times_start" => "",
+            "buy_times_end" => "",
+            "buy_product_code" => "",
+            "last_buy_start" => "",
+            "last_buy_end" => "",
+        );
+        $crawler = $this->client->request(
+            'POST',
+            $this->app->url('admin_mail_magazine'),
+            array('mail_magazine' => $searchForm)
+
+        );
+        $pageNumber = $crawler->filter('.box-title strong')->html();
+        $this->assertRegexp('/件/', $pageNumber);
+
+        //pagination
+        $crawler = $this->client->request(
+            'GET',
+            $this->app->url('admin_mail_magazine').'?page_no=2'
+        );
+
+        //check result
+        $pageNumber = $crawler->filter('.box-title strong')->html();
+        $this->assertRegexp('/件/', $pageNumber);
+
+        //check search condition
+        $sexCheckbox = $crawler->filter('#mail_magazine_sex label')->html();
+        $this->assertRegexp('/checked/', $sexCheckbox);
+    }
 }

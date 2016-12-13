@@ -38,18 +38,26 @@ class MailMagazineController
      */
     public function index(Application $app, Request $request)
     {
+        $session = $request->getSession();
+        $page_no = $request->get('page_no');
+        $pageMaxis = $app['eccube.repository.master.page_max']->findAll();
+        $page_max = $app['config']['default_page_count'];
+
         $pagination = null;
         $searchForm = $app['form.factory']
             ->createBuilder('mail_magazine')
             ->getForm();
 
-        $searchForm->handleRequest($request);
-        $searchData = array();
-        if ($searchForm->isValid()) {
-            $searchData = $searchForm->getData();
-        }
-
         if ('POST' === $request->getMethod()) {
+            $searchForm->handleRequest($request);
+            $searchData = array();
+            if ($searchForm->isValid()) {
+                $searchData = $searchForm->getData();
+            }
+//            dump($request->get('mail_magazine'));exit;
+            // sessionのデータ保持
+            $session->set('plugin.mailmagazine.search', $searchData);
+
             // 検索ボタンクリック時の処理
             $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
             $qb = $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
@@ -58,16 +66,63 @@ class MailMagazineController
             $pagination = $app['paginator']()->paginate(
                 $qb,
                 empty($searchData['pageno']) ? 1 : $searchData['pageno'],
-                empty($searchData['pagemax']) ? 10 : $searchData['pagemax']->getId()
+                $page_max
             );
+        } else {
+            if (is_null($page_no)) {
+                // sessionを削除
+                $session->remove('plugin.mailmagazine.search');
+            } else {
+                // pagingなどの処理
+                $searchData = $session->get('plugin.mailmagazine.search');
+                if (!is_null($searchData)) {
+
+                    $pcount = $request->get('page_max');
+                    $page_max = empty($pcount) ? $page_max : $pcount;
+
+                    $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
+                    $qb = $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
+                        ->getQueryBuilderBySearchData($searchData);
+
+                    $pagination = $app['paginator']()->paginate(
+                        $qb,
+                        $page_no,
+                        $page_max
+                    );
+
+                    if (isset($searchData['sex'])&&(count($searchData['sex']) > 0)) {
+                        $sex_ids = array();
+                        foreach ($searchData['sex'] as $Sex) {
+                            $sex_ids[] = $Sex->getId();
+                        }
+                        $searchData['sex'] = $app['eccube.repository.master.sex']
+                            ->findBy(array('id' => $sex_ids));
+                    }
+
+                    if (isset($searchData['pref'])) {
+                        $searchData['pref'] = $app['eccube.repository.master.pref']
+                            ->find($searchData['pref']->getId());
+                    }
+
+                    if (isset($searchData['pagemax'])) {
+                        $searchData['pagemax'] = $app['eccube.repository.master.page_max']
+                            ->find($searchData['pagemax']->getId());
+                    }
+
+                    $searchForm->setData($searchData);
+                }
+            }
         }
 
-        return $app->render('MailMagazine/View/admin/index.twig', array(
-            'searchForm' => $searchForm->createView(),
-            'pagination' => $pagination,
-        ));
+        return $app->render(
+            'MailMagazine/View/admin/index.twig',
+            array('searchForm' => $searchForm->createView(),
+                'pagination' => $pagination,
+                'pageMaxis' => $pageMaxis,
+                'page_count' => $page_max,
+            )
+        );
     }
-
 
     /**
      * テンプレート選択
