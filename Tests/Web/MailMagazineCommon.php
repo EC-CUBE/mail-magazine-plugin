@@ -71,13 +71,12 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
 
     }
 
-    protected function createSearchForm(\Eccube\Entity\Customer $MailCustomer)
+    protected function createSearchForm(\Eccube\Entity\Customer $MailCustomer, $birth_month = null)
     {
         // create order
         $Order = $this->createOrder($MailCustomer);
         $order_detail = $Order->getOrderDetails();
         $old_date = new \DateTime('1980-01-01');
-
         return array(
             '_token'            => 'dummy',
             'multi'             => $MailCustomer->getId(),
@@ -100,7 +99,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'last_buy_end'      => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
             'customer_status'   => array($MailCustomer->getStatus()->getId()),
             'buy_product_code'  => $order_detail[0]->getProductName(),
-            'birth_month'       => null,
+            'birth_month'       => $birth_month,
         );
     }
 
