@@ -69,6 +69,9 @@ class MailMagazineService
      */
     private $lastSendMailBody = "";
 
+    /** @var string */
+    private $mailMagazineDir;
+
     /** @var \Eccube\Entity\BaseInfo */
     public $BaseInfo;
 
@@ -76,6 +79,13 @@ class MailMagazineService
     {
         $this->app = $app;
         $this->BaseInfo = $app['eccube.repository.base_info']->get();
+        $this->mailMagazineDir = str_replace(
+            '${ROOT_DIR}',
+            $app['config']['root_dir'],
+            $this->app['config']['MailMagazine']['const']['mail_magazine_dir']);
+        if (!file_exists($this->mailMagazineDir)) {
+            mkdir($this->mailMagazineDir);
+        }
     }
 
     /**
@@ -254,7 +264,6 @@ class MailMagazineService
         $fileHistory = $this->getHistoryFileName($sendId);
         $fileResult = $this->getHistoryFileName($sendId, false);
         $handleHistory = fopen($fileHistory, "r");
-        $handleResult = fopen($fileResult, "a");
 
         // スキップ数
         $skipCount = $offset;
@@ -272,8 +281,12 @@ class MailMagazineService
             }
 
             list($status, $email, $name) = explode(",", $line, 3);
+
+
             if ($status == self::SEND_FLAG_SUCCESS) {
+                $handleResult = fopen($fileResult, "a");
                 fwrite($handleResult, $line);
+                fclose($handleResult);
                 $processCount++;
                 continue;
             }
@@ -293,6 +306,7 @@ class MailMagazineService
             }
 
             // メール送信成功時
+            $handleResult = fopen($fileResult, "a");
             if($sendResult) {
                 fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$email.','.$name);
             }
@@ -301,15 +315,14 @@ class MailMagazineService
                 fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$email.','.$name);
                 $errorCount++;
             }
+            fclose($handleResult);
 
             $processCount++;
         }
-        fclose($handleResult);
         fclose($handleHistory);
 
         // 全部終わったら履歴ファイルを削除
         if ($offset + $processCount >= $sendHistory->getSendCount()) {
-            $start = microtime(true);
             $errorCount = 0;
             $handleResult = fopen($fileResult, "r");
             while ($line = fgets($handleResult)) {
@@ -319,7 +332,6 @@ class MailMagazineService
             }
             fclose($handleResult);
             unlink($fileHistory);
-            log_info("error_count", array("error_count" => $errorCount, "time" => (microtime(true) - $start)));
         }
 
         // 送信結果情報を更新する
@@ -355,7 +367,7 @@ class MailMagazineService
 
     public function getHistoryFileName($historyId, $input = true)
     {
-        return $this->app['config']['plugin_temp_realdir'].'/mail_magazine_'.($input ? 'in' : 'out').'_'.$historyId.'.txt';
+        return $this->mailMagazineDir.'/mail_magazine_'.($input ? 'in' : 'out').'_'.$historyId.'.txt';
     }
 
     public function unlinkHistoryFiles($historyId)

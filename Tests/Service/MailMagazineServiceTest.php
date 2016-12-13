@@ -42,7 +42,7 @@ class MailMagazineServiceTest extends AbstractServiceTestCase
 
     public function testGetHistoryFileName()
     {
-        $dir = $this->app['config']['plugin_temp_realdir'].'/';
+        $dir = $this->app['config']['root_dir'].'/app/mail_magazine/';
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1));
         self::assertEquals($dir.'mail_magazine_in_2.txt', $this->mailMagazineService->getHistoryFileName(2));
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1, true));
@@ -175,7 +175,7 @@ class MailMagazineServiceTest extends AbstractServiceTestCase
 
         $this->mailMagazineService->sendrMailMagazine($historyId);
         $this->mailMagazineService->markRetry($historyId);
-        $this->mailMagazineService->sendrMailMagazine($historyId, true);
+        $this->mailMagazineService->sendrMailMagazine($historyId);
 
         self::assertEquals(array('mail_magazine_service_test@example.com'), $this->sentAddresses);
     }
