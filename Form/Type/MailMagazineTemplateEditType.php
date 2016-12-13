@@ -45,6 +45,20 @@ class MailMagazineTemplateEditType extends AbstractType
                     new Assert\NotBlank()
                 )
             ))
+            ->add('content_type', 'choice', array(
+                'label' => 'タイプ',
+                'required' => false,
+                'expanded' => true,
+                'multiple' => false,
+                'empty_value' => false,
+                'choices' => array(
+                    '0' => 'テキスト',
+                    '1' => 'HTML',
+                ),
+                'constraints' => array(
+                    new Assert\NotBlank()
+                )
+            ))
             ->add('body', 'textarea', array(
                 'label' => '本文',
                 'required' => true,

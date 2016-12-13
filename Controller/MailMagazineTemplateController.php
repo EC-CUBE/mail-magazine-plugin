@@ -187,6 +187,7 @@ class MailMagazineTemplateController
                 $template = new \Plugin\MailMagazine\Entity\MailMagazineTemplate();
                 $template->setSubject($data['subject']);
                 $template->setBody($data['body']);
+                $template->setContentType($data['content_type']);
                 $status = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->create($template);
                 if (!$status) {
                     $app->addError('admin.mailmagazine.template.save.failure', 'admin');
@@ -222,6 +223,7 @@ class MailMagazineTemplateController
                 // 更新処理
                 $template->setSubject($data['subject']);
                 $template->setBody($data['body']);
+                $template->setContentType($data['content_type']);
                 $status = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->update($template);
                 if (!$status) {
                     $app->addError('admin.mailmagazine.template.save.failure', 'admin');

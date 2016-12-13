@@ -25,7 +25,7 @@
     <script>
         $(function(){
             $("#mail_magazine_template").on("change", function(){
-                var id = $(this).val()
+                var id = $(this).val();
                 if (id) {
                     action= '{{ url('admin_mail_magazine_select') }}/' + id;
                 } else {
@@ -33,6 +33,12 @@
                 }
                 document.form1.action = action;
                 document.form1.submit();
+            });
+
+            $("#mail_magazine_content_type input").each(function (_e) {
+                if ($(this).attr("value") == {{new_type}}) {
+                    $(this).prop("checked", true);
+                }
             });
         });
 
@@ -59,6 +65,7 @@
 
                         {{ form_row(form.template) }}
                         {{ form_row(form.subject, {'value' : new_subject}) }}
+                        {{ form_row(form.content_type, {'value': new_type}) }}
                         {{ form_row(form.body, {'value' : new_body}) }}
 
                         <div style="display: none">

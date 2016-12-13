@@ -33,6 +33,11 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
     private $subject;
 
     /**
+     * @var integer
+     */
+    private $content_type;
+
+    /**
      * @var string
      */
     private $body;
@@ -90,7 +95,7 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
      */
     public function setTemplateId($id)
     {
-        $this->template_id = $template_id;
+        $this->template_id = $id;
 
         return $this;
     }
@@ -218,5 +223,25 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
     public function getBody()
     {
         return $this->body;
+    }
+
+    /**
+     * Set type when send mail (0: text, 1: HTML)
+     * @param $type
+     * @return $this
+     */
+    public function setContentType($type)
+    {
+        $this->content_type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type when send mail (0: text, 1: HTML)
+     * @return int
+     */
+    public function getContentType()
+    {
+        return $this->content_type;
     }
 }

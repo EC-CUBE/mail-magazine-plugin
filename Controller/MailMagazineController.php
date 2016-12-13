@@ -132,8 +132,8 @@ class MailMagazineController
      * @param string $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function select(Application $app, Request $request, $id = null) {
-
+    public function select(Application $app, Request $request, $id = null)
+    {
         $Mail = null;
 
         // POSTでない場合は終了する
@@ -150,6 +150,8 @@ class MailMagazineController
 
         $newSubject = "";
         $newBody = "";
+        // default of content type
+        $newType = Constant::DISABLED;
 
         // テンプレートが選択されている場合はテンプレートデータを取得する
         if($id) {
@@ -158,17 +160,19 @@ class MailMagazineController
             $Mail = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
 
             if (is_null($Mail)) {
-                throw new NotFoundHttpException();
+                throw new HttpException\NotFoundHttpException();
             }
 
             // テンプレートを表示する
             $newSubject = $Mail->getSubject();
+            $newType = $Mail->getContentType();
             $newBody = $Mail->getBody();
         }
 
         return $app->render('MailMagazine/View/admin/template_select.twig', array(
                 'form' => $form->createView(),
                 'new_subject' => $newSubject,
+                'new_type' => $newType,
                 'new_body' => $newBody,
                 'id' => $id,
         ));
@@ -181,8 +185,8 @@ class MailMagazineController
      * @param Request $request
      * @param string $id
      */
-    public function confirm(Application $app, Request $request, $id = null) {
-
+    public function confirm(Application $app, Request $request, $id = null)
+    {
         // POSTでない場合は終了する
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -227,15 +231,16 @@ class MailMagazineController
             return $app->render('MailMagazine/View/admin/template_select.twig', array(
                     'form' => $form->createView(),
                     'new_subject' => $formData['subject'],
+                    'new_type' => $formData['content_type'],
                     'new_body' =>  $formData['body'],
                     'id' =>  $id,
             ));
-
         }
 
         return $app->render('MailMagazine/View/admin/confirm.twig', array(
                 'form' => $form->createView(),
                 'subject_itm' => $form['subject']->getData(),
+                'content_type_itm' => $form['content_type']->getData(),
                 'body_itm' => $form['body']->getData(),
                 'id' => $id,
         ));
@@ -249,8 +254,8 @@ class MailMagazineController
      * @param Request $request
      * @param string $id
      */
-    public function commit(Application $app, Request $request, $id = null) {
-
+    public function commit(Application $app, Request $request, $id = null)
+    {
         // POSTでない場合は終了する
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -270,6 +275,9 @@ class MailMagazineController
 
         // サービスの取得
         $service = $app['eccube.plugin.mail_magazine.service.mail'];
+
+        // Mail template id
+        $data['id'] = $id;
 
         // 配信履歴を登録する
         $sendId = $service->createMailMagazineHistory($data);

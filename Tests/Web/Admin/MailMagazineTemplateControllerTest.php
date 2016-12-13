@@ -21,7 +21,8 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         return array(
             'subject'   => $fake->word,
             'body'      => $fake->word,
-            '_token'     => 'dummy'
+            '_token'     => 'dummy',
+            'content_type' => 1
         );
     }
     /**

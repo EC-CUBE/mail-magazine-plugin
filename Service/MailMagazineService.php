@@ -21,6 +21,7 @@ class MailMagazineService
     // ====================================
     const REPOSITORY_SEND_HISTORY = 'eccube.plugin.mail_magazine.repository.mail_magazine_send_history';
     const REPOSITORY_SEND_CUSTOMER = 'eccube.plugin.mail_magazine.repository.mail_magazine_send_customer';
+    const REPOSITORY_MAIL_TEMPLATE = 'eccube.plugin.mail_magazine.repository.mail_magazine';
 
     // send_flagの定数
     /** メール送信成功 */
@@ -39,6 +40,8 @@ class MailMagazineService
      * @var string
      */
     private $lastSendMailBody = "";
+
+    private $contentType = Constant::DISABLED;
 
     /** @var \Eccube\Entity\BaseInfo */
     public $BaseInfo;
@@ -68,6 +71,11 @@ class MailMagazineService
             ->setReturnPath($this->BaseInfo->getEmail04())
             ->setBody($formData['body']);
 
+        // set content type
+        if ($formData['contentType']) {
+            $message->setContentType('text/html');
+        }
+
         return $this->app->mail($message);
     }
 
@@ -94,6 +102,8 @@ class MailMagazineService
         $sendHistory = new \Plugin\MailMagazine\Entity\MailMagazineSendHistory();
 
         // 登録値を設定する
+        // Type for mail
+        $sendHistory->setContentType($formData['content_type']);
         $sendHistory->setBody($formData['body']);
         $sendHistory->setSubject($formData['subject']);
         $sendHistory->setSendCount(count($customerList));
@@ -145,7 +155,7 @@ class MailMagazineService
      * Send mailmagazine.
      * メールマガジンを送信する.
      *
-     * @param unknown $sendId
+     * @param integer $sendId
      */
     public function sendrMailMagazine($sendId)
     {
@@ -159,6 +169,10 @@ class MailMagazineService
             // 削除されている場合は終了する
             return false;
         }
+
+        // Get type for mail
+        $this->contentType = $sendHistory->getContentType();
+
         // send_customerを取得する
         $sendCustomerList = $this->app[self::REPOSITORY_SEND_CUSTOMER]->getSendCustomerByNotSuccess($sendId);
 
@@ -175,7 +189,8 @@ class MailMagazineService
             $mailData = array(
                     'email' => $sendCustomer->getEmail(),
                     'subject' => preg_replace('/{name}/', $name, $sendHistory->getSubject()),
-                    'body' => $body
+                    'body' => $body,
+                    'contentType' => $this->contentType
             );
             try {
                 $sendResult = $this->sendMail($mailData);
@@ -221,10 +236,10 @@ class MailMagazineService
         $mailData = array(
                 'email' => $this->BaseInfo->getEmail03(),
                 'subject' => $subject,
-                'body' => $this->lastSendMailBody
+                'body' => $this->lastSendMailBody,
+                'contentType' => $this->contentType
         );
 
-        return $this->sendMail($mailData);;
+        return $this->sendMail($mailData);
     }
-
 }

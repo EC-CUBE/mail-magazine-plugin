@@ -11,6 +11,7 @@
 
 namespace Plugin\MailMagazine\Tests\Web\Admin;
 
+use Eccube\Common\Constant;
 use Plugin\MailMagazine\Tests\Web\MailMagazineCommon;
 
 class MailMagazineControllerTest extends MailMagazineCommon
@@ -85,6 +86,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy',
             ))
@@ -103,6 +105,41 @@ class MailMagazineControllerTest extends MailMagazineCommon
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
+                'body'     => $MailTemplate->getBody(),
+                '_token'   => 'dummy',
+            ))
+        );
+    }
+
+    public function testSelect_MailIdInvalid()
+    {
+        $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
+
+        $this->client->request(
+            'POST',
+            $this->app->url('admin_mail_magazine_select', array('id' => 999999)),
+            array('mail_magazine' => array(
+                'subject'  => 'Subject',
+                'content_type'  => Constant::DISABLED,
+                'body'     => 'body',
+                '_token'   => 'dummy',
+            ))
+        );
+    }
+
+    public function testConfirm_BadRequest()
+    {
+        $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException');
+
+        $MailTemplate = $this->createMagazineTemplate();
+
+        $this->client->request(
+            'GET',
+            $this->app->url('admin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
+            array('mail_magazine' => array(
+                'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy',
             ))
@@ -119,6 +156,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
                 '_token'   => 'dummy',
             ))
@@ -134,11 +172,17 @@ class MailMagazineControllerTest extends MailMagazineCommon
             'POST',
             $this->app->url('admin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
+                'tel' => array(
+                    'tel01' => '',
+                    'tel02' => '',
+                    'tel03' => ''
+                ),
                 'id'       => $MailTemplate->getId(),
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
+                'content_type'  => $MailTemplate->getContentType(),
                 'body'     => $MailTemplate->getBody(),
-                '_token'   => 'dummy',
+                '_token'   => 'dummy'
             ))
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -152,6 +196,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $searchForm = $this->createSearchForm($MaiCustomer);
         $searchForm['template'] = $MailTemplate->getId();
         $searchForm['subject']  = $MailTemplate->getSubject();
+        $searchForm['content_type']  = $MailTemplate->getContentType();
         $searchForm['body']     = $MailTemplate->getBody();
 
         $this->client->request(

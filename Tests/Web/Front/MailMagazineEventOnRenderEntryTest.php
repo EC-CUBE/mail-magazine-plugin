@@ -124,4 +124,21 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
 
         $this->cleanUpMailCatcherMessages();
     }
+
+    public function testOnRenderEntry_PostInvalid()
+    {
+        $updateFlg = Constant::ENABLED;
+
+        $formData['mailmaga_flg'] = $updateFlg;
+
+        $this->client->request('POST',
+            $this->app->url('entry'),
+            array(
+                'entry' => $formData,
+                'mode' => 'complete',
+            )
+        );
+
+        $this->assertFalse($this->client->getResponse()->isRedirect($this->app->url('entry_complete')));
+    }
 }

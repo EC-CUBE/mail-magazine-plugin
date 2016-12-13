@@ -15,6 +15,11 @@ Plugin\MailMagazine\Entity\MailMagazineTemplate:
         subject:
             type: text
             nullable: false
+        content_type:
+            type: smallint
+            nullable: false
+            unsigned: false
+            default: '0'
         body:
             type: text
             nullable: false
