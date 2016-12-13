@@ -14,6 +14,9 @@ namespace Plugin\MailMagazine\ServiceProvider;
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
 
+// include log functions (for 3.0.0 - 3.0.11)
+require_once(__DIR__.'/../log.php');
+
 class MailMagazineServiceProvider implements ServiceProviderInterface
 {
     public function register(BaseApplication $app)
@@ -216,6 +219,11 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             $config['nav'] = $nav;
             return $config;
         }));
+
+        // initialize logger (for 3.0.0 - 3.0.8)
+        if (!method_exists('Eccube\Application', 'getInstance')) {
+            eccube_log_init($app);
+        }
     }
 
     public function boot(BaseApplication $app)
