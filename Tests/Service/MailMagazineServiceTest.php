@@ -34,7 +34,7 @@ class MailMagazineServiceTest extends AbstractServiceTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->app['mailer'] = $this->mailer = $this->getMockBuilder(\Swift_Mailer::class)->disableOriginalConstructor()->getMock();
+        $this->app['mailer'] = $this->mailer = $this->getMockBuilder('\Swift_Mailer')->disableOriginalConstructor()->getMock();
         $this->mailMagazineService = $this->app['eccube.plugin.mail_magazine.service.mail'];
         $this->mailMagazineSendHistoryRepository = $this->app[MailMagazineService::REPOSITORY_SEND_HISTORY];
         $this->sentAddresses = array();
