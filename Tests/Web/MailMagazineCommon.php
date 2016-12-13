@@ -123,6 +123,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $SendHistory->setSubject($MailTemplate->getSubject());
         $SendHistory->setSendCount(1);
         $SendHistory->setCompleteCount(1);
+        $SendHistory->setErrorCount(0);
         $SendHistory->setDelFlg(Constant::DISABLED);
 
         $SendHistory->setEndDate(null);

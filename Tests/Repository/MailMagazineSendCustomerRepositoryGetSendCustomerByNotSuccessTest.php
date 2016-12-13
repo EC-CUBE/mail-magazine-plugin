@@ -27,6 +27,7 @@ class MailMagazineSendCustomerRepositoryGetSendCustomerByNotSuccessTest extends 
 
     public function testGetSendCustomerByNotSuccess()
     {
+        $this->markTestSkipped("不要になった機能なのであとで削除");
         $result = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_customer']
             ->getSendCustomerByNotSuccess($this->SendHistory->getId());
         $this->actual = $result[0]['send_id'];

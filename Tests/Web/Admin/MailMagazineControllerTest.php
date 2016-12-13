@@ -144,7 +144,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testCommit()
+    public function testPrepare()
     {
         $this->initializeMailCatcher();
         $MailTemplate = $this->createMagazineTemplate();
@@ -156,7 +156,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine_commit', array('id' => $MailTemplate->getId())),
+            $this->app->url('admin_mail_magazine_prepare', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => $searchForm)
         );
 
