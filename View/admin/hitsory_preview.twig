@@ -32,8 +32,12 @@
                         <td>{{ history.subject }}</td>
                     </tr>
                     <tr>
-                        <th>本文</th>
+                        <th>本文 (テキスト形式)</th>
                         <td><xmp>{{ history.body }}</xmp></td>
+                    </tr>
+                    <tr>
+                        <th>本文 (HTML形式)</th>
+                        <td><xmp>{{ history.htmlBody|raw }}</xmp></td>
                     </tr>
                 </tbody>
             </table>

@@ -38,6 +38,11 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     private $body;
 
     /**
+     * @var string
+     */
+    private $html_body;
+
+    /**
     * @var integer
     */
     private $send_count;
@@ -164,6 +169,24 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     public function getBody()
     {
         return $this->body;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHtmlBody()
+    {
+        return $this->html_body;
+    }
+
+    /**
+     * @param string $html_body
+     * @return MailMagazineSendHistory
+     */
+    public function setHtmlBody($html_body)
+    {
+        $this->html_body = $html_body;
+        return $this;
     }
 
     /**

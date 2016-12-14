@@ -209,12 +209,16 @@ class MailMagazineType extends AbstractType
                 'mapped' => false,
             ))
             ->add('subject', 'text', array(
-                'label' => 'Subject',
+                'label' => '件名',
                 'required' => true,
             ))
             ->add('body', 'textarea', array(
-                'label' => '本文',
+                'label' => '本文 (テキスト形式)',
                 'required' => true,
+            ))
+            ->add('htmlBody', 'textarea', array(
+                'label' => '本文 (HTML形式)',
+                'required' => false,
             ))
             ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
         ;

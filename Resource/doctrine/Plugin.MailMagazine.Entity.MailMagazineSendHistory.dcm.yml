@@ -22,6 +22,9 @@ Plugin\MailMagazine\Entity\MailMagazineSendHistory:
         body:
             type: text
             nullable: true
+        html_body:
+            type: text
+            nullable: true
         send_count:
             type: integer
             nullable: true

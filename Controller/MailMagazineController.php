@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
@@ -134,7 +135,8 @@ class MailMagazineController
      */
     public function select(Application $app, Request $request, $id = null) {
 
-        $Mail = null;
+        /** @var MailMagazineTemplate $Template */
+        $Template = null;
 
         // POSTでない場合は終了する
         if ('POST' !== $request->getMethod()) {
@@ -150,26 +152,29 @@ class MailMagazineController
 
         $newSubject = "";
         $newBody = "";
+        $newHtmlBody = '';
 
         // テンプレートが選択されている場合はテンプレートデータを取得する
         if($id) {
             // テンプレート選択から遷移した場合の処理
             // 選択されたテンプレートのデータを取得する
-            $Mail = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
+            $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
 
-            if (is_null($Mail)) {
+            if (is_null($Template)) {
                 throw new NotFoundHttpException();
             }
 
             // テンプレートを表示する
-            $newSubject = $Mail->getSubject();
-            $newBody = $Mail->getBody();
+            $newSubject = $Template->getSubject();
+            $newBody = $Template->getBody();
+            $newHtmlBody = $Template->getHtmlBody();
         }
 
         return $app->render('MailMagazine/View/admin/template_select.twig', array(
                 'form' => $form->createView(),
                 'new_subject' => $newSubject,
                 'new_body' => $newBody,
+                'new_htmlBody' => $newHtmlBody,
                 'id' => $id,
         ));
     }
@@ -228,6 +233,7 @@ class MailMagazineController
                     'form' => $form->createView(),
                     'new_subject' => $formData['subject'],
                     'new_body' =>  $formData['body'],
+                    'new_htmlBody' =>  $formData['htmlBody'],
                     'id' =>  $id,
             ));
 
@@ -237,6 +243,7 @@ class MailMagazineController
                 'form' => $form->createView(),
                 'subject_itm' => $form['subject']->getData(),
                 'body_itm' => $form['body']->getData(),
+                'htmlBody_itm' => $form['htmlBody']->getData(),
                 'id' => $id,
         ));
     }

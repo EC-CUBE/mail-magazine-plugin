@@ -64,10 +64,16 @@ class MailMagazineService
     public $app;
 
     /**
-     * 最後に送信者に送信したメールの本文.
+     * 最後の送信者に送信したメールの本文(テキスト形式)
      * @var string
      */
     private $lastSendMailBody = "";
+
+    /**
+     * 最後の送信者に送信したメールの本文(HTML形式)
+     * @var string
+     */
+    private $lastSendMailHtmlBody = '';
 
     /** @var string */
     private $mailMagazineDir;
@@ -97,6 +103,7 @@ class MailMagazineService
      */
     protected function sendMail($formData) {
         // メール送信
+        /** @var \Swift_Message $message */
         $message = \Swift_Message::newInstance()
             ->setSubject($formData['subject'])
             ->setFrom(array($this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()))
@@ -105,6 +112,10 @@ class MailMagazineService
             ->setReplyTo($this->BaseInfo->getEmail03())
             ->setReturnPath($this->BaseInfo->getEmail04())
             ->setBody($formData['body']);
+
+        if ($formData['htmlBody']) {
+            $message->addPart($formData['htmlBody'], 'text/html');
+        }
 
         return $this->app->mail($message);
     }
@@ -135,6 +146,7 @@ class MailMagazineService
 
         // 登録値を設定する
         $sendHistory->setBody($formData['body']);
+        $sendHistory->setHtmlBody($formData['htmlBody']);
         $sendHistory->setSubject($formData['subject']);
         $sendHistory->setSendCount(count($customerList));
         $sendHistory->setCompleteCount(0);
@@ -241,9 +253,6 @@ class MailMagazineService
      */
     public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
     {
-        // 最後に送信したメール本文をクリアする
-        $this->lastSendMailBody = "";
-
         // send_historyを取得する
         /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $this->app[self::REPOSITORY_SEND_HISTORY]->find($sendId);
@@ -292,16 +301,20 @@ class MailMagazineService
             }
 
             $body = preg_replace('/{name}/', $name, $sendHistory->getBody());
+            $htmlBody = preg_replace('/{name}/', $name, $sendHistory->getHtmlBody());
             // 送信した本文を保持する
             $this->lastSendMailBody = $body;
+            $this->lastSendMailHtmlBody = $htmlBody;
             $mailData = array(
                 'email' => $email,
                 'subject' => preg_replace('/{name}/', $name, $sendHistory->getSubject()),
-                'body' => $body
+                'body' => $body,
+                'htmlBody' => $htmlBody
             );
             try {
                 $sendResult = $this->sendMail($mailData);
             } catch(\Exception $e) {
+                log_error($e->getMessage());
                 $sendResult = false;
             }
 
@@ -355,12 +368,14 @@ class MailMagazineService
         $mailData = array(
                 'email' => $this->BaseInfo->getEmail03(),
                 'subject' => $subject,
-                'body' => $this->lastSendMailBody
+                'body' => $this->lastSendMailBody,
+                'htmlBody' => $this->lastSendMailHtmlBody
         );
 
         try {
             return $this->sendMail($mailData);
         } catch (\Exception $e) {
+            log_error($e->getMessage());
             return false;
         }
     }
