@@ -279,7 +279,7 @@ class MailMagazineService
         // 処理数
         $processCount = 0;
 
-        while ($line = fgets($handleHistory)) {
+        while ($line = str_replace(PHP_EOL, '', fgets($handleHistory))) {
 
             if ($skipCount-- > 0) {
                 continue;
@@ -290,7 +290,6 @@ class MailMagazineService
             }
 
             list($status, $email, $name) = explode(",", $line, 3);
-
 
             if ($status == self::SEND_FLAG_SUCCESS) {
                 $handleResult = fopen($fileResult, "a");
