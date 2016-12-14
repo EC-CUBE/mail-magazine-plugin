@@ -11,20 +11,21 @@
 
 namespace Plugin\MailMagazine\Entity;
 
-class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
+use Eccube\Entity\AbstractEntity;
+
+class MailMagazineTemplate extends AbstractEntity
 {
     /**
      * @return string
      */
     public function __toString()
     {
-        return $this->getMethod();
+        return $this->getSubject();
     }
 
     /**
      * @var integer
      */
-//     private $template_id;
     private $id;
 
     /**
@@ -36,6 +37,11 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
      * @var string
      */
     private $body;
+
+    /**
+     * @var string
+     */
+    private $html_body;
 
     /**
      * @var integer
@@ -83,29 +89,6 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set template id
-     *
-     * @param  string $id
-     * @return MailMagazine
-     */
-    public function setTemplateId($id)
-    {
-        $this->template_id = $template_id;
-
-        return $this;
-    }
-
-    /**
-     * Get template_id
-     *
-     * @return integer
-     */
-    public function getTemplateId()
-    {
-        return $this->template_id;
-    }
-
-    /**
      * Get subject
      *
      * @return string
@@ -119,7 +102,7 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
      * Set subject
      *
      * @param  string $subject
-     * @return MailMagazine
+     * @return MailMagazineTemplate
      */
     public function setSubject($subject)
     {
@@ -132,7 +115,7 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
      * Set del_flg
      *
      * @param  integer $delFlg
-     * @return Payment
+     * @return MailMagazineTemplate
      */
     public function setDelFlg($delFlg)
     {
@@ -155,7 +138,7 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
      * Set create_date
      *
      * @param  \DateTime $createDate
-     * @return Payment
+     * @return MailMagazineTemplate
      */
     public function setCreateDate($createDate)
     {
@@ -178,7 +161,7 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
      * Set update_date
      *
      * @param  \DateTime $updateDate
-     * @return Payment
+     * @return MailMagazineTemplate
      */
     public function setUpdateDate($updateDate)
     {
@@ -200,8 +183,8 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
     /**
      * Set body
      *
-     * @param  \string $body
-     * @return Payment
+     * @param  string $body
+     * @return MailMagazineTemplate
      */
     public function setBody($body)
     {
@@ -213,10 +196,28 @@ class MailMagazineTemplate extends \Eccube\Entity\AbstractEntity
     /**
      * Get body
      *
-     * @return \DateTime
+     * @return string
      */
     public function getBody()
     {
         return $this->body;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHtmlBody()
+    {
+        return $this->html_body;
+    }
+
+    /**
+     * @param string $html_body
+     * @return MailMagazineTemplate
+     */
+    public function setHtmlBody($html_body)
+    {
+        $this->html_body = $html_body;
+        return $this;
     }
 }

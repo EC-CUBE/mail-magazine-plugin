@@ -38,20 +38,23 @@ class MailMagazineTemplateEditType extends AbstractType
 
         $builder
             ->add('subject', 'text', array(
-                'label' => 'Subject',
+                'label' => '件名',
                 'required' => true,
                 'constraints' => array(
                     new Assert\NotBlank()
                 )
             ))
             ->add('body', 'textarea', array(
-                'label' => '本文',
+                'label' => '本文 (テキスト形式)',
                 'required' => true,
                 'constraints' => array(
                     new Assert\NotBlank()
                 )
             ))
-            ->add('id', 'hidden')
+            ->add('htmlBody', 'textarea', array(
+                'label' => '本文 (HTML形式)',
+                'required' => false
+            ))
             ->addEventListener(FormEvents::POST_SUBMIT, function ($event) use ($app) {
             })
             ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
