@@ -78,6 +78,10 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             ->value('id', null)->assert('id', '\d+|')
             ->bind('admin_mail_magazine_confirm');
 
+        // テスト送信
+        $app->match('/' . $app["config"]["admin_route"] . '/mail/test', '\\Plugin\\MailMagazine\\Controller\\MailMagazineController::sendTest')
+            ->bind('admin_mail_magazine_test');
+
         // 配信内容配信
         $app->match('/' . $app["config"]["admin_route"] . '/mail/prepare', '\\Plugin\\MailMagazine\\Controller\\MailMagazineController::prepare')
             ->bind('admin_mail_magazine_prepare');

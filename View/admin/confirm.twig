@@ -28,6 +28,37 @@
             document.form1.submit();
         }
 
+        $(function () {
+            $('#testSendModal input').on('keyup', function() {
+                if (this.checkValidity()) {
+                    $(this).parents('div.form-group').removeClass('has-error');
+                } else {
+                    $(this).parents('div.form-group').addClass('has-error');
+                }
+                if ($('#testSendModal form').get(0).checkValidity()) {
+                    $('#sendTestMail').removeAttr('disabled');
+                } else {
+                    $('#sendTestMail').attr('disabled', 'disabled');
+                }
+            });
+            $('#sendTestMail').on('click', function() {
+                if (confirm('テストメールを送信します。\nよろしいですか？')) {
+                    $.post("{{ url('admin_mail_magazine_test') }}", {
+                        '_token': $('mail_magazine__token').val(),
+                        'email': $('#testEmail').val(),
+                        'name': $('#testName').val(),
+                        'subject': $('#mail_magazine_subject').val(),
+                        'body': $('#mail_magazine_body').val(),
+                        'htmlBody': $('#mail_magazine_htmlBody').val()
+                    }).done(function(res) {
+                        alert('テストメールを送信しました。');
+                        $('#testSendModal').modal('hide');
+                    }).fail(function (res) {
+                        alert('テストメールの送信に失敗しました。');
+                    });
+                }
+            })
+        })
     </script>
 {% endblock javascript%}
 
@@ -74,7 +105,8 @@
                         <div class="box-body">
                             <div class="row text-center">
                                 <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
-                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('admin_mail_magazine_prepare') }}'); return false;">配信する</button>
+                                    <a class="btn btn-primary btn-block btn-lg active" role="button" data-toggle="modal" data-target="#testSendModal">テスト送信する</a>
+                                    <button class="btn btn-danger btn-block btn-lg" onclick="changeAction('{{ url('admin_mail_magazine_prepare') }}'); return false;">配信する</button>
                                 </div>
                             </div>
                         </div><!-- /.box-body -->
@@ -100,4 +132,35 @@
     </div>
 
 
+{% endblock %}
+{% block modal %}
+    <div id="testSendModal" class="modal" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">テスト送信</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="testEmail" class="col-sm-2 control-label">送信先</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="testEmail" placeholder="メールアドレス" value="{{ testMailTo }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="testName" class="col-sm-2 control-label">名前</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="testName" placeholder="名前" value="{{ app.user.name }}" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="sendTestMail">送信</button>
+                    <button class="btn btn-default" data-dismiss="modal">閉じる</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

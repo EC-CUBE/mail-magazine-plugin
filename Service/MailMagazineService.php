@@ -101,7 +101,7 @@ class MailMagazineService
      *                  subject: 件名
      *                  body：本文
      */
-    protected function sendMail($formData) {
+    public function sendMail($formData) {
         // メール送信
         /** @var \Swift_Message $message */
         $message = \Swift_Message::newInstance()
@@ -299,17 +299,18 @@ class MailMagazineService
                 continue;
             }
 
-            $body = preg_replace('/{name}/', $name, $sendHistory->getBody());
-            $htmlBody = preg_replace('/{name}/', $name, $sendHistory->getHtmlBody());
-            // 送信した本文を保持する
-            $this->lastSendMailBody = $body;
-            $this->lastSendMailHtmlBody = $htmlBody;
             $mailData = array(
                 'email' => $email,
-                'subject' => preg_replace('/{name}/', $name, $sendHistory->getSubject()),
-                'body' => $body,
-                'htmlBody' => $htmlBody
+                'subject' => $sendHistory->getSubject(),
+                'body' => $sendHistory->getBody(),
+                'htmlBody' => $sendHistory->getHtmlBody()
             );
+            $this->replaceMailVars($mailData, $name);
+
+            // 送信した本文を保持する
+            $this->lastSendMailBody = $mailData['body'];
+            $this->lastSendMailHtmlBody = $mailData['htmlBody'];
+
             try {
                 $sendResult = $this->sendMail($mailData);
             } catch(\Exception $e) {
@@ -365,7 +366,7 @@ class MailMagazineService
         $subject = date('Y年m月d日H時i分') . '　下記メールの配信が完了しました。';
 
         $mailData = array(
-                'email' => $this->BaseInfo->getEmail03(),
+                'email' => $this->getAdminEmail(),
                 'subject' => $subject,
                 'body' => $this->lastSendMailBody,
                 'htmlBody' => $this->lastSendMailHtmlBody
@@ -377,6 +378,11 @@ class MailMagazineService
             log_error($e->getMessage());
             return false;
         }
+    }
+
+    public function getAdminEmail()
+    {
+        return $this->BaseInfo->getEmail03();
     }
 
     public function getHistoryFileName($historyId, $input = true)
@@ -391,6 +397,27 @@ class MailMagazineService
             if (file_exists($f)) {
                 unlink($f);
             }
+        }
+    }
+
+    /**
+     * テストメール送信
+     * @param array|$mailData メールデータ
+     */
+    public function sendTestMail($mailData)
+    {
+        $this->replaceMailVars($mailData, $mailData['name']);
+        $this->sendMail($mailData);
+    }
+
+    /**
+     * @param array|$mailData メールデータ
+     * @param string|$name 名前
+     */
+    public function replaceMailVars(&$mailData, $name)
+    {
+        foreach (array('subject', 'body', 'htmlBody') as $key) {
+            $mailData[$key] = preg_replace('/{name}/', $name, $mailData[$key]);
         }
     }
 }

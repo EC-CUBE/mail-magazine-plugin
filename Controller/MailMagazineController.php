@@ -239,12 +239,17 @@ class MailMagazineController
 
         }
 
+
+        /** @var MailMagazineService $service */
+        $service = $this->getMailMagazineService($app);
+
         return $app->render('MailMagazine/View/admin/confirm.twig', array(
                 'form' => $form->createView(),
                 'subject_itm' => $form['subject']->getData(),
                 'body_itm' => $form['body']->getData(),
                 'htmlBody_itm' => $form['htmlBody']->getData(),
                 'id' => $id,
+                'testMailTo' => $service->getAdminEmail(),
         ));
     }
 
@@ -276,7 +281,7 @@ class MailMagazineController
         set_time_limit(0);
 
         /** @var MailMagazineService $service */
-        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        $service = $this->getMailMagazineService($app);
 
         // 配信履歴を登録する
         $sendId = $service->createMailMagazineHistory($data);
@@ -318,7 +323,7 @@ class MailMagazineController
         $max = (int) $request->get('max', 100);
 
         /** @var MailMagazineService $service */
-        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        $service = $this->getMailMagazineService($app);
         /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $service->sendrMailMagazine($id, $offset, $max);
 
@@ -413,4 +418,30 @@ class MailMagazineController
         return $app->redirect($app->url('admin_mail_magazine'));
     }
 
+    /**
+     * テストメール送信
+     * @param Application $app
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function sendTest(Application $app, Request $request)
+    {
+        // Ajax/POSTでない場合は終了する
+        if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
+            throw new BadRequestHttpException();
+        }
+
+        $data = $request->request->all();
+        $this->getMailMagazineService($app)->sendTestMail($data);
+        return $app->json(array('status' => true));
+    }
+
+    /**
+     * @param Application $app
+     * @return MailMagazineService
+     */
+    private function getMailMagazineService(Application $app)
+    {
+        return $app['eccube.plugin.mail_magazine.service.mail'];
+    }
 }
