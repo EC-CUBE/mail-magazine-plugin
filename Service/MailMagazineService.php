@@ -146,7 +146,9 @@ class MailMagazineService
 
         // 登録値を設定する
         $sendHistory->setBody($formData['body']);
-        $sendHistory->setHtmlBody($formData['htmlBody']);
+        if (isset($formData['htmlBody'])) {
+            $sendHistory->setHtmlBody($formData['htmlBody']);
+        }
         $sendHistory->setSubject($formData['subject']);
         $sendHistory->setSendCount(count($customerList));
         $sendHistory->setCompleteCount(0);
@@ -293,7 +295,7 @@ class MailMagazineService
 
             if ($status == self::SEND_FLAG_SUCCESS) {
                 $handleResult = fopen($fileResult, "a");
-                fwrite($handleResult, $line);
+                fwrite($handleResult, $line.PHP_EOL);
                 fclose($handleResult);
                 $processCount++;
                 continue;
@@ -321,11 +323,11 @@ class MailMagazineService
             // メール送信成功時
             $handleResult = fopen($fileResult, "a");
             if($sendResult) {
-                fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$email.','.$name);
+                fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$email.','.$name.PHP_EOL);
             }
             // メール送信失敗時
             else {
-                fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$email.','.$name);
+                fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$email.','.$name.PHP_EOL);
                 $errorCount++;
             }
             fclose($handleResult);

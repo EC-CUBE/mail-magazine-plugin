@@ -96,7 +96,6 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testCommitEdit_IdIncorrect()
     {
         $form = $this->createFormData();
-        $form['id'] = 9999999;
 
         $this->client->request('POST',
             $this->app->url('admin_mail_magazine_template_commit', array('id' => 9999999)),
@@ -108,7 +107,6 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testCommitEdit_IdIsZero()
     {
         $form = $this->createFormData();
-        $form['id'] = 0;
 
         $this->client->request('POST',
             $this->app->url('admin_mail_magazine_template_commit', array('id' => 0)),
@@ -139,7 +137,6 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
 
         $form = $this->createFormData();
-        $form['id'] = $MailTemplate->getId();
 
         $this->client->request('POST',
             $this->app->url('admin_mail_magazine_template_commit', array('id' => $MailTemplate->getId())),

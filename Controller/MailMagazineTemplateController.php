@@ -237,15 +237,16 @@ class MailMagazineTemplateController
      * @param Request $request
      */
     public function regist(Application $app, Request $request) {
-        $PageLayout = new \Plugin\MailMagazine\Entity\MailMagazineTemplate();
+        $Template = new MailMagazineTemplate();
 
         // formの作成
         $form = $app['form.factory']
-            ->createBuilder('mail_magazine_template_edit', $PageLayout)
+            ->createBuilder('mail_magazine_template_edit', $Template)
             ->getForm();
 
         return $app->render('MailMagazine/View/admin/template_edit.twig', array(
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'Template' => $Template
         ));
 
     }
