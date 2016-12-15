@@ -27,8 +27,15 @@
             document.form1.action = action;
             document.form1.submit();
         }
-
         $(function () {
+            $('#sendMailMagazine').on('click', function (e) {
+                e.preventDefault();
+                if (confirm('メールマガジンを配信します。\nよろしいですか？')) {
+                    $(this).attr('disabled', 'disabled');
+                    changeAction('{{ url('admin_mail_magazine_prepare') }}');
+                }
+                return false;
+            });
             $('#testSendModal input').on('keyup', function() {
                 if (this.checkValidity()) {
                     $(this).parents('div.form-group').removeClass('has-error');
@@ -106,7 +113,7 @@
                             <div class="row text-center">
                                 <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
                                     <a class="btn btn-primary btn-block btn-lg active" role="button" data-toggle="modal" data-target="#testSendModal">テスト送信する</a>
-                                    <button class="btn btn-danger btn-block btn-lg" onclick="changeAction('{{ url('admin_mail_magazine_prepare') }}'); return false;">配信する</button>
+                                    <button class="btn btn-danger btn-block btn-lg" id="sendMailMagazine">配信する</button>
                                 </div>
                             </div>
                         </div><!-- /.box-body -->
