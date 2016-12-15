@@ -13,7 +13,6 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
-use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
@@ -206,15 +205,13 @@ class MailMagazineHistoryController
 
     public function retry(Application $app, Request $request)
     {
-//        // Ajax/POSTでない場合は終了する
-//        if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
-//            throw new BadRequestHttpException();
-//        }
+        // Ajax/POSTでない場合は終了する
+        if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
+            throw new BadRequestHttpException();
+        }
 
         $id = $request->get('id');
 
-        /** @var MailMagazineSendHistory $sendHistory */
-        $sendHistory = $app[MailMagazineService::REPOSITORY_SEND_HISTORY]->find($id);
         /** @var MailMagazineService $service */
         $service = $app['eccube.plugin.mail_magazine.service.mail'];
         $service->markRetry($id);
