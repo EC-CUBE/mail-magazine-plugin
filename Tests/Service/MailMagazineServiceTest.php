@@ -1,25 +1,12 @@
 <?php
 
-namespace Plugin\MailMagazine\Service;
+namespace Plugin\MailMagazine\Tests\Service;
 
-use Eccube\Common\Constant;
-use Eccube\Tests\Service\AbstractServiceTestCase;
-use Plugin\MailMagazine\Entity\MailmagaCustomer;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine\Tests\AbstractMailMagazineTestCase;
 
-class MailMagazineServiceTest extends AbstractServiceTestCase
+class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 {
-
-    /**
-     * @var \Plugin\MailMagazine\Service\MailMagazineService $mailMagazineService
-     */
-    private $mailMagazineService;
-
-    /**
-     * @var MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
-     */
-    private $mailMagazineSendHistoryRepository;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -35,8 +22,6 @@ class MailMagazineServiceTest extends AbstractServiceTestCase
     {
         parent::setUp();
         $this->app['mailer'] = $this->mailer = $this->getMockBuilder('\Swift_Mailer')->disableOriginalConstructor()->getMock();
-        $this->mailMagazineService = $this->app['eccube.plugin.mail_magazine.service.mail'];
-        $this->mailMagazineSendHistoryRepository = $this->app[MailMagazineService::REPOSITORY_SEND_HISTORY];
         $this->sentAddresses = array();
     }
 
@@ -573,40 +558,6 @@ class MailMagazineServiceTest extends AbstractServiceTestCase
         self::assertEquals(15, $history->getSendCount());
         self::assertEquals(5, $history->getCompleteCount());
         self::assertEquals(2, $history->getErrorCount());
-    }
-
-    /**
-     * @param string $email
-     * @param string $name01
-     * @param string $name02
-     * @return \Eccube\Entity\Customer
-     */
-    private function createMailmagaCustomer($email = 'mail_magazine_service_test@example.com', $name01 = 'name01', $name02 = 'name02')
-    {
-        $c = $this->createCustomer($email);
-        if ($name01) $c->setName01($name01);
-        if ($name02) $c->setName02($name02);
-        $this->app['orm.em']->persist($c);
-        $this->app['orm.em']->flush($c);
-
-        $mc = new MailmagaCustomer();
-        $mc->setCustomerId($c->getId());
-        $mc->setDelFlg(Constant::DISABLED);
-        $mc->setMailmagaFlg('1');
-
-        $this->app['orm.em']->persist($mc);
-        $this->app['orm.em']->flush($mc);
-
-        return $c;
-    }
-
-    private function createHistory(\Eccube\Entity\Customer $Customer)
-    {
-        return $this->mailMagazineService->createMailMagazineHistory(array(
-            'subject' => 'subject',
-            'body' => 'body',
-            'multi' => $Customer->getEmail(),
-        ));
     }
 
     /**

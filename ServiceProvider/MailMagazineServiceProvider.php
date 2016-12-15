@@ -140,6 +140,11 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             ->value('id', null)->assert('id', '\d+|')
             ->bind('admin_mail_magazine_history_delete');
 
+        // 配信履歴結果確認
+        $app->match('/' . $app["config"]["admin_route"] . '/mail/history/result', '\\Plugin\\MailMagazine\\Controller\\MailMagazineHistoryController::result')
+            ->value('id', null)->assert('id', '\d+|')
+            ->bind('admin_mail_magazine_history_result');
+
         // 配信履歴再試行
         $app->match('/' . $app["config"]["admin_route"] . '/mail/history/retry', '\\Plugin\\MailMagazine\\Controller\\MailMagazineHistoryController::retry')
             ->bind('admin_mail_magazine_history_retry');

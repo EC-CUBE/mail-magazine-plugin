@@ -47,7 +47,6 @@ function sendMail(id, offset, token) {
         .fail(function() {
             alert('エラーが発生しました。');
         });
-
 }
 $(function () {
     var lock = false;
@@ -75,6 +74,9 @@ $(function () {
     $('#sendModal').modal('show');
     sendMail({{ app.session.flashBag.get('eccube.plugin.mailmagazine.history')[0] }}, 0);
     {% endif %}
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 })
 </script>
 {% endblock %}
@@ -97,17 +99,14 @@ $(function () {
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>配信開始時刻</th>
-                                            <th>配信終了時刻</th>
+                                            <th width="170px">配信開始時刻</th>
+                                            <th width="170px">配信終了時刻</th>
                                             <th>件名</th>
-                                            <th>プレビュー</th>
-                                            <th>配信条件</th>
                                             <th>配信総数</th>
                                             <th>配信済数</th>
                                             <th>配信失敗数</th>
                                             <th>未配信数</th>
-                                            <th>再試行</th>
-                                            <th>削除</th>
+                                            <th width="250px"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -120,18 +119,29 @@ $(function () {
                                                 {% endif %}
                                             </td>
                                             <td class="">{{ SendHistory.subject}}</td>
-                                            <td class=""><a href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;">確認</a></td>
-                                            <td class=""><a href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;">確認</a></td>
                                             <td class="">{{ SendHistory.send_count }}</td>
                                             <td class="">{{ SendHistory.complete_count }}</td>
                                             <td class="">{{ SendHistory.error_count }}</td>
                                             <td class="">{{ SendHistory.send_count - SendHistory.complete_count }}</td>
                                             <td class="">
+                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="プレビュー">
+                                                    <span class="glyphicon glyphicon-search"></span>
+                                                </a>
+                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信条件">
+                                                    <span class="glyphicon glyphicon-cog"></span>
+                                                </a>
+                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_result', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信結果">
+                                                    <span class="glyphicon glyphicon-list"></span>
+                                                </a>
+                                                <a class="btn btn-danger btn-sm" href="?" onclick="fnDelete('{{ url('admin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="削除">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </a>
                                                 {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
-                                                    <a href="#" class="btn btn-sm btn-danger retry-btn" data-id="{{ SendHistory.id }}">再試行</a>
+                                                    <a href="#" class="btn btn-sm btn-danger retry-btn" data-id="{{ SendHistory.id }}" data-toggle="tooltip" title="再試行">
+                                                        <span class="glyphicon glyphicon-repeat"></span>
+                                                    </a>
                                                 {% endif %}
                                             </td>
-                                            <td class=""><a href="?" onclick="fnDelete('{{ url('admin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">削除</a></td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>

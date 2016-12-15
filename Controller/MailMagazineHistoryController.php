@@ -13,7 +13,13 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Knp\Component\Pager\Event\ItemsEvent;
+use Knp\Component\Pager\Paginator;
+use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine\Service\MailMagazineService;
+use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -75,7 +81,7 @@ class MailMagazineHistoryController
         }
 
         // 配信履歴を取得する
-        $sendHistory = $app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->find($id);
+        $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
         if(is_null($sendHistory)) {
             $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
@@ -106,7 +112,7 @@ class MailMagazineHistoryController
         }
 
         // 配信履歴を取得する
-        $sendHistory = $app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->find($id);
+        $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
         if(is_null($sendHistory)) {
             $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
@@ -179,7 +185,7 @@ class MailMagazineHistoryController
         }
 
         // 配信履歴を取得する
-        $sendHistory = $app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->find($id);
+        $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
         // 配信履歴がない場合はエラーメッセージを表示する
         if(is_null($sendHistory)) {
@@ -193,8 +199,7 @@ class MailMagazineHistoryController
         $app['orm.em']->persist($sendHistory);
         $app['orm.em']->flush();
 
-        /** @var MailMagazineService $service */
-        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        $service = $this->getMailMagazineService($app);
         $service->unlinkHistoryFiles($id);
 
         $app->addSuccess('admin.mailmagazine.history.delete.sucesss', 'admin');
@@ -212,10 +217,54 @@ class MailMagazineHistoryController
 
         $id = $request->get('id');
 
-        /** @var MailMagazineService $service */
-        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        $service = $this->getMailMagazineService($app);
         $service->markRetry($id);
 
         return $app->json(array('status' => true));
+    }
+
+    public function result(Application $app, Request $request)
+    {
+        $id = $request->get('id');
+        $resultFile = $this->getMailMagazineService($app)->getHistoryFileName($id, false);
+        /** @var MailMagazineSendHistory $History */
+        $History = $this->getMailMagazineSendHistoryRepository($app)->find($id);
+
+        $pageMaxis = $app['eccube.repository.master.page_max']->findAll();
+        $page_count = $request->get('page_count');
+        $page_count = $page_count ? $page_count : $app['config']['default_page_count'];
+
+        $pageNo = $request->get('page_no');
+        $paginator = new Paginator();
+        $paginator->subscribe(new MailMagazineHistoryFilePaginationSubscriber());
+        $pagination = $paginator->paginate($resultFile,
+            empty($pageNo) ? 1 : $pageNo,
+            $page_count,
+            array('total' => $History->getCompleteCount())
+        );
+
+        return $app->render('MailMagazine/View/admin/hitsory_result.twig', array(
+            'pagination' => $pagination,
+            'pageMaxis' => $pageMaxis,
+            'page_count' => $page_count
+        ));
+    }
+
+    /**
+     * @param Application $app
+     * @return MailMagazineService
+     */
+    private function getMailMagazineService(Application $app)
+    {
+        return $app['eccube.plugin.mail_magazine.service.mail'];
+    }
+
+    /**
+     * @param Application $app
+     * @return MailMagazineSendHistoryRepository
+     */
+    private function getMailMagazineSendHistoryRepository(Application $app)
+    {
+        return $app['eccube.plugin.mail_magazine.repository.mail_magazine_history'];
     }
 }
