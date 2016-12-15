@@ -137,29 +137,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
 
         $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_history']->createSendHistory($SendHistory);
 
-        // send customer
-        $this->createSendCustomer($SendHistory, $MailCustomer);
 
         return $SendHistory;
     }
 
-    protected function createSendCustomer(\Plugin\MailMagazine\Entity\MailMagazineSendHistory $SendHistory, \Eccube\Entity\Customer $MailCustomer)
-    {
-        // -----------------------------
-        // plg_send_customer
-        // -----------------------------
-        $sendId = $SendHistory->getId();
-
-        // Entity
-        $SendCustomer = new MailMagazineSendCustomer();
-
-        // data
-        $SendCustomer->setSendId($sendId);
-        $SendCustomer->setCustomerId($MailCustomer->getId());
-        $SendCustomer->setEmail($MailCustomer->getEmail());
-        $SendCustomer->setName($MailCustomer->getName01() . " " . $MailCustomer->getName02());
-
-        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_customer']->updateSendCustomer($SendCustomer);
-        return $SendCustomer;
-    }
 }

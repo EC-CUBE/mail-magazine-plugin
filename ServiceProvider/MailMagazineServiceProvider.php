@@ -11,6 +11,8 @@
 
 namespace Plugin\MailMagazine\ServiceProvider;
 
+use Plugin\MailMagazine\Entity\MailMagazineCustomer;
+use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
 
@@ -21,11 +23,6 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
 {
     public function register(BaseApplication $app)
     {
-        // 不要？
-        $app['eccube.plugin.mail_magazine.repository.mail_magazine_plugin'] = $app->share(function () use ($app) {
-            return $app['orm.em']->getRepository('Plugin\MailMagazine\Entity\MailMagazinePlugin');
-        });
-
         // メルマガテンプレート用リポジトリ
         $app['eccube.plugin.mail_magazine.repository.mail_magazine'] = $app->share(function () use ($app) {
             return $app['orm.em']->getRepository('Plugin\MailMagazine\Entity\MailMagazineTemplate');
@@ -36,10 +33,9 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             return $app['orm.em']->getRepository('Plugin\MailMagazine\Entity\MailMagazineSendHistory');
         });
 
-        // EC-CUBE本体よりコピー
         // Customer用リポジトリ
         $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer'] = $app->share(function () use ($app) {
-            return $app['orm.em']->getRepository('Plugin\MailMagazine\Entity\MailMagazineCustomer');
+            return new MailMagazineCustomerRepository($app['orm.em'], $app['orm.em']->getMetadataFactory()->getMetadataFor('Eccube\Entity\Customer'));
         });
         // SendHistory用リポジトリ
         $app['eccube.plugin.mail_magazine.repository.mail_magazine_send_history'] = $app->share(function () use ($app) {
