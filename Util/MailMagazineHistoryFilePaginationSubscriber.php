@@ -31,9 +31,10 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
             if ($count == 0) {
                 break;
             }
-            list($status, $email, $name) = explode(",", str_replace(PHP_EOL, '', $line), 3);
+            list($status, $customerId, $email, $name) = explode(",", str_replace(PHP_EOL, '', $line), 4);
             $event->items[] = array(
                 'status' => $status,
+                'customerId' => $customerId,
                 'email' => $email,
                 'name' => $name
             );

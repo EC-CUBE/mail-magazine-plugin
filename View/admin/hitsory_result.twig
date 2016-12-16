@@ -49,9 +49,12 @@
                     <div class="table-responsive with-border">
                         <table class="table table-striped">
                             <thead>
-                            <th>ステータス</th>
-                            <th>送信先</th>
-                            <th>名前</th>
+                            <tr>
+                                <th>ステータス</th>
+                                <th>会員ID</th>
+                                <th>送信先</th>
+                                <th>名前</th>
+                            </tr>
                             </thead>
                             <tbody>
                             {% for result in pagination %}
@@ -66,6 +69,9 @@
                                         {% else %}
                                             {{ result.status }}
                                         {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url('admin_customer_edit', { id : result.customerId }) }}">{{ result.customerId }}</a>
                                     </td>
                                     <td>{{ result.email }}</td>
                                     <td>{{ result.name }}</td>
@@ -83,11 +89,9 @@
             </div>
         {% endif %}
     </div>
-        <div class="row">
-            <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-                <p><a href="{{ url('admin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
-            </div>
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+            <p><a href="{{ url('admin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
         </div>
-</form>
-
+    </div>
 {% endblock %}

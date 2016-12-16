@@ -180,7 +180,7 @@ class MailMagazineService
         $sendId = $sendHistory->getId();
         $fp = fopen($this->getHistoryFileName($sendId), "w");
         foreach($customerList as $customer) {
-            fwrite($fp, self::SEND_FLAG_NONE.','.$customer['email'].','.$customer['name01'] . ' ' . $customer['name02'].PHP_EOL);
+            fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'] . ' ' . $customer['name02'].PHP_EOL);
         }
         fclose($fp);
 
@@ -291,7 +291,7 @@ class MailMagazineService
                 break;
             }
 
-            list($status, $email, $name) = explode(",", $line, 3);
+            list($status, $customerId, $email, $name) = explode(",", $line, 4);
 
             if ($status == self::SEND_FLAG_SUCCESS) {
                 $handleResult = fopen($fileResult, "a");
@@ -323,11 +323,11 @@ class MailMagazineService
             // メール送信成功時
             $handleResult = fopen($fileResult, "a");
             if($sendResult) {
-                fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$email.','.$name.PHP_EOL);
+                fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$customerId.','.$email.','.$name.PHP_EOL);
             }
             // メール送信失敗時
             else {
-                fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$email.','.$name.PHP_EOL);
+                fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$customerId.','.$email.','.$name.PHP_EOL);
                 $errorCount++;
             }
             fclose($handleResult);

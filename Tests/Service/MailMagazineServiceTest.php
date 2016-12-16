@@ -57,9 +57,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
     public function testCreateMailMagazineHistory_履歴ファイルができる()
     {
-        $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
-        $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
-        $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
+        $c1 = $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
+        $c2 = $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
+        $c3 = $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
 
         $actualId = $this->mailMagazineService->createMailMagazineHistory(array(
             'subject' => 'subject',
@@ -71,9 +71,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
         self::assertTrue(file_exists($fileName));
 
-        $expected = '0,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-                    '0,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-                    '0,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL;
+        $expected = '0,'.$c1->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '0,'.$c2->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '0,'.$c3->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($fileName));
     }
 
@@ -94,13 +94,14 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
     public function testSendrMailMagazine_送信成功時に結果ファイルが作成される()
     {
-        $historyId = $this->createHistory($this->createMailmagaCustomer('sendr_mail_magazine@example.com', 'name01', 'name02'));
+        $customer = $this->createMailmagaCustomer('sendr_mail_magazine@example.com', 'name01', 'name02');
+        $historyId = $this->createHistory($customer);
         $this->setUpMailerStub(array(true));
 
         $this->mailMagazineService->sendrMailMagazine($historyId);
 
         $fileName = $this->mailMagazineService->getHistoryFileName($historyId, false);
-        self::assertEquals('1,sendr_mail_magazine@example.com,name01 name02'.PHP_EOL, file_get_contents($fileName));
+        self::assertEquals('1,'.$customer->getId().',sendr_mail_magazine@example.com,name01 name02'.PHP_EOL, file_get_contents($fileName));
     }
 
     public function testSendrMailMagazine_送信成功時に配信ファイルが削除される()
@@ -132,13 +133,14 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
     public function testSendrMailMagazine_送信失敗時に結果ファイルが作成される()
     {
-        $historyId = $this->createHistory($this->createMailmagaCustomer('sendr_mail_magazine@example.com', 'name01', 'name02'));
+        $customer = $this->createMailmagaCustomer('sendr_mail_magazine@example.com', 'name01', 'name02');
+        $historyId = $this->createHistory($customer);
         $this->setUpMailerStub(array(false));
 
         $this->mailMagazineService->sendrMailMagazine($historyId);
 
         $fileName = $this->mailMagazineService->getHistoryFileName($historyId, false);
-        self::assertEquals('2,sendr_mail_magazine@example.com,name01 name02'.PHP_EOL, file_get_contents($fileName));
+        self::assertEquals('2,'.$customer->getId().',sendr_mail_magazine@example.com,name01 name02'.PHP_EOL, file_get_contents($fileName));
     }
 
     public function testSendrMailMagazine_送信失敗時に配信ファイルが削除される()
@@ -188,9 +190,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
     public function testSendrMailMagazine_未配信メールを再送できる()
     {
         // 3件分の履歴を作成
-        $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
-        $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
-        $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
+        $c1 = $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
+        $c2 = $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
+        $c3 = $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
             'subject' => 'subject',
@@ -200,7 +202,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
         // 1件だけ送れたことにする
         $resultFile = $this->mailMagazineService->getHistoryFileName($historyId, false);
-        file_put_contents($resultFile, "1,1_create_mail_magazine_history@example.com,name01_1 name02_1".PHP_EOL);
+        file_put_contents($resultFile, '1,'.$c1->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL);
 
         $this->setUpMailerStub(array(true, true));
 
@@ -215,24 +217,26 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         ), $this->sentAddresses);
 
         // 結果ファイルは3件分あるはず
-        $expected = '1,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-                    '1,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-                    '1,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL;
+        $expected = '1,'.$c1->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '1,'.$c2->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '1,'.$c3->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
     }
 
     public function testSendrMailMagazine_10件中最初の5件だけメールを送れる()
     {
-        $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0');
-        $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
-        $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
-        $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
-        $this->createMailmagaCustomer('4_create_mail_magazine_history@example.com', 'name01_4', 'name02_4');
-        $this->createMailmagaCustomer('5_create_mail_magazine_history@example.com', 'name01_5', 'name02_5');
-        $this->createMailmagaCustomer('6_create_mail_magazine_history@example.com', 'name01_6', 'name02_6');
-        $this->createMailmagaCustomer('7_create_mail_magazine_history@example.com', 'name01_7', 'name02_7');
-        $this->createMailmagaCustomer('8_create_mail_magazine_history@example.com', 'name01_8', 'name02_8');
-        $this->createMailmagaCustomer('9_create_mail_magazine_history@example.com', 'name01_9', 'name02_9');
+        $customers = array(
+            $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0'),
+            $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1'),
+            $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2'),
+            $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3'),
+            $this->createMailmagaCustomer('4_create_mail_magazine_history@example.com', 'name01_4', 'name02_4'),
+            $this->createMailmagaCustomer('5_create_mail_magazine_history@example.com', 'name01_5', 'name02_5'),
+            $this->createMailmagaCustomer('6_create_mail_magazine_history@example.com', 'name01_6', 'name02_6'),
+            $this->createMailmagaCustomer('7_create_mail_magazine_history@example.com', 'name01_7', 'name02_7'),
+            $this->createMailmagaCustomer('8_create_mail_magazine_history@example.com', 'name01_8', 'name02_8'),
+            $this->createMailmagaCustomer('9_create_mail_magazine_history@example.com', 'name01_9', 'name02_9'),
+        );
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
             'subject' => 'subject',
@@ -256,27 +260,29 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
         // 結果ファイルは5件分あるはず
         $resultFile = $this->mailMagazineService->getHistoryFileName($historyId, false);
-        $expected = '1,0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
-                    '1,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-                    '1,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-                    '1,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
-                    '1,4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
+        $expected = '1,'.$customers[0]->getId().',0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
+                    '1,'.$customers[1]->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '1,'.$customers[2]->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '1,'.$customers[3]->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
+                    '1,'.$customers[4]->getId().',4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
 
     }
 
     public function testSendrMailMagazine_10件中最初の6件目から10件目までメールを送れる()
     {
-        $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0');
-        $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
-        $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
-        $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
-        $this->createMailmagaCustomer('4_create_mail_magazine_history@example.com', 'name01_4', 'name02_4');
-        $this->createMailmagaCustomer('5_create_mail_magazine_history@example.com', 'name01_5', 'name02_5');
-        $this->createMailmagaCustomer('6_create_mail_magazine_history@example.com', 'name01_6', 'name02_6');
-        $this->createMailmagaCustomer('7_create_mail_magazine_history@example.com', 'name01_7', 'name02_7');
-        $this->createMailmagaCustomer('8_create_mail_magazine_history@example.com', 'name01_8', 'name02_8');
-        $this->createMailmagaCustomer('9_create_mail_magazine_history@example.com', 'name01_9', 'name02_9');
+        $customers = array(
+            $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0'),
+            $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1'),
+            $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2'),
+            $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3'),
+            $this->createMailmagaCustomer('4_create_mail_magazine_history@example.com', 'name01_4', 'name02_4'),
+            $this->createMailmagaCustomer('5_create_mail_magazine_history@example.com', 'name01_5', 'name02_5'),
+            $this->createMailmagaCustomer('6_create_mail_magazine_history@example.com', 'name01_6', 'name02_6'),
+            $this->createMailmagaCustomer('7_create_mail_magazine_history@example.com', 'name01_7', 'name02_7'),
+            $this->createMailmagaCustomer('8_create_mail_magazine_history@example.com', 'name01_8', 'name02_8'),
+            $this->createMailmagaCustomer('9_create_mail_magazine_history@example.com', 'name01_9', 'name02_9'),
+        );
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
             'subject' => 'subject',
@@ -300,11 +306,11 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
         // 結果ファイルは5件分あるはず
         $resultFile = $this->mailMagazineService->getHistoryFileName($historyId, false);
-        $expected = '1,0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
-                    '1,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-                    '1,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-                    '1,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
-                    '1,4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
+        $expected = '1,'.$customers[0]->getId().',0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
+                    '1,'.$customers[1]->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '1,'.$customers[2]->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '1,'.$customers[3]->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
+                    '1,'.$customers[4]->getId().',4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
 
         // 6件目から10件目まで送信
@@ -325,32 +331,34 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         ), $this->sentAddresses);
 
         $resultFile = $this->mailMagazineService->getHistoryFileName($historyId, false);
-        $expected = '1,0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
-                    '1,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-                    '1,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-                    '1,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
-                    '1,4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL.
-                    '1,5_create_mail_magazine_history@example.com,name01_5 name02_5'.PHP_EOL.
-                    '1,6_create_mail_magazine_history@example.com,name01_6 name02_6'.PHP_EOL.
-                    '1,7_create_mail_magazine_history@example.com,name01_7 name02_7'.PHP_EOL.
-                    '1,8_create_mail_magazine_history@example.com,name01_8 name02_8'.PHP_EOL.
-                    '1,9_create_mail_magazine_history@example.com,name01_9 name02_9'.PHP_EOL;
+        $expected = '1,'.$customers[0]->getId().',0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
+                    '1,'.$customers[1]->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '1,'.$customers[2]->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '1,'.$customers[3]->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
+                    '1,'.$customers[4]->getId().',4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL.
+                    '1,'.$customers[5]->getId().',5_create_mail_magazine_history@example.com,name01_5 name02_5'.PHP_EOL.
+                    '1,'.$customers[6]->getId().',6_create_mail_magazine_history@example.com,name01_6 name02_6'.PHP_EOL.
+                    '1,'.$customers[7]->getId().',7_create_mail_magazine_history@example.com,name01_7 name02_7'.PHP_EOL.
+                    '1,'.$customers[8]->getId().',8_create_mail_magazine_history@example.com,name01_8 name02_8'.PHP_EOL.
+                    '1,'.$customers[9]->getId().',9_create_mail_magazine_history@example.com,name01_9 name02_9'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
     }
 
     public function testSendrMailMagazine_未送信がある状態で再送処理をせずに送信する()
     {
         // 10件分の履歴
-        $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0');
-        $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
-        $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
-        $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
-        $this->createMailmagaCustomer('4_create_mail_magazine_history@example.com', 'name01_4', 'name02_4');
-        $this->createMailmagaCustomer('5_create_mail_magazine_history@example.com', 'name01_5', 'name02_5');
-        $this->createMailmagaCustomer('6_create_mail_magazine_history@example.com', 'name01_6', 'name02_6');
-        $this->createMailmagaCustomer('7_create_mail_magazine_history@example.com', 'name01_7', 'name02_7');
-        $this->createMailmagaCustomer('8_create_mail_magazine_history@example.com', 'name01_8', 'name02_8');
-        $this->createMailmagaCustomer('9_create_mail_magazine_history@example.com', 'name01_9', 'name02_9');
+        $customers = array(
+            $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0'),
+            $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1'),
+            $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2'),
+            $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3'),
+            $this->createMailmagaCustomer('4_create_mail_magazine_history@example.com', 'name01_4', 'name02_4'),
+            $this->createMailmagaCustomer('5_create_mail_magazine_history@example.com', 'name01_5', 'name02_5'),
+            $this->createMailmagaCustomer('6_create_mail_magazine_history@example.com', 'name01_6', 'name02_6'),
+            $this->createMailmagaCustomer('7_create_mail_magazine_history@example.com', 'name01_7', 'name02_7'),
+            $this->createMailmagaCustomer('8_create_mail_magazine_history@example.com', 'name01_8', 'name02_8'),
+            $this->createMailmagaCustomer('9_create_mail_magazine_history@example.com', 'name01_9', 'name02_9'),
+        );
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
             'subject' => 'subject',
@@ -376,11 +384,11 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
         // 結果ファイルは5件
         $resultFile = $this->mailMagazineService->getHistoryFileName($historyId, false);
-        $expected = '1,0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
-            '1,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-            '1,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-            '1,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
-            '1,4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
+        $expected = '1,'.$customers[0]->getId().',0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
+                    '1,'.$customers[1]->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '1,'.$customers[2]->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '1,'.$customers[3]->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
+                    '1,'.$customers[4]->getId().',4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
 
         /*
@@ -401,11 +409,11 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $resultFile = $this->mailMagazineService->getHistoryFileName($historyId, false);
 
         // 結果ファイルは5件のまま
-        $expected = '1,0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
-                    '1,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-                    '1,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-                    '1,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
-                    '1,4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
+        $expected = '1,'.$customers[0]->getId().',0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
+                    '1,'.$customers[1]->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '1,'.$customers[2]->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '1,'.$customers[3]->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
+                    '1,'.$customers[4]->getId().',4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
 
         /*
@@ -427,16 +435,16 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
             '9_create_mail_magazine_history@example.com',
         ), $this->sentAddresses);
 
-        $expected = '1,0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
-                    '1,1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
-                    '1,2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
-                    '1,3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
-                    '1,4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL.
-                    '1,5_create_mail_magazine_history@example.com,name01_5 name02_5'.PHP_EOL.
-                    '1,6_create_mail_magazine_history@example.com,name01_6 name02_6'.PHP_EOL.
-                    '1,7_create_mail_magazine_history@example.com,name01_7 name02_7'.PHP_EOL.
-                    '1,8_create_mail_magazine_history@example.com,name01_8 name02_8'.PHP_EOL.
-                    '1,9_create_mail_magazine_history@example.com,name01_9 name02_9'.PHP_EOL;
+        $expected = '1,'.$customers[0]->getId().',0_create_mail_magazine_history@example.com,name01_0 name02_0'.PHP_EOL.
+                    '1,'.$customers[1]->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
+                    '1,'.$customers[2]->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
+                    '1,'.$customers[3]->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
+                    '1,'.$customers[4]->getId().',4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL.
+                    '1,'.$customers[5]->getId().',5_create_mail_magazine_history@example.com,name01_5 name02_5'.PHP_EOL.
+                    '1,'.$customers[6]->getId().',6_create_mail_magazine_history@example.com,name01_6 name02_6'.PHP_EOL.
+                    '1,'.$customers[7]->getId().',7_create_mail_magazine_history@example.com,name01_7 name02_7'.PHP_EOL.
+                    '1,'.$customers[8]->getId().',8_create_mail_magazine_history@example.com,name01_8 name02_8'.PHP_EOL.
+                    '1,'.$customers[9]->getId().',9_create_mail_magazine_history@example.com,name01_9 name02_9'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
 
         /** @var MailMagazineSendHistory $history */
