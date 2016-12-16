@@ -40,7 +40,7 @@
                         <div class="form-group">
                             {{ form_label(form.body) }}
                             <div class="col-sm-9 col-lg-10">
-                                {{ form_widget(form.body) }}
+                                {{ form_widget(form.body, { 'attr' : { 'rows' : 20 } }) }}
                                 {{ form_errors(form.body) }}
                             </div>
                         </div>
@@ -48,11 +48,11 @@
                         <div class="form-group">
                             {{ form_label(form.htmlBody) }}
                             <div class="col-sm-9 col-lg-10">
-                                {{ form_widget(form.htmlBody) }}
+                                {{ form_widget(form.htmlBody, { 'attr' : { 'rows' : 20 } }) }}
                                 {{ form_errors(form.htmlBody) }}
                             </div>
                         </div>
-
+                        <span class="help-block">※ 名前差し込み時は {name} といれてください</span>
                     </div>
                 </div>
             </div>

@@ -93,7 +93,6 @@ $(function () {
                         <h3 class="box-title">総件数 <span class="normal"><strong>{{ pagination.totalItemCount }} 件</strong> </span></h3>
                     </div><!-- /.box-header -->
                     <div class="box-body">
-                        {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_mail_magazine_history' } %}
                         <div class="table_list">
                             <div class="table-responsive with-border">
                                 <table class="table table-striped">
@@ -148,7 +147,8 @@ $(function () {
                                 </table>
                             </div>
                         </div>
-                        </div><!-- /.box-body -->
+                        {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_mail_magazine_history' } %}
+                    </div><!-- /.box-body -->
                 {% else %}
                     {# データがない場合 #}
                     <div class="box-header with-arrow">
