@@ -13,21 +13,17 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
-use Knp\Component\Pager\Event\ItemsEvent;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine\Service\MailMagazineService;
 use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MailMagazineHistoryController
 {
-    private $main_title;
-    private $sub_title;
 
     public function __construct()
     {
@@ -76,16 +72,16 @@ class MailMagazineHistoryController
         // subject/bodyを抽出し、以下のViewへ渡す
         // パラメータ$idにマッチするデータが存在するか判定
         if (!$id) {
-            $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
-            return $app->redirect($app->url('admin_mail_magazine_history'));
+            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+            return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         // 配信履歴を取得する
         $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
         if(is_null($sendHistory)) {
-            $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
-            return $app->redirect($app->url('admin_mail_magazine_history'));
+            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+            return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         return $app->render('MailMagazine/View/admin/hitsory_preview.twig', array(
@@ -107,16 +103,16 @@ class MailMagazineHistoryController
         // dtb_send_historyから対象レコード抽出
         // dtb_send_history.search_dataを逆シリアライズした上で、各変数をViewに渡す
         if (!$id) {
-            $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
-            return $app->redirect($app->url('admin_mail_magazine_history'));
+            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+            return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         // 配信履歴を取得する
         $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
         if(is_null($sendHistory)) {
-            $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
-            return $app->redirect($app->url('admin_mail_magazine_history'));
+            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+            return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         // 検索条件をアンシリアライズする
@@ -189,8 +185,8 @@ class MailMagazineHistoryController
 
         // 配信履歴がない場合はエラーメッセージを表示する
         if(is_null($sendHistory)) {
-            $app->addError('admin.mailmagazine.history.datanotfound', 'admin');
-            return $app->redirect($app->url('admin_mail_magazine_history'));
+            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+            return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         // POSTかつ$idに対応するdtb_send_historyのレコードがあれば、del_flg = 1に設定して更新
@@ -202,10 +198,10 @@ class MailMagazineHistoryController
         $service = $this->getMailMagazineService($app);
         $service->unlinkHistoryFiles($id);
 
-        $app->addSuccess('admin.mailmagazine.history.delete.sucesss', 'admin');
+        $app->addSuccess('admin.plugin.mailmagazine.history.delete.sucesss', 'admin');
 
         // メルマガテンプレート一覧へリダイレクト
-        return $app->redirect($app->url('admin_mail_magazine_history'));
+        return $app->redirect($app->url('plugin_mail_magazine_history'));
     }
 
     public function retry(Application $app, Request $request)
@@ -217,8 +213,12 @@ class MailMagazineHistoryController
 
         $id = $request->get('id');
 
+        log_info('メルマガ再試行前処理開始', array('id' => $id));
+
         $service = $this->getMailMagazineService($app);
         $service->markRetry($id);
+
+        log_info('メルマガ再試行前処理完了', array('id' => $id));
 
         return $app->json(array('status' => true));
     }

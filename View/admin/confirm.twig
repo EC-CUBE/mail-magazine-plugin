@@ -32,7 +32,7 @@
                 e.preventDefault();
                 if (confirm('メールマガジンを配信します。\nよろしいですか？')) {
                     $(this).attr('disabled', 'disabled');
-                    changeAction('{{ url('admin_mail_magazine_prepare') }}');
+                    changeAction('{{ url('plugin_mail_magazine_prepare') }}');
                 }
                 return false;
             });
@@ -50,7 +50,7 @@
             });
             $('#sendTestMail').on('click', function() {
                 if (confirm('テストメールを送信します。\nよろしいですか？')) {
-                    $.post("{{ url('admin_mail_magazine_test') }}", {
+                    $.post("{{ url('plugin_mail_magazine_test') }}", {
                         '_token': $('mail_magazine__token').val(),
                         'email': $('#testEmail').val(),
                         'name': $('#testName').val(),
@@ -128,7 +128,7 @@
                         <div class="box-body">
                             <div class="row text-center">
                                 <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
-                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('admin_mail_magazine_select') }}/{{id}}'); return false;">テンプレート設定画面へ戻る</button>
+                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('plugin_mail_magazine_select') }}/{{id}}'); return false;">テンプレート設定画面へ戻る</button>
                                 </div>
                             </div>
                         </div><!-- /.box-body -->

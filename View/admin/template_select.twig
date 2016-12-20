@@ -27,9 +27,9 @@
             $("#mail_magazine_template").on("change", function(){
                 var id = $(this).val()
                 if (id) {
-                    action= '{{ url('admin_mail_magazine_select') }}/' + id;
+                    action= '{{ url('plugin_mail_magazine_select') }}/' + id;
                 } else {
-                    action= '{{ url('admin_mail_magazine_select') }}';
+                    action= '{{ url('plugin_mail_magazine_select') }}';
                 }
                 document.form1.action = action;
                 document.form1.submit();
@@ -78,7 +78,7 @@
                         <div class="box-body">
                             <div class="row text-center">
                                 <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
-                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('admin_mail_magazine_confirm') }}/' + document.form1.mail_magazine_template.value); return false;">登録</button>
+                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('plugin_mail_magazine_confirm') }}/' + document.form1.mail_magazine_template.value); return false;">登録</button>
                                 </div>
                             </div>
 
@@ -94,7 +94,7 @@
                         <div class="box-body">
                             <div class="row text-center">
                                 <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
-                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('admin_mail_magazine') }}'); return false;">検索画面に戻る</button>
+                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('plugin_mail_magazine') }}'); return false;">検索画面に戻る</button>
                                 </div>
                             </div>
                         </div><!-- /.box-body -->

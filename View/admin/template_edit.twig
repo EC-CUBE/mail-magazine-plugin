@@ -18,7 +18,7 @@
 
 {% block main %}
     <form role="form" name="content_page_form" id="content_page_form" method="post"
-          action="{{ url('admin_mail_magazine_template_commit', { id: Template.id } ) }}">
+          action="{{ url('plugin_mail_magazine_template_commit', { id: Template.id } ) }}">
         {{ form_widget(form._token) }}
         <div class="row" id="aside_wrap">
             <div class="col-md-9">

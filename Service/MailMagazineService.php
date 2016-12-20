@@ -46,8 +46,7 @@ class MailMagazineService
     // ====================================
     // 定数宣言
     // ====================================
-    const REPOSITORY_SEND_HISTORY = 'eccube.plugin.mail_magazine.repository.mail_magazine_send_history';
-    const REPOSITORY_SEND_CUSTOMER = 'eccube.plugin.mail_magazine.repository.mail_magazine_send_customer';
+    const REPOSITORY_SEND_HISTORY = 'eccube.plugin.mail_magazine.repository.mail_magazine_history';
 
     // send_flagの定数
     /** メール未送信 */

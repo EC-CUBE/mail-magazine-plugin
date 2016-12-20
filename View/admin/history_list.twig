@@ -32,7 +32,7 @@ function changeAction(action) {
     document.form1.submit();
 }
 function sendMail(id, offset, token) {
-    $.post('{{ url('admin_mail_magazine_commit') }}', { id : id, offset: offset || 0, _token:token })
+    $.post('{{ url('plugin_mail_magazine_commit') }}', { id : id, offset: offset || 0, _token:token })
         .done(function(res) {
             $('#send-progress').css('width', (res.count / res.total * 100) + '%');
             $('#send-status-message').text(res.count + ' / ' + res.total + ' 件処理完了');
@@ -56,7 +56,7 @@ $(function () {
             lock = true;
             $('#sendModal').modal('show');
             var id = $(this).data('id');
-            $.post('{{ url('admin_mail_magazine_history_retry') }}?id=' + id)
+            $.post('{{ url('plugin_mail_magazine_history_retry') }}?id=' + id)
                 .done(function() { sendMail(id, 0); })
                 .fail(function() { alert('エラーが発生しました。'); });
         }
@@ -123,16 +123,16 @@ $(function () {
                                             <td class="">{{ SendHistory.error_count }}</td>
                                             <td class="">{{ SendHistory.send_count - SendHistory.complete_count }}</td>
                                             <td class="">
-                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="プレビュー">
+                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="プレビュー">
                                                     <span class="glyphicon glyphicon-search"></span>
                                                 </a>
-                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信条件">
+                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信条件">
                                                     <span class="glyphicon glyphicon-cog"></span>
                                                 </a>
-                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('admin_mail_magazine_history_result', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信結果">
+                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_result', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信結果">
                                                     <span class="glyphicon glyphicon-list"></span>
                                                 </a>
-                                                <a class="btn btn-danger btn-sm" href="?" onclick="fnDelete('{{ url('admin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="削除">
+                                                <a class="btn btn-danger btn-sm" href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="削除">
                                                     <span class="glyphicon glyphicon-trash"></span>
                                                 </a>
                                                 {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
@@ -147,7 +147,7 @@ $(function () {
                                 </table>
                             </div>
                         </div>
-                        {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_mail_magazine_history' } %}
+                        {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine_history' } %}
                     </div><!-- /.box-body -->
                 {% else %}
                     {# データがない場合 #}

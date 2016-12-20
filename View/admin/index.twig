@@ -215,7 +215,7 @@ function fnChangeActionSubmit(action) {
             </div>
             <div class="row btn_area">
                 <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4 text-center">
-                    <button class="btn btn-primary btn-block btn-lg" onclick="fnChangeActionSubmit('{{ url('admin_mail_magazine') }}'); return false;">
+                    <button class="btn btn-primary btn-block btn-lg" onclick="fnChangeActionSubmit('{{ url('plugin_mail_magazine') }}'); return false;">
                         検索する <svg class="cb cb-angle-right"><use xlink:href="#cb-angle-right"></svg>
                     </button>
                 </div>
@@ -243,7 +243,7 @@ function fnChangeActionSubmit(action) {
 
                                     <ul class="dropdown-menu">
                                         {% for pageMax in pageMaxis if pageMax.name != page_count %}
-                                            <li><a href="{{ path('admin_mail_magazine', {'page_no': 1, 'page_max': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
+                                            <li><a href="{{ path('plugin_mail_magazine', {'page_no': 1, 'page_max': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
                                         {% endfor %}
                                     </ul>
                                 </li>
@@ -285,10 +285,10 @@ function fnChangeActionSubmit(action) {
                     </div>
                 </div><!-- /.box-body -->
                 {% if pagination.totalItemCount > 0 %}
-                    {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_mail_magazine' } %}
+                    {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine' } %}
                     <div class="row btn_area">
                         <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4 text-center">
-                            <button class="btn btn-primary btn-block btn-lg" onclick="fnChangeActionSubmit('{{ url('admin_mail_magazine_select') }}'); return false;">
+                            <button class="btn btn-primary btn-block btn-lg" onclick="fnChangeActionSubmit('{{ url('plugin_mail_magazine_select') }}'); return false;">
                                 配信内容を確認する <svg class="cb cb-angle-right"><use xlink:href="#cb-angle-right"></svg>
                             </button>
                         </div>

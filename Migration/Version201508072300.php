@@ -193,10 +193,6 @@ class Version201508072300 extends AbstractMigration
             'notnull' => true,
             'default' => 0,
         ));
-        $table->addColumn('error_count', 'integer', array(
-            'notnull' => true,
-            'default' => 0,
-        ));
         $table->addColumn('start_date', 'datetime', array(
             'unsigned' => false,
             'notnull' => false,

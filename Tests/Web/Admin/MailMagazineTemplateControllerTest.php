@@ -31,7 +31,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testRoutingMailMagazineTemplate()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_template')
+            $this->app->url('plugin_mail_magazine_template')
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -39,7 +39,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testRegist()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_template_regist')
+            $this->app->url('plugin_mail_magazine_template_regist')
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -49,7 +49,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_edit', array('id' => $MailTemplate->getId()))
+            $this->app->url('plugin_mail_magazine_template_edit', array('id' => $MailTemplate->getId()))
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -58,26 +58,26 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testEdit_IdIsNull()
     {
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_edit', array('id' => null))
+            $this->app->url('plugin_mail_magazine_template_edit', array('id' => null))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testEdit_IdIncorrect()
     {
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_edit', array('id' => 9999999))
+            $this->app->url('plugin_mail_magazine_template_edit', array('id' => 9999999))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testEdit_NotPost()
     {
         $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException');
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_template_edit', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_template_edit', array( 'id' => null))
         );
     }
 
@@ -87,7 +87,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         unset($form['subject']);
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_commit'),
+            $this->app->url('plugin_mail_magazine_template_commit'),
             array('mail_magazine_template_edit' => $form)
         );
         $this->assertTrue(true);
@@ -98,10 +98,10 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $form = $this->createFormData();
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_commit', array('id' => 9999999)),
+            $this->app->url('plugin_mail_magazine_template_commit', array('id' => 9999999)),
             array('mail_magazine_template_edit' => $form)
         );
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testCommitEdit_IdIsZero()
@@ -109,11 +109,11 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $form = $this->createFormData();
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_commit', array('id' => 0)),
+            $this->app->url('plugin_mail_magazine_template_commit', array('id' => 0)),
             array('mail_magazine_template_edit' => $form)
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testCommitRegist()
@@ -121,11 +121,11 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $form = $this->createFormData();
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_commit'),
+            $this->app->url('plugin_mail_magazine_template_commit'),
             array('mail_magazine_template_edit' => $form)
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
         $MailTemplate = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine']->findOneBy(array('subject' => $form['subject']));
         $this->actual = $MailTemplate->getBody();
         $this->expected = $form['body'];
@@ -139,11 +139,11 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $form = $this->createFormData();
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_commit', array('id' => $MailTemplate->getId())),
+            $this->app->url('plugin_mail_magazine_template_commit', array('id' => $MailTemplate->getId())),
             array('mail_magazine_template_edit' => $form)
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
 
         $this->actual = $MailTemplate->getSubject();
         $this->expected = $form['subject'];
@@ -155,7 +155,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
 
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_template_preview', array( 'id' => $MailTemplate->getId()))
+            $this->app->url('plugin_mail_magazine_template_preview', array( 'id' => $MailTemplate->getId()))
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -164,19 +164,19 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testPreview_IdIsNull()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_template_preview', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_template_preview', array( 'id' => null))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testPreview_IdIncorrect()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_template_preview', array( 'id' => 9999999))
+            $this->app->url('plugin_mail_magazine_template_preview', array( 'id' => 9999999))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testDelete()
@@ -184,37 +184,37 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_delete', array( 'id' => $MailTemplate->getId()))
+            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => $MailTemplate->getId()))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testDelete_IdIsNull()
     {
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_delete', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => null))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testDelete_IdIncorrect()
     {
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_delete', array( 'id' => 9999999))
+            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => 9999999))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
     public function testDelete_IdIsZero()
     {
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_template_delete', array( 'id' => 0))
+            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => 0))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_template')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
 
 }

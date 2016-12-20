@@ -135,7 +135,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         // serialize
         $SendHistory->setSearchData(base64_encode(serialize($formData)));
 
-        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_history']->createSendHistory($SendHistory);
+        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->createSendHistory($SendHistory);
 
 
         return $SendHistory;
