@@ -201,7 +201,10 @@ class MailMagazine
                 $diffs = array_values(array_diff($location, $url));
                 $id = $diffs[0];
             }
-            $Customer = $this->app['eccube.repository.customer']->find($id);
+            $CustomerRepo = $this->app['eccube.repository.customer']->find($id);
+
+            // Using clone to avoid doctrine preference (unitOfWork)
+            $Customer = clone $CustomerRepo;
 
             // メルマガFormを取得する
             $builder = $this->app['form.factory']->createBuilder('admin_customer');
