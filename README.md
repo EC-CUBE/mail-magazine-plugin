@@ -1,6 +1,7 @@
 # mail-magazine-plugin
 [![Build Status](https://travis-ci.org/EC-CUBE/mail-magazine-plugin.svg?branch=master)](https://travis-ci.org/EC-CUBE/mail-magazine-plugin)
 [![Build status](https://ci.appveyor.com/api/projects/status/3j9pol5x153eol6c?svg=true)](https://ci.appveyor.com/project/ECCUBE/mail-magazine-plugin)
+[![Coverage Status](https://coveralls.io/repos/github/EC-CUBE/mail-magazine-plugin/badge.svg?branch=master)](https://coveralls.io/github/EC-CUBE/mail-magazine-plugin?branch=master)
 
 メルマガ管理
 
