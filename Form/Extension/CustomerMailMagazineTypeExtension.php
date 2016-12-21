@@ -11,6 +11,8 @@
 
 namespace Plugin\MailMagazine\Form\Extension;
 
+use Eccube\Entity\Customer;
+use Plugin\MailMagazine\Entity\MailmagaCustomer;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -26,6 +28,18 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $mailmagaFlg = null;
+        /** @var Customer $Customer */
+        $Customer = $options['data'];
+        if (!is_null($Customer)) {
+            $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
+            /** @var MailmagaCustomer $MailmagaCustomer */
+            $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
+            if (!is_null($MailmagaCustomer)) {
+                $mailmagaFlg = $MailmagaCustomer->getMailmagaFlg();
+            }
+        }
+
         $builder
             ->add('mailmaga_flg', 'choice', array(
                 'label' => 'メールマガジン送付について',
@@ -40,9 +54,11 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
                     new Assert\NotBlank(),
                 ),
                 'mapped' => false,
+                'data' => $mailmagaFlg,
             ))
             ;
     }
+
 
     public function getExtendedType()
     {

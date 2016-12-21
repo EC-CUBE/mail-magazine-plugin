@@ -12,6 +12,10 @@
 namespace Plugin\MailMagazine\ServiceProvider;
 
 use Eccube\Common\Constant;
+use Plugin\MailMagazine\Event\MailMagazine;
+use Plugin\MailMagazine\Event\MailMagazineLegacy;
+use Plugin\MailMagazine\Form\Extension\CustomerMailMagazineTypeExtension;
+use Plugin\MailMagazine\Form\Extension\EntryMailMagazineTypeExtension;
 use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
@@ -41,6 +45,14 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
         // 新規会員登録/Myページ
         $app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'] = $app->share(function () use ($app) {
             return $app['orm.em']->getRepository('Plugin\MailMagazine\Entity\MailmagaCustomer');
+        });
+
+        // イベント
+        $app['eccube.plugin.mail_magazine.event.mail_magazine'] = $app->share(function() use ($app) {
+            return new MailMagazine($app);
+        });
+        $app['eccube.plugin.mail_magazine.event.mail_magazine_legacy'] = $app->share(function() use ($app) {
+            return new MailMagazineLegacy($app);
         });
 
         // 管理画面定義
@@ -158,8 +170,8 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
 
         // Form Extension
         $app['form.type.extensions'] = $app->share($app->extend('form.type.extensions', function ($extensions) use ($app) {
-            $extensions[] = new \Plugin\MailMagazine\Form\Extension\EntryMailMagazineTypeExtension($app);
-            $extensions[] = new \Plugin\MailMagazine\Form\Extension\CustomerMailMagazineTypeExtension($app);
+            $extensions[] = new EntryMailMagazineTypeExtension($app);
+            $extensions[] = new CustomerMailMagazineTypeExtension($app);
             return $extensions;
         }));
 
