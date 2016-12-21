@@ -186,7 +186,7 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
                 'child' => array(
                     array(
                         'id' => "mailmagazine",
-                        'name' => "配信内容設定",
+                        'name' => "配信",
                         'url' => "plugin_mail_magazine",
                     ),
                     array(

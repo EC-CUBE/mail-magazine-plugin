@@ -17,7 +17,7 @@
 {% set menus = ['mailmagazine', 'mailmagazine'] %}
 
 {% block title %}メルマガ管理{% endblock %}
-{% block sub_title %}配信内容管理{% endblock %}
+{% block sub_title %}配信{% endblock %}
 
 {% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 
@@ -53,7 +53,7 @@
             <div class="col-md-9">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">メールテンプレート編集</h3>
+                        <h3 class="box-title">配信内容の設定</h3>
                     </div><!-- /.box-header -->
                     <div class="box-body">
 
@@ -78,7 +78,7 @@
                         <div class="box-body">
                             <div class="row text-center">
                                 <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
-                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('plugin_mail_magazine_confirm') }}/' + document.form1.mail_magazine_template.value); return false;">登録</button>
+                                    <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('plugin_mail_magazine_confirm') }}/' + document.form1.mail_magazine_template.value); return false;">確認画面へ</button>
                                 </div>
                             </div>
 
