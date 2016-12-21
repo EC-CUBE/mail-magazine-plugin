@@ -38,7 +38,7 @@
                                 <ul class="dropdown-menu">
                                     {% endfor %}
                                     {% for pageMax in pageMaxis if pageMax.name != page_count %}
-                                        <li><a href="{{ path('admin_mail_magazine_history_result', {'id': app.request.query.get('id'), 'page_no': 1, 'page_count': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
+                                        <li><a href="{{ path('plugin_mail_magazine_history_result', {'id': app.request.query.get('id'), 'page_no': 1, 'page_count': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
                                     {% endfor %}
                                 </ul>
                             </li>
@@ -91,7 +91,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-            <p><a href="{{ url('admin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
+            <p><a href="{{ url('plugin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
         </div>
     </div>
 {% endblock %}
