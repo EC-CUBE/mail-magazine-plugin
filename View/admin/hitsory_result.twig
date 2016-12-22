@@ -70,9 +70,7 @@
                                             {{ result.status }}
                                         {% endif %}
                                     </td>
-                                    <td>
-                                        <a href="{{ url('admin_customer_edit', { id : result.customerId }) }}">{{ result.customerId }}</a>
-                                    </td>
+                                    <td>{{ result.customerId }}</td>
                                     <td>{{ result.email }}</td>
                                     <td>{{ result.name }}</td>
                                 </tr>
