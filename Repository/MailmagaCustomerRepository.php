@@ -29,7 +29,7 @@ class MailmagaCustomerRepository extends EntityRepository
     {
         $em = $this->getEntityManager();
         $em->persist($MailmagaCustomer);
-        $em->flush();
+        $em->flush($MailmagaCustomer);
 
     }
 

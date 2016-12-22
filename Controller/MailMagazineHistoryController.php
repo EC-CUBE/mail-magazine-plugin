@@ -153,7 +153,7 @@ class MailMagazineHistoryController
             }
         }
         $data['sex'] = $val;
-        
+
         // 誕生月
         $val = null;
         if(!is_null($searchData['birth_month'])) {
@@ -200,7 +200,7 @@ class MailMagazineHistoryController
         $sendHistory->setDelFlg(Constant::ENABLED);
 
         $app['orm.em']->persist($sendHistory);
-        $app['orm.em']->flush();
+        $app['orm.em']->flush($sendHistory);
 
         $service = $this->getMailMagazineService($app);
         $service->unlinkHistoryFiles($id);

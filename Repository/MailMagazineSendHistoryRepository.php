@@ -33,7 +33,7 @@ class MailMagazineSendHistoryRepository extends EntityRepository
         $em->getConnection()->beginTransaction();
         try {
             $em->persist($sendHistory);
-            $em->flush();
+            $em->flush($sendHistory);
 
             $em->getConnection()->commit();
         } catch (\Exception $e) {

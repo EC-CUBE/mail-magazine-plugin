@@ -53,7 +53,7 @@ class MailMagazineTemplateRepository extends EntityRepository
             // 削除フラグをONにして更新
             $MailMagazineTemplate->setDelFlg(Constant::ENABLED);
             $em->persist($MailMagazineTemplate);
-            $em->flush();
+            $em->flush($MailMagazineTemplate);
 
             $em->getConnection()->commit();
         } catch (\Exception $e) {
@@ -75,7 +75,7 @@ class MailMagazineTemplateRepository extends EntityRepository
         $em->getConnection()->beginTransaction();
         try {
             $em->persist($MailMagazineTemplate);
-            $em->flush();
+            $em->flush($MailMagazineTemplate);
 
             $em->getConnection()->commit();
         } catch (\Exception $e) {
@@ -99,7 +99,7 @@ class MailMagazineTemplateRepository extends EntityRepository
         try {
             $MailMagazineTemplate->setDelFlg(Constant::DISABLED);
             $em->persist($MailMagazineTemplate);
-            $em->flush();
+            $em->flush($MailMagazineTemplate);
 
             $em->getConnection()->commit();
         } catch (\Exception $e) {
