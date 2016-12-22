@@ -153,6 +153,13 @@ class MailMagazineHistoryController
             }
         }
         $data['sex'] = $val;
+        
+        // 誕生月
+        $val = null;
+        if(!is_null($searchData['birth_month'])) {
+            $val = $searchData['birth_month'] + 1;
+        }
+        $data['birth_month'] = $val;
 
         return $data;
     }
