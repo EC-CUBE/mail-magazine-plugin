@@ -113,7 +113,7 @@ class MailMagazineController
         }
 
         return $app->render(
-            'MailMagazine/View/admin/index.twig',
+            'MailMagazine/Resource/template/admin/index.twig',
             array('searchForm' => $searchForm->createView(),
                 'pagination' => $pagination,
                 'pageMaxis' => $pageMaxis,
@@ -167,7 +167,7 @@ class MailMagazineController
             $newHtmlBody = $Template->getHtmlBody();
         }
 
-        return $app->render('MailMagazine/View/admin/template_select.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/template_select.twig', array(
                 'form' => $form->createView(),
                 'new_subject' => $newSubject,
                 'new_body' => $newBody,
@@ -226,7 +226,7 @@ class MailMagazineController
         // validationを実行する
         if(!$form->isValid()) {
             // エラーの場合はテンプレート選択画面に遷移する
-            return $app->render('MailMagazine/View/admin/template_select.twig', array(
+            return $app->render('MailMagazine/Resource/template/admin/template_select.twig', array(
                     'form' => $form->createView(),
                     'new_subject' => $formData['subject'],
                     'new_body' =>  $formData['body'],
@@ -240,7 +240,7 @@ class MailMagazineController
         /** @var MailMagazineService $service */
         $service = $this->getMailMagazineService($app);
 
-        return $app->render('MailMagazine/View/admin/confirm.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/confirm.twig', array(
                 'form' => $form->createView(),
                 'subject_itm' => $form['subject']->getData(),
                 'body_itm' => $form['body']->getData(),

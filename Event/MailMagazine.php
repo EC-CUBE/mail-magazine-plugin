@@ -26,7 +26,7 @@ class MailMagazine extends CommonEvent
      */
     public function onRenderEntryConfirm(TemplateEvent $event)
     {
-        $this->replaceTwig($event, 'MailMagazine/View/entry_confirm_add_mailmaga.twig', '<div id="confirm_box__footer" class="row no-padding">');
+        $this->replaceTwig($event, 'MailMagazine/Resource/template/entry_confirm_add_mailmaga.twig', '<div id="confirm_box__footer" class="row no-padding">');
     }
 
     /**
@@ -70,7 +70,7 @@ class MailMagazine extends CommonEvent
      */
     public function onRenderAdminCustomerEdit(TemplateEvent $event)
     {
-        $this->replaceTwig($event, 'MailMagazine/View/admin/mailmagazine.twig', '<div class="extra-form">');
+        $this->replaceTwig($event, 'MailMagazine/Resource/template/admin/mailmagazine.twig', '<div class="extra-form">');
     }
 
     /**
@@ -96,7 +96,7 @@ class MailMagazine extends CommonEvent
 
     private function replaceEntryForm(TemplateEvent $event, $elementId)
     {
-        $snippet = $this->app['twig']->getLoader()->getSource('MailMagazine/View/entry_add_mailmaga.twig');
+        $snippet = $this->app['twig']->getLoader()->getSource('MailMagazine/Resource/template/entry_add_mailmaga.twig');
         $source = $event->getSource();
 
         $pattern = '/<dl id="'.$elementId.'">.*?<\/dl>/s';

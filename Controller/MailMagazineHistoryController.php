@@ -58,7 +58,7 @@ class MailMagazineHistoryController
                 empty($searchData['pagemax']) ? 10 : $searchData['pagemax']->getId()
         );
 
-        return $app->render('MailMagazine/View/admin/history_list.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/history_list.twig', array(
             'pagination' => $pagination
         ));
     }
@@ -84,7 +84,7 @@ class MailMagazineHistoryController
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
-        return $app->render('MailMagazine/View/admin/hitsory_preview.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/hitsory_preview.twig', array(
             'history' => $sendHistory
         ));
     }
@@ -123,7 +123,7 @@ class MailMagazineHistoryController
         // 必要な項目のみ
         $displayData = $this->searchDataToDisplayData($searchData);
 
-        return $app->render('MailMagazine/View/admin/hitsory_condition.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/hitsory_condition.twig', array(
             'search_data' => $displayData
         ));
     }
@@ -250,7 +250,7 @@ class MailMagazineHistoryController
             array('total' => $History->getCompleteCount())
         );
 
-        return $app->render('MailMagazine/View/admin/hitsory_result.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/hitsory_result.twig', array(
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
             'page_count' => $page_count

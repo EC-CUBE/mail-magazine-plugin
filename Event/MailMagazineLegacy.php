@@ -219,7 +219,7 @@ class MailMagazineLegacy extends CommonEvent
 
             $form->handleRequest($request);
 
-            $parts = $this->app->renderView('MailMagazine/View/admin/mailmagazine.twig', array(
+            $parts = $this->app->renderView('MailMagazine/Resource/template/admin/mailmagazine.twig', array(
                 'form' => $form->createView()
             ));
 
@@ -287,7 +287,7 @@ class MailMagazineLegacy extends CommonEvent
             // 追加する情報のHTMLを取得する.
             try {
                 $parts = $this->app['twig']->render(
-                    'MailMagazine/View/'.$twigName,
+                    'MailMagazine/Resource/template/'.$twigName,
                     array('form' => $form->createView())
                 );
             } catch (Exception $exception) {
@@ -347,7 +347,7 @@ class MailMagazineLegacy extends CommonEvent
 
             // 追加する情報のHTMLを取得する.
             $parts = $this->app['twig']->render(
-                'MailMagazine/View/entry_add_mailmaga.twig',
+                'MailMagazine/Resource/template/entry_add_mailmaga.twig',
                 array('form' => $form->createView())
             );
             $newNodeHtml = $nodeHtml.$parts;

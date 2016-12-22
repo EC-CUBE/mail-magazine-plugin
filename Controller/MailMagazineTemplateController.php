@@ -34,7 +34,7 @@ class MailMagazineTemplateController
         // 下のarrayにViewの変数名と共に突っ込む
         $templateList = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->findAll();
 
-        return $app->render('MailMagazine/View/admin/template_list.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/template_list.twig', array(
                 'TemplateList' => $templateList
         ));
     }
@@ -69,7 +69,7 @@ class MailMagazineTemplateController
         }
 
         // プレビューページ表示
-        return $app->render('MailMagazine/View/admin/preview.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/preview.twig', array(
                 'Template' => $template
         ));
     }
@@ -149,7 +149,7 @@ class MailMagazineTemplateController
             ->createBuilder('mail_magazine_template_edit', $Template)
             ->getForm();
 
-        return $app->render('MailMagazine/View/admin/template_edit.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
                 'form' => $form->createView(),
                 'Template' => $Template
         ));
@@ -186,7 +186,7 @@ class MailMagazineTemplateController
             // エラーであれば元の画面を表示する
             if (!$form->isValid()) {
                 $app->addError("validate error");
-                return $app->render('MailMagazine/View/admin/template_edit.twig', array(
+                return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
                         'form' => $form->createView(),
                     'Template' => $Template
                 ));
@@ -199,7 +199,7 @@ class MailMagazineTemplateController
                 $status = $templateRepository->create($Template);
                 if (!$status) {
                     $app->addError('admin.plugin.mailmagazine.template.save.failure', 'admin');
-                    return $app->render('MailMagazine/View/admin/template_edit.twig', array(
+                    return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
                             'form' => $form->createView(),
                             'Template' => $Template
                     ));
@@ -211,7 +211,7 @@ class MailMagazineTemplateController
                 $status = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->update($Template);
                 if (!$status) {
                     $app->addError('admin.plugin.mailmagazine.template.save.failure', 'admin');
-                    return $app->render('MailMagazine/View/admin/template_edit.twig', array(
+                    return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
                         'form' => $form->createView(),
                         'Template' => $Template
                     ));
@@ -242,7 +242,7 @@ class MailMagazineTemplateController
             ->createBuilder('mail_magazine_template_edit', $Template)
             ->getForm();
 
-        return $app->render('MailMagazine/View/admin/template_edit.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
                 'form' => $form->createView(),
                 'Template' => $Template
         ));
