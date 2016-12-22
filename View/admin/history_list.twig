@@ -129,7 +129,7 @@ $(function () {
                                                 <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信条件">
                                                     <span class="glyphicon glyphicon-cog"></span>
                                                 </a>
-                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_result', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信結果">
+                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_result') }}?id={{ SendHistory.id }}'); return false;" data-toggle="tooltip" title="配信結果">
                                                     <span class="glyphicon glyphicon-list"></span>
                                                 </a>
                                                 <a class="btn btn-danger btn-sm" href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="削除">
