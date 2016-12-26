@@ -109,7 +109,7 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             ->bind('plugin_mail_magazine_template_regist');
 
         // テンプレ編集確定
-        $admin->match('/plugin/mail_magazine/template/{id}/commit', '\\Plugin\\MailMagazine\\Controller\\MailMagazineTemplateController::commit')
+        $admin->match('/plugin/mail_magazine/template/commit/{id}', '\\Plugin\\MailMagazine\\Controller\\MailMagazineTemplateController::commit')
             ->value('id', null)->assert('id', '\d+|')
             ->bind('plugin_mail_magazine_template_commit');
 
