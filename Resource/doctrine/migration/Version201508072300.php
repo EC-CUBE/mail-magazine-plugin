@@ -19,7 +19,6 @@ use Doctrine\DBAL\Schema\Schema;
  */
 class Version201508072300 extends AbstractMigration
 {
-
     /**
      * @param Schema $schema
      */
@@ -57,7 +56,7 @@ class Version201508072300 extends AbstractMigration
 
     protected function createPlgMailMagazinePlugin(Schema $schema)
     {
-        $table = $schema->createTable("plg_mailmaga_plugin");
+        $table = $schema->createTable('plg_mailmaga_plugin');
         $table->addColumn('plugin_id', 'integer', array(
             'autoincrement' => true,
         ));
@@ -105,7 +104,7 @@ class Version201508072300 extends AbstractMigration
      */
     protected function createPlgMailMagazineTemplate(Schema $schema)
     {
-        $table = $schema->createTable("plg_mailmaga_template");
+        $table = $schema->createTable('plg_mailmaga_template');
         $table->addColumn('template_id', 'integer', array(
             'autoincrement' => true,
         ));
@@ -136,11 +135,13 @@ class Version201508072300 extends AbstractMigration
     }
 
     /**
-     * plg_send_customerテーブルの作成
+     * plg_send_customerテーブルの作成.
+     *
      * @param Schema $schema
      */
-    protected function createPlgSendCustomer(Schema $schema) {
-        $table = $schema->createTable("plg_send_customer");
+    protected function createPlgSendCustomer(Schema $schema)
+    {
+        $table = $schema->createTable('plg_send_customer');
         $table->addColumn('send_id', 'integer', array(
             'notnull' => true,
         ));
@@ -162,17 +163,18 @@ class Version201508072300 extends AbstractMigration
         $table->addIndex(
             array('customer_id')
         );
-
     }
 
     /**
-     * plg_send_historyテーブルの作成
+     * plg_send_historyテーブルの作成.
+     *
      * @param Schema $schema
      */
-    protected function createPlgSendHistory(Schema $schema) {
-        $table = $schema->createTable("plg_send_history");
+    protected function createPlgSendHistory(Schema $schema)
+    {
+        $table = $schema->createTable('plg_send_history');
         $table->addColumn('send_id', 'integer', array(
-            'notnull' => true
+            'notnull' => true,
         ));
         $table->addColumn('creator_id', 'integer', array(
             'notnull' => false,
@@ -223,22 +225,22 @@ class Version201508072300 extends AbstractMigration
         $table->addIndex(
             array('creator_id')
         );
-
     }
 
     /**
-     * plg_send_history_send_id_seqの作成
+     * plg_send_history_send_id_seqの作成.
+     *
      * @param Schema $schema
      */
-    protected function createPlgplgSendHistorySendIdSeq(Schema $schema) {
-        $seq = $schema->createSequence("plg_send_history_send_id_seq");
+    protected function createPlgplgSendHistorySendIdSeq(Schema $schema)
+    {
+        $seq = $schema->createSequence('plg_send_history_send_id_seq');
     }
 
-
-    function getMailMagazineCode()
+    public function getMailMagazineCode()
     {
         $config = \Eccube\Application::alias('config');
 
-        return "";
+        return '';
     }
 }

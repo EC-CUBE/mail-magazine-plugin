@@ -1,4 +1,5 @@
 <?php
+
 namespace Plugin\MailMagazine\Util;
 
 use Knp\Component\Pager\Event\ItemsEvent;
@@ -6,7 +7,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInterface
 {
-
     public function items(ItemsEvent $event)
     {
         $event->stopPropagation();
@@ -14,6 +14,7 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
         if (!file_exists($file)) {
             $event->count = 0;
             $event->items = array();
+
             return;
         }
 
@@ -31,21 +32,21 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
             if ($count == 0) {
                 break;
             }
-            list($status, $customerId, $email, $name) = explode(",", str_replace(PHP_EOL, '', $line), 4);
+            list($status, $customerId, $email, $name) = explode(',', str_replace(PHP_EOL, '', $line), 4);
             $event->items[] = array(
                 'status' => $status,
                 'customerId' => $customerId,
                 'email' => $email,
-                'name' => $name
+                'name' => $name,
             );
-            $count--;
+            --$count;
         }
     }
 
     public static function getSubscribedEvents()
     {
         return array(
-            'knp_pager.items' => array('items', 1)
+            'knp_pager.items' => array('items', 1),
         );
     }
 }

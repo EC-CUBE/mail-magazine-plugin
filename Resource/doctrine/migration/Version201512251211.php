@@ -19,7 +19,6 @@ use Doctrine\DBAL\Schema\Schema;
  */
 class Version201512251211 extends AbstractMigration
 {
-
     /**
      * @param Schema $schema
      */
@@ -28,7 +27,7 @@ class Version201512251211 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $table = $schema->getTable('plg_send_history');
 
-        if ($this->connection->getDatabasePlatform()->getName() == "mysql") {
+        if ($this->connection->getDatabasePlatform()->getName() == 'mysql') {
             $table->changeColumn('send_id', array('autoincrement' => true));
         }
     }

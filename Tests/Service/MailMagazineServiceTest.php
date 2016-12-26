@@ -7,7 +7,6 @@ use Plugin\MailMagazine\Tests\AbstractMailMagazineTestCase;
 
 class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 {
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -49,8 +48,8 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         /** @var MailMagazineSendHistory $actual */
         $actual = $this->mailMagazineSendHistoryRepository->find($expectedId);
 
-        self::assertEquals("subject", $actual->getSubject());
-        self::assertEquals("body", $actual->getBody());
+        self::assertEquals('subject', $actual->getSubject());
+        self::assertEquals('body', $actual->getBody());
         self::assertEquals(3, $actual->getSendCount());
         self::assertEquals(0, $actual->getCompleteCount());
     }
@@ -175,7 +174,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $this->mailMagazineService->sendrMailMagazine($historyId);
 
         self::assertEquals(array(
-            'mail_magazine_service_test@example.com'
+            'mail_magazine_service_test@example.com',
         ), $this->sentAddresses);
 
         $this->mailMagazineService->markRetry($historyId);
@@ -183,7 +182,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
         self::assertEquals(array(
             'mail_magazine_service_test@example.com',
-            'mail_magazine_service_test@example.com'
+            'mail_magazine_service_test@example.com',
         ), $this->sentAddresses);
     }
 
@@ -213,7 +212,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         // 未配信のアドレスに対してメールが送られるはず
         self::assertEquals(array(
             '2_create_mail_magazine_history@example.com',
-            '3_create_mail_magazine_history@example.com'
+            '3_create_mail_magazine_history@example.com',
         ), $this->sentAddresses);
 
         // 結果ファイルは3件分あるはず
@@ -266,7 +265,6 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
                     '1,'.$customers[3]->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL.
                     '1,'.$customers[4]->getId().',4_create_mail_magazine_history@example.com,name01_4 name02_4'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($resultFile));
-
     }
 
     public function testSendrMailMagazine_10件中最初の6件目から10件目までメールを送れる()
@@ -542,7 +540,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
         $this->setUpMailerStub(array(
             true, false, false, true, false,
-            true, false, false
+            true, false, false,
         ));
 
         /*
@@ -572,14 +570,16 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
      * メーラのスタブを設定。
      * 引数の順番でメールの送信結果を返す。
      * [false, true] なら最初のメール送信は失敗、2通目のメール送信は成功。
+     *
      * @param array|$arrayOfReturn メール送信結果の配列
      */
     private function setUpMailerStub($arrayOfReturn)
     {
         $stack = &$this->sentAddresses;
         $this->mailer->expects($this->exactly(count($arrayOfReturn)))->method('send')->with(
-            $this->callback(function($message) use (&$stack) {
+            $this->callback(function ($message) use (&$stack) {
                 $stack[] = current(array_keys($message->getTo()));
+
                 return true;
             })
         )->will(new \PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls($arrayOfReturn));

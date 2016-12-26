@@ -38,8 +38,6 @@ use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
  *
  * ・配信失敗したメールの再送
  * 結果ファイルのステータスが`error`になっている配信先に対してメールを送る。
- *
- * @package Plugin\MailMagazine\Service
  */
 class MailMagazineService
 {
@@ -63,13 +61,15 @@ class MailMagazineService
     public $app;
 
     /**
-     * 最後の送信者に送信したメールの本文(テキスト形式)
+     * 最後の送信者に送信したメールの本文(テキスト形式).
+     *
      * @var string
      */
-    private $lastSendMailBody = "";
+    private $lastSendMailBody = '';
 
     /**
-     * 最後の送信者に送信したメールの本文(HTML形式)
+     * 最後の送信者に送信したメールの本文(HTML形式).
+     *
      * @var string
      */
     private $lastSendMailHtmlBody = '';
@@ -94,13 +94,15 @@ class MailMagazineService
     }
 
     /**
-     * メールを送信する
+     * メールを送信する.
+     *
      * @param array $formData メルマガ情報
      *                  email: 送信先メールアドレス
      *                  subject: 件名
      *                  body：本文
      */
-    public function sendMail($formData) {
+    public function sendMail($formData)
+    {
         // メール送信
         /** @var \Swift_Message $message */
         $message = \Swift_Message::newInstance()
@@ -125,11 +127,12 @@ class MailMagazineService
      * 配信履歴データ(MailMagazineSendHistory)の作成と、配信履歴ファイルを作成します。
      *
      * @param array $formData
+     *
      * @return int 採番されたsend_id
-     *         エラー時はfalseを返す
+     *             エラー時はfalseを返す
      */
-    public function createMailMagazineHistory($formData) {
-
+    public function createMailMagazineHistory($formData)
+    {
         // メール配信先リストの取得
         /** @var MailMagazineCustomerRepository $mailMagazineCustomerRepository */
         $mailMagazineCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer'];
@@ -172,14 +175,14 @@ class MailMagazineService
         $sendHistory->setSearchData(base64_encode(serialize($formData)));
 
         $status = $this->app[self::REPOSITORY_SEND_HISTORY]->createSendHistory($sendHistory);
-        if(!$status) {
+        if (!$status) {
             return null;
         }
 
         $sendId = $sendHistory->getId();
-        $fp = fopen($this->getHistoryFileName($sendId), "w");
-        foreach($customerList as $customer) {
-            fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'] . ' ' . $customer['name02'].PHP_EOL);
+        $fp = fopen($this->getHistoryFileName($sendId), 'w');
+        foreach ($customerList as $customer) {
+            fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'].' '.$customer['name02'].PHP_EOL);
         }
         fclose($fp);
 
@@ -192,7 +195,7 @@ class MailMagazineService
      * ・履歴ファイル
      * none,aaa@example.com,aaa
      * none,bbb@example.com,bbb
-     * none,ccc@example.com,ccc
+     * none,ccc@example.com,ccc.
      *
      * ・結果ファイル
      * done,aaa@example.com,aaa
@@ -238,7 +241,7 @@ class MailMagazineService
         }
         // 履歴ファイルは削除されていて、結果ファイルだけある場合 -> 送信失敗したメールを再送する
         // 結果ファイルを履歴ファイルとしてメール配信する。
-        else if (!file_exists($fileHistory) && file_exists($fileResult)) {
+        elseif (!file_exists($fileHistory) && file_exists($fileResult)) {
             rename($fileResult, $fileHistory);
         }
     }
@@ -249,7 +252,8 @@ class MailMagazineService
      *
      * @param int $sendId 履歴ID
      * @param int $offset 開始位置
-     * @param int $max 最大数
+     * @param int $max    最大数
+     *
      * @return MailMagazineSendHistory 送信履歴
      */
     public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
@@ -258,7 +262,7 @@ class MailMagazineService
         /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $this->app[self::REPOSITORY_SEND_HISTORY]->find($sendId);
 
-        if(is_null($sendHistory)) {
+        if (is_null($sendHistory)) {
             // 削除されている場合は終了する
             return false;
         }
@@ -273,7 +277,7 @@ class MailMagazineService
         // 履歴ファイルと結果ファイル
         $fileHistory = $this->getHistoryFileName($sendId);
         $fileResult = $this->getHistoryFileName($sendId, false);
-        $handleHistory = fopen($fileHistory, "r");
+        $handleHistory = fopen($fileHistory, 'r');
 
         // スキップ数
         $skipCount = $offset;
@@ -281,7 +285,6 @@ class MailMagazineService
         $processCount = 0;
 
         while ($line = str_replace(PHP_EOL, '', fgets($handleHistory))) {
-
             if ($skipCount-- > 0) {
                 continue;
             }
@@ -290,13 +293,13 @@ class MailMagazineService
                 break;
             }
 
-            list($status, $customerId, $email, $name) = explode(",", $line, 4);
+            list($status, $customerId, $email, $name) = explode(',', $line, 4);
 
             if ($status == self::SEND_FLAG_SUCCESS) {
-                $handleResult = fopen($fileResult, "a");
+                $handleResult = fopen($fileResult, 'a');
                 fwrite($handleResult, $line.PHP_EOL);
                 fclose($handleResult);
-                $processCount++;
+                ++$processCount;
                 continue;
             }
 
@@ -304,7 +307,7 @@ class MailMagazineService
                 'email' => $email,
                 'subject' => $sendHistory->getSubject(),
                 'body' => $sendHistory->getBody(),
-                'htmlBody' => $sendHistory->getHtmlBody()
+                'htmlBody' => $sendHistory->getHtmlBody(),
             );
             $this->replaceMailVars($mailData, $name);
 
@@ -314,34 +317,34 @@ class MailMagazineService
 
             try {
                 $sendResult = $this->sendMail($mailData);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 log_error($e->getMessage());
                 $sendResult = false;
             }
 
             // メール送信成功時
-            $handleResult = fopen($fileResult, "a");
-            if($sendResult) {
+            $handleResult = fopen($fileResult, 'a');
+            if ($sendResult) {
                 fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$customerId.','.$email.','.$name.PHP_EOL);
             }
             // メール送信失敗時
             else {
                 fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$customerId.','.$email.','.$name.PHP_EOL);
-                $errorCount++;
+                ++$errorCount;
             }
             fclose($handleResult);
 
-            $processCount++;
+            ++$processCount;
         }
         fclose($handleHistory);
 
         // 全部終わったら履歴ファイルを削除
         if ($offset + $processCount >= $sendHistory->getSendCount()) {
             $errorCount = 0;
-            $handleResult = fopen($fileResult, "r");
+            $handleResult = fopen($fileResult, 'r');
             while ($line = fgets($handleResult)) {
                 if (substr($line, 0, 1) == self::SEND_FLAG_FAILURE) {
-                    $errorCount++;
+                    ++$errorCount;
                 }
             }
             fclose($handleResult);
@@ -358,25 +361,26 @@ class MailMagazineService
     }
 
     /**
-     * 送信完了報告メールを送信する
+     * 送信完了報告メールを送信する.
      *
      * @return number
      */
-    public function sendMailMagazineCompleateReportMail() {
-
-        $subject = date('Y年m月d日H時i分') . '　下記メールの配信が完了しました。';
+    public function sendMailMagazineCompleateReportMail()
+    {
+        $subject = date('Y年m月d日H時i分').'　下記メールの配信が完了しました。';
 
         $mailData = array(
                 'email' => $this->getAdminEmail(),
                 'subject' => $subject,
                 'body' => $this->lastSendMailBody,
-                'htmlBody' => $this->lastSendMailHtmlBody
+                'htmlBody' => $this->lastSendMailHtmlBody,
         );
 
         try {
             return $this->sendMail($mailData);
         } catch (\Exception $e) {
             log_error($e->getMessage());
+
             return false;
         }
     }
@@ -393,8 +397,7 @@ class MailMagazineService
 
     public function unlinkHistoryFiles($historyId)
     {
-        foreach (array($this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)) as $f)
-        {
+        foreach (array($this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)) as $f) {
             if (file_exists($f)) {
                 unlink($f);
             }
@@ -403,6 +406,7 @@ class MailMagazineService
 
     /**
      * テストメール送信
+     *
      * @param array|$mailData メールデータ
      */
     public function sendTestMail($mailData)

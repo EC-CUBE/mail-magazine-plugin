@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Plugin\MailMagazine\Test\Util;
 
 use Knp\Component\Pager\Pagination\AbstractPagination;
@@ -10,7 +9,6 @@ use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
 {
-
     private $rootDir;
 
     public function setUp()
@@ -132,12 +130,14 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
      * @param $page
      * @param $limit
      * @param $total
+     *
      * @return AbstractPagination
      */
     private function newPagination($file, $page, $limit, $total)
     {
         $paginator = new Paginator();
         $paginator->subscribe(new MailMagazineHistoryFilePaginationSubscriber());
+
         return $paginator->paginate($file, $page, $limit, array('total' => $total));
     }
 

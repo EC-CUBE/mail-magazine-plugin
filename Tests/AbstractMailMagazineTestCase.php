@@ -1,4 +1,5 @@
 <?php
+
 namespace Plugin\MailMagazine\Tests;
 
 use Eccube\Common\Constant;
@@ -9,12 +10,12 @@ use Plugin\MailMagazine\Service\MailMagazineService;
 abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
 {
     /**
-     * @var MailMagazineService $mailMagazineService
+     * @var MailMagazineService
      */
     protected $mailMagazineService;
 
     /**
-     * @var MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
+     * @var MailMagazineSendHistoryRepository
      */
     protected $mailMagazineSendHistoryRepository;
 
@@ -29,13 +30,18 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
      * @param string $email
      * @param string $name01
      * @param string $name02
+     *
      * @return \Eccube\Entity\Customer
      */
     protected function createMailmagaCustomer($email = 'mail_magazine_service_test@example.com', $name01 = 'name01', $name02 = 'name02')
     {
         $c = $this->createCustomer($email);
-        if ($name01) $c->setName01($name01);
-        if ($name02) $c->setName02($name02);
+        if ($name01) {
+            $c->setName01($name01);
+        }
+        if ($name02) {
+            $c->setName02($name02);
+        }
         $this->app['orm.em']->persist($c);
         $this->app['orm.em']->flush($c);
 

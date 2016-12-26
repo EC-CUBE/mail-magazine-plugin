@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Plugin\MailMagazine\Event;
-
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,18 +9,18 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class MailMagazineLegacy extends CommonEvent
 {
-
     // ===========================================================
     // マイページ画面
     // ===========================================================
+
     /**
      * マイページ会員情報編集のrender before
-     * メルマガ送付項目を表示する
+     * メルマガ送付項目を表示する.
+     *
      * @param FilterResponseEvent $event
      */
     public function onRenderMypageChangeBefore(FilterResponseEvent $event)
     {
-
         if (!$this->app->isGranted('IS_AUTHENTICATED_FULLY')) {
             return;
         }
@@ -43,7 +41,6 @@ class MailMagazineLegacy extends CommonEvent
      */
     public function onControllMypageChangeAfter()
     {
-
         if (!$this->app->isGranted('IS_AUTHENTICATED_FULLY')) {
             return;
         }
@@ -80,8 +77,10 @@ class MailMagazineLegacy extends CommonEvent
     // ===========================================================
     // 新規会員登録画面
     // ===========================================================
+
     /**
-     * 新規会員登録のBefore
+     * 新規会員登録のBefore.
+     *
      * @param FilterResponseEvent $event
      */
     public function onRenderEntryBefore(FilterResponseEvent $event)
@@ -135,7 +134,6 @@ class MailMagazineLegacy extends CommonEvent
         }
 
         if ($mode == 'complete') {
-
             // カスタマーIDを取得する
             $customerId = $this->getEntryCustomerId($request);
 
@@ -145,11 +143,10 @@ class MailMagazineLegacy extends CommonEvent
                 $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
             }
         }
-
     }
 
     /**
-     * 会員管理 会員登録・編集のbefore
+     * 会員管理 会員登録・編集のbefore.
      *
      * @param FilterResponseEvent $event
      */
@@ -194,10 +191,7 @@ class MailMagazineLegacy extends CommonEvent
             // // メルマガ送付情報を保存する
             $mailmagaFlg = $form->get('mailmaga_flg')->getData();
             $this->saveMailmagaCustomer($customerId, $mailmagaFlg);
-
         } else {
-
-
             $id = $request->get('id');
             if ($id) {
                 $Customer = $this->app['orm.em']
@@ -220,36 +214,33 @@ class MailMagazineLegacy extends CommonEvent
             $form->handleRequest($request);
 
             $parts = $this->app->renderView('MailMagazine/Resource/template/admin/mailmagazine.twig', array(
-                'form' => $form->createView()
+                'form' => $form->createView(),
             ));
-
 
             try {
                 $oldHtml = $this->decodeHtml($crawler->filter('.form-horizontal .form-group')->last()->parents()->html());
 
                 $newHtml = $oldHtml.$parts;
                 $html = str_replace($oldHtml, $newHtml, $html);
-
             } catch (\InvalidArgumentException $e) {
             }
 
-
             $response->setContent($html);
-
 
             $event->setResponse($response);
         }
-
     }
 
     // ===========================================================
     // クラス内メソッド
     // ===========================================================
+
     /**
      * 会員新規登録画面に「メールマガジン送付について」項目を追加したHTMLを取得する.
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
+     *
      * @return string
      */
     protected function getNewEntryHtml($request, $response)
@@ -299,14 +290,16 @@ class MailMagazineLegacy extends CommonEvent
         } catch (\InvalidArgumentException $e) {
             // no-op
         }
+
         return $html;
     }
 
     /**
      * マイページ画面に「メールマガジン送付について」項目を追加したHTMLを取得する.
      *
-     * @param Request             $request
-     * @param Response            $response
+     * @param Request  $request
+     * @param Response $response
+     *
      * @return string
      */
     protected function getNewMypageChangeHtml($request, $response)
@@ -356,12 +349,15 @@ class MailMagazineLegacy extends CommonEvent
         } catch (\InvalidArgumentException $e) {
             // no-op
         }
+
         return $html;
     }
 
     /**
-     * 会員登録確認画面が確認する
+     * 会員登録確認画面が確認する.
+     *
      * @param Request $request
+     *
      * @return bool
      */
     protected function isEntryConfirm($request)
@@ -376,13 +372,15 @@ class MailMagazineLegacy extends CommonEvent
         if ($mode == 'confirm' && $EntryForm->isValid()) {
             return true;
         }
+
         return false;
     }
 
     /**
-     * 解析用HTMLを取得
+     * 解析用HTMLを取得.
      *
      * @param Crawler $crawler
+     *
      * @return string
      */
     private function getHtml(Crawler $crawler)
@@ -392,6 +390,7 @@ class MailMagazineLegacy extends CommonEvent
             $domElement->ownerDocument->formatOutput = true;
             $html .= $domElement->ownerDocument->saveHTML();
         }
+
         return $this->decodeHtml($html);
     }
 

@@ -28,8 +28,8 @@ class MailMagazineType extends AbstractType
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $config = $this->app['config'];
@@ -221,12 +221,11 @@ class MailMagazineType extends AbstractType
                 'required' => false,
             ))
             ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
-        ;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'mail_magazine';

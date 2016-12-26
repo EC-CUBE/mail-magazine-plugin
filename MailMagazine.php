@@ -19,7 +19,6 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class MailMagazine
 {
-
     private $app;
 
     public function __construct($app)
@@ -28,7 +27,8 @@ class MailMagazine
     }
 
     /**
-     * 3.0.9以降用のイベントハンドラ
+     * 3.0.9以降用のイベントハンドラ.
+     *
      * @return \Plugin\MailMagazine\Event\MailMagazine
      */
     private function getEventHandler()
@@ -37,7 +37,8 @@ class MailMagazine
     }
 
     /**
-     * 3.0.8以前用のイベントハンドラ
+     * 3.0.8以前用のイベントハンドラ.
+     *
      * @return MailMagazineLegacy
      */
     private function getLegacyEventHandler()
@@ -46,7 +47,8 @@ class MailMagazine
     }
 
     /**
-     * 新規会員登録画面のイベント処理
+     * 新規会員登録画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderEntryIndex(TemplateEvent $event)
@@ -55,7 +57,8 @@ class MailMagazine
     }
 
     /**
-     * 新規会員登録確認画面のイベント処理
+     * 新規会員登録確認画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderEntryConfirm(TemplateEvent $event)
@@ -64,7 +67,8 @@ class MailMagazine
     }
 
     /**
-     * 新規会員登録完了時のイベント処理
+     * 新規会員登録完了時のイベント処理.
+     *
      * @param EventArgs $event
      */
     public function onFrontEntryIndexComplete(EventArgs $event)
@@ -73,7 +77,8 @@ class MailMagazine
     }
 
     /**
-     * 会員情報編集画面のイベント処理
+     * 会員情報編集画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderMypageChange(TemplateEvent $event)
@@ -82,7 +87,8 @@ class MailMagazine
     }
 
     /**
-     * 会員情報編集完了時のイベント処理
+     * 会員情報編集完了時のイベント処理.
+     *
      * @param EventArgs $event
      */
     public function onFrontMypageChangeIndexComplete(EventArgs $event)
@@ -91,7 +97,8 @@ class MailMagazine
     }
 
     /**
-     * 管理用会員編集画面のイベント処理
+     * 管理用会員編集画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderAdminCustomerEdit(TemplateEvent $event)
@@ -100,7 +107,8 @@ class MailMagazine
     }
 
     /**
-     * 管理用会員編集完了時のイベント処理
+     * 管理用会員編集完了時のイベント処理.
+     *
      * @param EventArgs $event
      */
     public function onAdminCustomerEditIndexComplete(EventArgs $event)
@@ -111,9 +119,11 @@ class MailMagazine
     // ===========================================================
     // マイページ画面
     // ===========================================================
+
     /**
      * マイページ会員情報編集のrender before
-     * メルマガ送付項目を表示する
+     * メルマガ送付項目を表示する.
+     *
      * @param FilterResponseEvent $event
      */
     public function onRenderMypageChangeBefore(FilterResponseEvent $event)
@@ -139,8 +149,10 @@ class MailMagazine
     // ===========================================================
     // 新規会員登録画面
     // ===========================================================
+
     /**
-     * 新規会員登録のBefore
+     * 新規会員登録のBefore.
+     *
      * @param FilterResponseEvent $event
      */
     public function onRenderEntryBefore(FilterResponseEvent $event)
@@ -164,7 +176,7 @@ class MailMagazine
     }
 
     /**
-     * 会員管理 会員登録・編集のbefore
+     * 会員管理 会員登録・編集のbefore.
      *
      * @param FilterResponseEvent $event
      */

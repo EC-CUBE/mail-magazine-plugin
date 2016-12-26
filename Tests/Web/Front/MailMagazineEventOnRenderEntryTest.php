@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of EC-CUBE
+ * This file is part of EC-CUBE.
  *
  * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
  * http://www.lockon.co.jp/
@@ -10,7 +10,6 @@
  */
 
 namespace Plugin\MailMagazine\Tests\Web\Front;
-
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\AbstractWebTestCase;
@@ -32,7 +31,7 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
                 'name02' => $faker->firstName,
             ),
             'kana' => array(
-                'kana01' => $faker->lastKanaName ,
+                'kana01' => $faker->lastKanaName,
                 'kana02' => $faker->firstKanaName,
             ),
             'company_name' => $faker->company,
@@ -70,11 +69,11 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
             ),
             'sex' => 1,
             'job' => 1,
-            '_token' => 'dummy'
+            '_token' => 'dummy',
         );
+
         return $form;
     }
-
 
     public function testOnRenderEntry()
     {
@@ -117,7 +116,7 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
             $this->app->url('entry'),
             array(
                 'entry' => $formData,
-                'mode' => 'complete'
+                'mode' => 'complete',
             )
         );
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('entry_complete')));
