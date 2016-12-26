@@ -147,7 +147,7 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             ->bind('plugin_mail_magazine_history_delete');
 
         // 配信履歴結果確認
-        $admin->match('/plugin/mail_magazine/history/result', '\\Plugin\\MailMagazine\\Controller\\MailMagazineHistoryController::result')
+        $admin->match('/plugin/mail_magazine/history/result/{id}', '\\Plugin\\MailMagazine\\Controller\\MailMagazineHistoryController::result')
             ->value('id', null)->assert('id', '\d+|')
             ->bind('plugin_mail_magazine_history_result');
 
