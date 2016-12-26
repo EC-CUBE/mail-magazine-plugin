@@ -27,9 +27,20 @@ env:
     # ec-cube 3.0.10
     - ECCUBE_VERSION=3.0.10 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - ECCUBE_VERSION=3.0.10 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    # ec-cube 3.0.11
+    - ECCUBE_VERSION=3.0.11 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - ECCUBE_VERSION=3.0.11 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    # ec-cube 3.0.12-p1
+    - ECCUBE_VERSION=3.0.12-p1 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - ECCUBE_VERSION=3.0.12-p1 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 
 matrix:
   fast_finish: true
+  include:
+    - php: 7.0.12 # for coverrage
+      env: ECCUBE_VERSION=master DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres PHP_SAPI=phpdbg
+      sudo: required
+      dist: trusty
   exclude:
     # ec-cube 3.0.9-3.0.10 はphp7非対応のため実行しない
     - php: 7.0
@@ -46,6 +57,7 @@ install:
   - gem install mailcatcher
 
 before_script:
+  - if [[ $PHP_SAPI = 'phpdbg' ]]; then echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini ; fi
   # archive plugin
   - tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
   # clone ec-cube
@@ -67,10 +79,15 @@ before_script:
 
 script:
   # exec phpunit on ec-cube
-  - phpunit app/Plugin/${PLUGIN_CODE}/Tests
+  - if [[ $PHP_SAPI = 'phpdbg' ]]; then phpdbg -qrr ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover ; fi
+  - if [[ $PHP_SAPI != 'phpdbg' ]]; then phpunit app/Plugin/${PLUGIN_CODE}/Tests ; fi
 
 after_script:
   # disable plugin
   - php app/console plugin:develop disable --code=${PLUGIN_CODE}
   # uninstall plugin
   - php app/console plugin:develop uninstall --code=${PLUGIN_CODE} --uninstall-force=true
+
+after_success:
+  # for coveralls
+  - if [[ $PHP_SAPI = 'phpdbg' ]]; then php vendor/bin/coveralls -v -x coverage.clover ; fi

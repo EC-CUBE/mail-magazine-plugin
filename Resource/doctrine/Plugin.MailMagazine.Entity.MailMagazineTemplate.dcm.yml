@@ -18,6 +18,9 @@ Plugin\MailMagazine\Entity\MailMagazineTemplate:
         body:
             type: text
             nullable: false
+        html_body:
+            type: text
+            nullable: true
         del_flg:
             type: smallint
             nullable: false

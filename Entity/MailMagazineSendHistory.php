@@ -18,8 +18,8 @@ namespace Plugin\MailMagazine\Entity;
 class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
 {
     /**
-    * @var integer
-    */
+     * @var integer
+     */
     private $id;
 
     /**
@@ -38,6 +38,11 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     private $body;
 
     /**
+     * @var string
+     */
+    private $html_body;
+
+    /**
     * @var integer
     */
     private $send_count;
@@ -46,6 +51,11 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     * @var integer
     */
     private $complete_count;
+
+    /**
+     * @var integer
+     */
+    private $error_count;
 
     /**
     * @var \DateTime
@@ -162,6 +172,24 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getHtmlBody()
+    {
+        return $this->html_body;
+    }
+
+    /**
+     * @param string $html_body
+     * @return MailMagazineSendHistory
+     */
+    public function setHtmlBody($html_body)
+    {
+        $this->html_body = $html_body;
+        return $this;
+    }
+
+    /**
     * Set send_count
     *
     * @param  integer     $sendCount
@@ -205,6 +233,24 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     public function getCompleteCount()
     {
         return $this->complete_count;
+    }
+
+    /**
+     * @return int
+     */
+    public function getErrorCount()
+    {
+        return $this->error_count;
+    }
+
+    /**
+     * @param int $errorCount
+     * @return MailMagazineSendHistory
+     */
+    public function setErrorCount($errorCount)
+    {
+        $this->error_count = $errorCount;
+        return $this;
     }
 
     /**
@@ -366,5 +412,14 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     public function getCreator()
     {
         return $this->Creator;
+    }
+
+    /**
+     * 配信エラーの有無にかかわらず、すべて送信したかどうかの判定
+     * @return bool 配信完了した場合はtrue
+     */
+    public function isComplete()
+    {
+        return $this->getCompleteCount() == $this->getSendCount();
     }
 }

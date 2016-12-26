@@ -12,18 +12,16 @@
 namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
-use Eccube\Common\Constant;
+use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MailMagazineController
 {
-    private $main_title;
-    private $sub_title;
-
     public function __construct()
     {
     }
@@ -115,7 +113,7 @@ class MailMagazineController
         }
 
         return $app->render(
-            'MailMagazine/View/admin/index.twig',
+            'MailMagazine/Resource/template/admin/index.twig',
             array('searchForm' => $searchForm->createView(),
                 'pagination' => $pagination,
                 'pageMaxis' => $pageMaxis,
@@ -134,7 +132,8 @@ class MailMagazineController
      */
     public function select(Application $app, Request $request, $id = null) {
 
-        $Mail = null;
+        /** @var MailMagazineTemplate $Template */
+        $Template = null;
 
         // POSTでない場合は終了する
         if ('POST' !== $request->getMethod()) {
@@ -150,26 +149,29 @@ class MailMagazineController
 
         $newSubject = "";
         $newBody = "";
+        $newHtmlBody = '';
 
         // テンプレートが選択されている場合はテンプレートデータを取得する
         if($id) {
             // テンプレート選択から遷移した場合の処理
             // 選択されたテンプレートのデータを取得する
-            $Mail = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
+            $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
 
-            if (is_null($Mail)) {
+            if (is_null($Template)) {
                 throw new NotFoundHttpException();
             }
 
             // テンプレートを表示する
-            $newSubject = $Mail->getSubject();
-            $newBody = $Mail->getBody();
+            $newSubject = $Template->getSubject();
+            $newBody = $Template->getBody();
+            $newHtmlBody = $Template->getHtmlBody();
         }
 
-        return $app->render('MailMagazine/View/admin/template_select.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/template_select.twig', array(
                 'form' => $form->createView(),
                 'new_subject' => $newSubject,
                 'new_body' => $newBody,
+                'new_htmlBody' => $newHtmlBody,
                 'id' => $id,
         ));
     }
@@ -224,37 +226,44 @@ class MailMagazineController
         // validationを実行する
         if(!$form->isValid()) {
             // エラーの場合はテンプレート選択画面に遷移する
-            return $app->render('MailMagazine/View/admin/template_select.twig', array(
+            return $app->render('MailMagazine/Resource/template/admin/template_select.twig', array(
                     'form' => $form->createView(),
                     'new_subject' => $formData['subject'],
                     'new_body' =>  $formData['body'],
+                    'new_htmlBody' =>  $formData['htmlBody'],
                     'id' =>  $id,
             ));
 
         }
 
-        return $app->render('MailMagazine/View/admin/confirm.twig', array(
+
+        /** @var MailMagazineService $service */
+        $service = $this->getMailMagazineService($app);
+
+        return $app->render('MailMagazine/Resource/template/admin/confirm.twig', array(
                 'form' => $form->createView(),
                 'subject_itm' => $form['subject']->getData(),
                 'body_itm' => $form['body']->getData(),
+                'htmlBody_itm' => $form['htmlBody']->getData(),
                 'id' => $id,
+                'testMailTo' => $service->getAdminEmail(),
         ));
     }
 
     /**
-     * 配信処理
-     * 配信終了後配信履歴に遷移する
-     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる
+     * 配信前処理
+     * 配信履歴データを作成する
      * @param Application $app
      * @param Request $request
-     * @param string $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function commit(Application $app, Request $request, $id = null) {
-
-        // POSTでない場合は終了する
-        if ('POST' !== $request->getMethod()) {
+    public function prepare(Application $app, Request $request)
+    {
+        if ('POST' != $request->getMethod()) {
             throw new BadRequestHttpException();
         }
+
+        log_info('メルマガ配信前処理開始');
 
         // Formを取得する
         $form = $app['form.factory']
@@ -263,111 +272,106 @@ class MailMagazineController
         $form->handleRequest($request);
         $data = $form->getData();
 
-        // 送信対象者をdtb_customerから取得する
         if (!$form->isValid()) {
             throw new BadRequestHttpException();
         }
 
-        // サービスの取得
-        $service = $app['eccube.plugin.mail_magazine.service.mail'];
+        // タイムアウトしないようにする
+        set_time_limit(0);
+
+        /** @var MailMagazineService $service */
+        $service = $this->getMailMagazineService($app);
 
         // 配信履歴を登録する
         $sendId = $service->createMailMagazineHistory($data);
         if(is_null($sendId)) {
-            $app->addError('admin.mailmagazine.send.regist.failure', 'admin');
-        } else {
+            $app->addError('admin.plugin.mailmagazine.send.register.failure', 'admin');
+        }
 
-            // 登録した配信履歴からメールを送信する
-            $service->sendrMailMagazine($sendId);
+        // フラッシュスコープにIDを保持してリダイレクト後に送信処理を開始できるようにする
+        $app['session']->getFlashBag()->add('eccube.plugin.mailmagazine.history', $sendId);
 
-            // 送信完了メールを送信する
+        log_info('メルマガ配信前処理完了', array('sendId' => $sendId));
+
+        // 配信履歴画面に遷移する
+        return $app->redirect($app->url('plugin_mail_magazine_history'));
+    }
+
+    /**
+     * 配信処理
+     * 配信終了後配信履歴に遷移する
+     * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる
+     * @param Application $app
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function commit(Application $app, Request $request) {
+
+        // Ajax/POSTでない場合は終了する
+        if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
+            throw new BadRequestHttpException();
+        }
+
+        // タイムアウトしないようにする
+        set_time_limit(0);
+
+        // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
+        // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
+        $app['swiftmailer.use_spool'] = false;
+
+        $id = $request->get('id');
+        $offset = (int) $request->get('offset', 0);
+        $max = (int) $request->get('max', 100);
+
+        log_info('メルマガ配信処理開始', array('id' => $id, 'offset' => $offset, 'max' => $max));
+
+        /** @var MailMagazineService $service */
+        $service = $this->getMailMagazineService($app);
+        /** @var MailMagazineSendHistory $sendHistory */
+        $sendHistory = $service->sendrMailMagazine($id, $offset, $max);
+
+        if ($sendHistory->isComplete()) {
             $service->sendMailMagazineCompleateReportMail();
-            $app->addSuccess('admin.mailmagazine.send.complete', 'admin');
         }
 
+        log_info('メルマガ配信処理完了', array('id' => $id, 'offset' => $offset, 'max' => $max));
 
-        // 配信管理画面に遷移する
-        return $app->redirect($app->url('admin_mail_magazine_history'));
-    }
-
-
-    /**
-    *
-    * @param Application $app
-    * @param Request $request
-    * @param unknown $id
-    * @throws NotFoundHttpException
-    * @return \Symfony\Component\HttpFoundation\RedirectResponse
-    */
-    public function up(Application $app, Request $request, $id)
-    {
-        $repos = $app['eccube.plugin.mail_magazine.repository.maker'];
-
-        $TargetMailMagazine = $repos->find($id);
-        if (!$TargetMailMagazine) {
-            throw new NotFoundHttpException();
-        }
-
-        $form = $app['form.factory']
-            ->createNamedBuilder('admin_mail_magazine', 'form', null, array(
-                'allow_extra_fields' => true,
-            ))
-            ->getForm();
-
-        $status = false;
-        if ($request->getMethod() === 'POST') {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $status = $repos->up($TargetMailMagazine);
-            }
-        }
-
-        if ($status === true) {
-            $app->addSuccess('admin.maker.down.complete', 'admin');
-        } else {
-            $app->addError('admin.maker.down.error', 'admin');
-        }
-
-        return $app->redirect($app->url('admin_mail_magazine'));
+        return $app->json(array(
+            'status' => true,
+            'id' => $id,
+            'total' => $sendHistory->getSendCount(),
+            'count' => $sendHistory->getCompleteCount(),
+        ));
     }
 
     /**
-    *
-    * @param Application $app
-    * @param Request $request
-    * @param unknown $id
-    * @throws NotFoundHttpException
-    */
-    public function down(Application $app, Request $request, $id)
+     * テストメール送信
+     * @param Application $app
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function sendTest(Application $app, Request $request)
     {
-        $repos = $app['eccube.plugin.mail_magazine.repository.maker'];
-
-        $TargetMailMagazine = $repos->find($id);
-        if (!$TargetMailMagazine) {
-            throw new NotFoundHttpException();
+        // Ajax/POSTでない場合は終了する
+        if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
+            throw new BadRequestHttpException();
         }
 
-        $form = $app['form.factory']
-            ->createNamedBuilder('admin_mail_magazine', 'form', null, array(
-                'allow_extra_fields' => true,
-            ))
-            ->getForm();
+        log_info('テストメール配信処理開始');
 
-        $status = false;
-        if ($request->getMethod() === 'POST') {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $status = $repos->down($TargetMailMagazine);
-            }
-        }
+        $data = $request->request->all();
+        $this->getMailMagazineService($app)->sendTestMail($data);
 
-        if ($status === true) {
-            $app->addSuccess('admin.mail.down.complete', 'admin');
-        } else {
-            $app->addError('admin.mail.down.error', 'admin');
-        }
-
-        return $app->redirect($app->url('admin_mail_magazine'));
+        log_info('テストメール配信処理完了');
+        return $app->json(array('status' => true));
     }
 
+    /**
+     * @param Application $app
+     * @return MailMagazineService
+     */
+    private function getMailMagazineService(Application $app)
+    {
+        return $app['eccube.plugin.mail_magazine.service.mail'];
+    }
 }

@@ -12,14 +12,14 @@
 namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
+use Plugin\MailMagazine\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MailMagazineTemplateController
 {
-    private $main_title;
-    private $sub_title;
 
     public function __construct()
     {
@@ -34,7 +34,7 @@ class MailMagazineTemplateController
         // 下のarrayにViewの変数名と共に突っ込む
         $templateList = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->findAll();
 
-        return $app->render('MailMagazine/View/admin/template_list.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/template_list.twig', array(
                 'TemplateList' => $templateList
         ));
     }
@@ -52,10 +52,10 @@ class MailMagazineTemplateController
         // id の存在確認
         // nullであれば一覧に戻る
         if(is_null($id) || strlen($id) == 0) {
-            $app->addError('admin.mailmagazine.template.data.illegalaccess', 'admin');
+            $app->addError('admin.plugin.mailmagazine.template.data.illegalaccess', 'admin');
 
             // メルマガテンプレート一覧へリダイレクト
-            return $app->redirect($app->url('admin_mail_magazine_template'));
+            return $app->redirect($app->url('plugin_mail_magazine_template'));
         }
 
         // パラメータ$idにマッチするデータが存在するか判定
@@ -63,13 +63,13 @@ class MailMagazineTemplateController
         $template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
         if(is_null($template)) {
             // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
-            $app->addError('admin.mailmagazine.template.data.notfound', 'admin');
+            $app->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
 
-            return $app->redirect($app->url('admin_mail_magazine_template'));
+            return $app->redirect($app->url('plugin_mail_magazine_template'));
         }
 
         // プレビューページ表示
-        return $app->render('MailMagazine/View/admin/preview.twig', array(
+        return $app->render('MailMagazine/Resource/template/admin/preview.twig', array(
                 'Template' => $template
         ));
     }
@@ -88,9 +88,9 @@ class MailMagazineTemplateController
         if ('POST' === $request->getMethod()) {
             // idがからの場合はメルマガテンプレート一覧へリダイレクト
             if(is_null($id) || strlen($id) == 0) {
-                $app->addError('admin.mailmagazine.template.data.illegalaccess', 'admin');
+                $app->addError('admin.plugin.mailmagazine.template.data.illegalaccess', 'admin');
 
-                return $app->redirect($app->url('admin_mail_magazine_template'));
+                return $app->redirect($app->url('plugin_mail_magazine_template'));
             }
 
             // メルマガテンプレートを取得する
@@ -98,9 +98,9 @@ class MailMagazineTemplateController
 
             if(is_null($template)) {
                 // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
-                $app->addError('admin.mailmagazine.template.data.notfound', 'admin');
+                $app->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
 
-                return $app->redirect($app->url('admin_mail_magazine_template'));
+                return $app->redirect($app->url('plugin_mail_magazine_template'));
             }
 
             // メルマガテンプレートを削除する
@@ -109,7 +109,7 @@ class MailMagazineTemplateController
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $app->redirect($app->url('admin_mail_magazine_template'));
+        return $app->redirect($app->url('plugin_mail_magazine_template'));
     }
 
     /**
@@ -127,30 +127,31 @@ class MailMagazineTemplateController
         // id の存在確認
         // nullであれば一覧に戻る
         if(is_null($id) || strlen($id) == 0) {
-            $app->addError('admin.mailmagazine.template.data.illegalaccess', 'admin');
+            $app->addError('admin.plugin.mailmagazine.template.data.illegalaccess', 'admin');
 
             // メルマガテンプレート一覧へリダイレクト
-            return $app->redirect($app->url('admin_mail_magazine_template'));
+            return $app->redirect($app->url('plugin_mail_magazine_template'));
         }
 
         // 選択したメルマガテンプレートを検索
         // 存在しなければメッセージを表示
-        $PageLayout = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
+        $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
 
-        if(is_null($PageLayout)) {
+        if(is_null($Template)) {
             // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
-            $app->addError('admin.mailmagazine.template.data.notfound', 'admin');
+            $app->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
 
-            return $app->redirect($app->url('admin_mail_magazine_template'));
+            return $app->redirect($app->url('plugin_mail_magazine_template'));
         }
 
         // formの作成
         $form = $app['form.factory']
-            ->createBuilder('mail_magazine_template_edit', $PageLayout)
+            ->createBuilder('mail_magazine_template_edit', $Template)
             ->getForm();
 
-        return $app->render('MailMagazine/View/admin/template_edit.twig', array(
-                'form' => $form->createView()
+        return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
+                'form' => $form->createView(),
+                'Template' => $Template
         ));
 
     }
@@ -161,84 +162,70 @@ class MailMagazineTemplateController
      * @param Request $request
      * @param unknown $id
      */
-    public function commit(Application $app, Request $request) {
+    public function commit(Application $app, Request $request, $id) {
+
+        /** @var MailMagazineTemplateRepository $templateRepository */
+        $templateRepository = $app['eccube.plugin.mail_magazine.repository.mail_magazine'];
+        $Template = $id ? $templateRepository->find($id) : new MailMagazineTemplate();
+
+        // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
+        if(is_null($Template)) {
+            $app->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
+
+            return $app->redirect($app->url('plugin_mail_magazine_template'));
+        }
 
         // Formを取得
-        $builder = $app['form.factory']->createBuilder('mail_magazine_template_edit');
+        $builder = $app['form.factory']->createBuilder('mail_magazine_template_edit', $Template);
         $form = $builder->getForm();
         $form->handleRequest($request);
-        $data = $form->getData();
 
-        if ('POST' === $request->getMethod()) {
+        if ($form->isSubmitted()) {
 
             // 入力項目確認処理を行う.
             // エラーであれば元の画面を表示する
             if (!$form->isValid()) {
                 $app->addError("validate error");
-                return $app->render('MailMagazine/View/admin/template_edit.twig', array(
-                        'form' => $form->createView()
+                return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
+                        'form' => $form->createView(),
+                    'Template' => $Template
                 ));
             }
 
-            if(is_null($data['id'])) {
+            if(!$id) {
                 // =============
                 // 登録処理
                 // =============
-                $template = new \Plugin\MailMagazine\Entity\MailMagazineTemplate();
-                $template->setSubject($data['subject']);
-                $template->setBody($data['body']);
-                $status = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->create($template);
+                $status = $templateRepository->create($Template);
                 if (!$status) {
-                    $app->addError('admin.mailmagazine.template.save.failure', 'admin');
-                    return $app->render('MailMagazine/View/admin/template_edit.twig', array(
-                            'form' => $form->createView()
+                    $app->addError('admin.plugin.mailmagazine.template.save.failure', 'admin');
+                    return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
+                            'form' => $form->createView(),
+                            'Template' => $Template
                     ));
                 }
             } else {
                 // =============
                 // 更新処理
                 // =============
-
-                $id = $data['id'];
-                // id の存在確認
-                // nullであれば一覧に戻る
-                if(!$id) {
-                    $app->addError('admin.mailmagazine.template.data.illegalaccess', 'admin');
-
-                    // メルマガテンプレート一覧へリダイレクト
-                    return $app->redirect($app->url('admin_mail_magazine_template'));
-                }
-
-                // テンプレートを取得する
-                $template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
-
-                // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
-                if(is_null($template)) {
-                    $app->addError('admin.mailmagazine.template.data.notfound', 'admin');
-
-                    return $app->redirect($app->url('admin_mail_magazine_template'));
-                }
-
-                // 更新処理
-                $template->setSubject($data['subject']);
-                $template->setBody($data['body']);
-                $status = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->update($template);
+                $status = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->update($Template);
                 if (!$status) {
-                    $app->addError('admin.mailmagazine.template.save.failure', 'admin');
-                    return $app->render('MailMagazine/View/admin/template_edit.twig', array(
-                        'form' => $form->createView()
+                    $app->addError('admin.plugin.mailmagazine.template.save.failure', 'admin');
+                    return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
+                        'form' => $form->createView(),
+                        'Template' => $Template
                     ));
                 }
 
             }
 
             // 成功時のメッセージを登録する
-            $app->addSuccess('admin.mailmagazine.template.save.complete', 'admin');
+            $app->addSuccess('admin.plugin.mailmagazine.template.save.complete', 'admin');
 
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $app->redirect($app->url('admin_mail_magazine_template'));
+        return $app->redirect($app->url('plugin_mail_magazine_template'));
 
     }
 
@@ -248,15 +235,16 @@ class MailMagazineTemplateController
      * @param Request $request
      */
     public function regist(Application $app, Request $request) {
-        $PageLayout = new \Plugin\MailMagazine\Entity\MailMagazineTemplate();
+        $Template = new MailMagazineTemplate();
 
         // formの作成
         $form = $app['form.factory']
-            ->createBuilder('mail_magazine_template_edit', $PageLayout)
+            ->createBuilder('mail_magazine_template_edit', $Template)
             ->getForm();
 
-        return $app->render('MailMagazine/View/admin/template_edit.twig', array(
-                'form' => $form->createView()
+        return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
+                'form' => $form->createView(),
+                'Template' => $Template
         ));
 
     }

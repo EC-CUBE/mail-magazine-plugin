@@ -123,6 +123,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $SendHistory->setSubject($MailTemplate->getSubject());
         $SendHistory->setSendCount(1);
         $SendHistory->setCompleteCount(1);
+        $SendHistory->setErrorCount(0);
         $SendHistory->setDelFlg(Constant::DISABLED);
 
         $SendHistory->setEndDate(null);
@@ -134,31 +135,10 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         // serialize
         $SendHistory->setSearchData(base64_encode(serialize($formData)));
 
-        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_history']->createSendHistory($SendHistory);
+        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->createSendHistory($SendHistory);
 
-        // send customer
-        $this->createSendCustomer($SendHistory, $MailCustomer);
 
         return $SendHistory;
     }
 
-    protected function createSendCustomer(\Plugin\MailMagazine\Entity\MailMagazineSendHistory $SendHistory, \Eccube\Entity\Customer $MailCustomer)
-    {
-        // -----------------------------
-        // plg_send_customer
-        // -----------------------------
-        $sendId = $SendHistory->getId();
-
-        // Entity
-        $SendCustomer = new MailMagazineSendCustomer();
-
-        // data
-        $SendCustomer->setSendId($sendId);
-        $SendCustomer->setCustomerId($MailCustomer->getId());
-        $SendCustomer->setEmail($MailCustomer->getEmail());
-        $SendCustomer->setName($MailCustomer->getName01() . " " . $MailCustomer->getName02());
-
-        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_send_customer']->updateSendCustomer($SendCustomer);
-        return $SendCustomer;
-    }
 }

@@ -18,7 +18,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
     public function testIndex()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history')
+            $this->app->url('plugin_mail_magazine_history')
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -29,7 +29,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $SendHistory = $this->createSendHistoy($MailCustomer);
 
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history_preview', array( 'id' => $SendHistory->getId()))
+            $this->app->url('plugin_mail_magazine_history_preview', array( 'id' => $SendHistory->getId()))
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -38,18 +38,18 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
     public function testPreview_IdIncorrect()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history_preview', array( 'id' => 9999999))
+            $this->app->url('plugin_mail_magazine_history_preview', array( 'id' => 9999999))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_history')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
     }
 
     public function testPreview_IdIsNull()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history_preview', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_history_preview', array( 'id' => null))
         );
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_history')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
     }
 
     public function testCondition()
@@ -58,7 +58,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $SendHistory = $this->createSendHistoy($MailCustomer);
 
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history_condition', array( 'id' => $SendHistory->getId()))
+            $this->app->url('plugin_mail_magazine_history_condition', array( 'id' => $SendHistory->getId()))
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -67,18 +67,18 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
     public function testCondition_IdIncorrect()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history_condition', array( 'id' => 9999999))
+            $this->app->url('plugin_mail_magazine_history_condition', array( 'id' => 9999999))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_history')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
     }
 
     public function testCondition_IdIsNull()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history_condition', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_history_condition', array( 'id' => null))
         );
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_history')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
     }
 
     public function testDelete()
@@ -87,26 +87,26 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $SendHistory = $this->createSendHistoy($MailCustomer);
 
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_history_delete', array( 'id' => $SendHistory->getId()))
+            $this->app->url('plugin_mail_magazine_history_delete', array( 'id' => $SendHistory->getId()))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_history')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
     }
 
     public function testDelete_IdIncorrect()
     {
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_history_delete', array( 'id' => 9999999))
+            $this->app->url('plugin_mail_magazine_history_delete', array( 'id' => 9999999))
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_history')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
     }
 
     public function testDelete_IdIsNull()
     {
         $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException');
         $this->client->request('POST',
-            $this->app->url('admin_mail_magazine_history_delete', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_history_delete', array( 'id' => null))
         );
     }
 
@@ -114,7 +114,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
     {
         $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException');
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine_history_delete', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_history_delete', array( 'id' => null))
         );
     }
 }

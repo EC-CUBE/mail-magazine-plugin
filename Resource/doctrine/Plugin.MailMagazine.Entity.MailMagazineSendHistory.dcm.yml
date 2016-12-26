@@ -22,11 +22,20 @@ Plugin\MailMagazine\Entity\MailMagazineSendHistory:
         body:
             type: text
             nullable: true
+        html_body:
+            type: text
+            nullable: true
         send_count:
             type: integer
             nullable: true
             unsigned: false
         complete_count:
+            type: integer
+            nullable: false
+            unsigned: false
+            options:
+                default: '0'
+        error_count:
             type: integer
             nullable: false
             unsigned: false

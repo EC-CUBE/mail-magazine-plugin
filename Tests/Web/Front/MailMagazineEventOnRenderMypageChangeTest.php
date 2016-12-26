@@ -71,7 +71,6 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
             ),
             'sex' => 1,
             'job' => 1,
-            'status' => 1,
             '_token' => 'dummy'
         );
         return $form;

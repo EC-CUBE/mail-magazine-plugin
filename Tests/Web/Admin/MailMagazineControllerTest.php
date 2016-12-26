@@ -22,7 +22,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
     public function testRoutingMailMagazine()
     {
         $this->client->request('GET',
-            $this->app->url('admin_mail_magazine')
+            $this->app->url('plugin_mail_magazine')
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -39,7 +39,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine'),
+            $this->app->url('plugin_mail_magazine'),
             array('mail_magazine' => $searchForm)
         );
         $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
@@ -57,7 +57,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine'),
+            $this->app->url('plugin_mail_magazine'),
             array('mail_magazine' => $searchForm)
         );
         $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
@@ -69,7 +69,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $searchForm = $this->createSearchForm($MaiCustomer);
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine'),
+            $this->app->url('plugin_mail_magazine'),
             array('mail_magazine' => $searchForm)
         );
         $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
@@ -81,7 +81,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine_select', array('id' => $MailTemplate->getId())),
+            $this->app->url('plugin_mail_magazine_select', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
@@ -99,7 +99,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
         $this->client->request(
             'GET',
-            $this->app->url('admin_mail_magazine_select', array('id' => $MailTemplate->getId())),
+            $this->app->url('plugin_mail_magazine_select', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
@@ -115,7 +115,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
+            $this->app->url('plugin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
                 'subject'  => $MailTemplate->getSubject(),
@@ -132,7 +132,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
+            $this->app->url('plugin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'id'       => $MailTemplate->getId(),
                 'template' => $MailTemplate->getId(),
@@ -144,7 +144,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testCommit()
+    public function testPrepare()
     {
         $this->initializeMailCatcher();
         $MailTemplate = $this->createMagazineTemplate();
@@ -156,11 +156,11 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine_commit', array('id' => $MailTemplate->getId())),
+            $this->app->url('plugin_mail_magazine_prepare', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => $searchForm)
         );
 
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('admin_mail_magazine_history')));
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
 
 //        $Messages = $this->getMailCatcherMessages();
 //        $Message = $this->getMailCatcherMessage($Messages[0]->id);
@@ -200,7 +200,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         );
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_mail_magazine'),
+            $this->app->url('plugin_mail_magazine'),
             array('mail_magazine' => $searchForm)
 
         );
@@ -210,7 +210,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         //pagination
         $crawler = $this->client->request(
             'GET',
-            $this->app->url('admin_mail_magazine').'?page_no=2'
+            $this->app->url('plugin_mail_magazine').'?page_no=2'
         );
 
         //check result

@@ -32,8 +32,12 @@
                         <td>{{ history.subject }}</td>
                     </tr>
                     <tr>
-                        <th>本文</th>
+                        <th>本文 (テキスト形式)</th>
                         <td><xmp>{{ history.body }}</xmp></td>
+                    </tr>
+                    <tr>
+                        <th>本文 (HTML形式)</th>
+                        <td><xmp>{{ history.htmlBody|raw }}</xmp></td>
                     </tr>
                 </tbody>
             </table>
@@ -41,7 +45,7 @@
     </div>
         <div class="row">
             <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-                <p><a href="{{ url('admin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
+                <p><a href="{{ url('plugin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
             </div>
         </div>
 

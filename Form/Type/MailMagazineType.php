@@ -15,13 +15,8 @@
 namespace Plugin\MailMagazine\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use \Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\EntityRepository;
 
 class MailMagazineType extends AbstractType
 {
@@ -214,12 +209,16 @@ class MailMagazineType extends AbstractType
                 'mapped' => false,
             ))
             ->add('subject', 'text', array(
-                'label' => 'Subject',
+                'label' => '件名',
                 'required' => true,
             ))
             ->add('body', 'textarea', array(
-                'label' => '本文',
+                'label' => '本文 (テキスト形式)',
                 'required' => true,
+            ))
+            ->add('htmlBody', 'textarea', array(
+                'label' => '本文 (HTML形式)',
+                'required' => false,
             ))
             ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
         ;
