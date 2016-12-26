@@ -101,11 +101,11 @@ $(function () {
                                             <th width="170px">配信開始時刻</th>
                                             <th width="170px">配信終了時刻</th>
                                             <th>件名</th>
-                                            <th>配信総数</th>
-                                            <th>配信済数</th>
-                                            <th>配信失敗数</th>
-                                            <th>未配信数</th>
-                                            <th width="250px"></th>
+                                            <th width="120px">配信総数</th>
+                                            <th width="120px">配信済数</th>
+                                            <th width="120px">配信失敗数</th>
+                                            <th width="120px">未配信数</th>
+                                            <th width="120px">&nbsp;</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -118,28 +118,33 @@ $(function () {
                                                 {% endif %}
                                             </td>
                                             <td class="">{{ SendHistory.subject}}</td>
-                                            <td class="">{{ SendHistory.send_count }}</td>
-                                            <td class="">{{ SendHistory.complete_count }}</td>
-                                            <td class="">{{ SendHistory.error_count }}</td>
-                                            <td class="">{{ SendHistory.send_count - SendHistory.complete_count }}</td>
-                                            <td class="">
-                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="プレビュー">
-                                                    <span class="glyphicon glyphicon-search"></span>
-                                                </a>
-                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="配信条件">
-                                                    <span class="glyphicon glyphicon-cog"></span>
-                                                </a>
-                                                <a class="btn btn-default btn-sm" href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_result') }}?id={{ SendHistory.id }}'); return false;" data-toggle="tooltip" title="配信結果">
-                                                    <span class="glyphicon glyphicon-list"></span>
-                                                </a>
-                                                <a class="btn btn-danger btn-sm" href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;" data-toggle="tooltip" title="削除">
-                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                </a>
-                                                {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
-                                                    <a href="#" class="btn btn-sm btn-danger retry-btn" data-id="{{ SendHistory.id }}" data-toggle="tooltip" title="再試行">
-                                                        <span class="glyphicon glyphicon-repeat"></span>
-                                                    </a>
-                                                {% endif %}
+                                            <td class="text-right">{{ SendHistory.send_count }}</td>
+                                            <td class="text-right">{{ SendHistory.complete_count }}</td>
+                                            <td class="text-right">{{ SendHistory.error_count }}</td>
+                                            <td class="text-right">{{ SendHistory.send_count - SendHistory.complete_count }}</td>
+                                            <td class="icon_edit">
+                                                <div class="dropdown">
+                                                    <a class="dropdown-toggle" data-toggle="dropdown"><svg class="cb cb-ellipsis-h"> <use xlink:href="#cb-ellipsis-h" /></svg></a>
+                                                    <ul id="result_list_main__menu--{{ SendHistory.id }}" class="dropdown-menu dropdown-menu-right">
+                                                        <li>
+                                                            <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;">プレビュー</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;">配信条件</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_result') }}?id={{ SendHistory.id }}'); return false;">配信結果</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">削除</a>
+                                                        </li>
+                                                        {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
+                                                        <li>
+                                                            <a href="#" class="retry-btn" data-id="{{ SendHistory.id }}">再試行</a>
+                                                        </li>
+                                                        {% endif %}
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                         {% endfor %}
