@@ -40,23 +40,26 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
             }
         }
 
-        $builder
-            ->add('mailmaga_flg', 'choice', array(
-                'label' => 'メールマガジン送付について',
-                'choices'   => array(
-                    '1' => '受け取る',
-                    '0' => '受け取らない',
-                ),
-                'expanded' => true,
-                'multiple' => false,
-                'required' => true,
-                'constraints' => array(
-                    new Assert\NotBlank(),
-                ),
-                'mapped' => false,
-                'data' => $mailmagaFlg,
-            ))
-            ;
+        $options = array(
+            'label' => 'メールマガジン送付について',
+            'choices'   => array(
+                '1' => '受け取る',
+                '0' => '受け取らない',
+            ),
+            'expanded' => true,
+            'multiple' => false,
+            'required' => true,
+            'constraints' => array(
+                new Assert\NotBlank(),
+            ),
+            'mapped' => false,
+        );
+
+        if (!is_null($mailmagaFlg)) {
+            $options['data'] = $mailmagaFlg;
+        }
+
+        $builder->add('mailmaga_flg', 'choice', $options);
     }
 
 

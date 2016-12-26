@@ -225,7 +225,7 @@ class MailMagazineLegacy extends CommonEvent
 
 
             try {
-                $oldHtml = $crawler->filter('.form-horizontal .form-group')->last()->parents()->html();
+                $oldHtml = $this->decodeHtml($crawler->filter('.form-horizontal .form-group')->last()->parents()->html());
 
                 $newHtml = $oldHtml.$parts;
                 $html = str_replace($oldHtml, $newHtml, $html);
@@ -392,6 +392,11 @@ class MailMagazineLegacy extends CommonEvent
             $domElement->ownerDocument->formatOutput = true;
             $html .= $domElement->ownerDocument->saveHTML();
         }
+        return $this->decodeHtml($html);
+    }
+
+    private function decodeHtml($html)
+    {
         return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
 }
