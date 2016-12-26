@@ -16,7 +16,6 @@ use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception as HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -31,7 +30,8 @@ class MailMagazineController
      * 左ナビゲーションの選択はGETで遷移する.
      *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index(Application $app, Request $request)
@@ -74,7 +74,6 @@ class MailMagazineController
                 // pagingなどの処理
                 $searchData = $session->get('plugin.mailmagazine.search');
                 if (!is_null($searchData)) {
-
                     $pcount = $request->get('page_max');
                     $page_max = empty($pcount) ? $page_max : $pcount;
 
@@ -88,7 +87,7 @@ class MailMagazineController
                         $page_max
                     );
 
-                    if (isset($searchData['sex'])&&(count($searchData['sex']) > 0)) {
+                    if (isset($searchData['sex']) && (count($searchData['sex']) > 0)) {
                         $sex_ids = array();
                         foreach ($searchData['sex'] as $Sex) {
                             $sex_ids[] = $Sex->getId();
@@ -124,14 +123,16 @@ class MailMagazineController
 
     /**
      * テンプレート選択
-     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる
+     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
+     *
      * @param Application $app
-     * @param Request $request
-     * @param string $id
+     * @param Request     $request
+     * @param string      $id
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function select(Application $app, Request $request, $id = null) {
-
+    public function select(Application $app, Request $request, $id = null)
+    {
         /** @var MailMagazineTemplate $Template */
         $Template = null;
 
@@ -147,12 +148,12 @@ class MailMagazineController
 
         $form->handleRequest($request);
 
-        $newSubject = "";
-        $newBody = "";
+        $newSubject = '';
+        $newBody = '';
         $newHtmlBody = '';
 
         // テンプレートが選択されている場合はテンプレートデータを取得する
-        if($id) {
+        if ($id) {
             // テンプレート選択から遷移した場合の処理
             // 選択されたテンプレートのデータを取得する
             $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
@@ -178,13 +179,14 @@ class MailMagazineController
 
     /**
      * 確認画面の表示
-     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる
+     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
+     *
      * @param Application $app
-     * @param Request $request
-     * @param string $id
+     * @param Request     $request
+     * @param string      $id
      */
-    public function confirm(Application $app, Request $request, $id = null) {
-
+    public function confirm(Application $app, Request $request, $id = null)
+    {
         // POSTでない場合は終了する
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -203,8 +205,8 @@ class MailMagazineController
                 'label' => 'Subject',
                 'required' => true,
                 'constraints' => array(
-                        new NotBlank()
-                )
+                        new NotBlank(),
+                ),
         ));
 
         // 本文
@@ -213,8 +215,8 @@ class MailMagazineController
                 'label' => '本文',
                 'required' => true,
                 'constraints' => array(
-                        new NotBlank()
-                )
+                        new NotBlank(),
+                ),
         ));
 
         $form = $builder->getForm();
@@ -224,18 +226,16 @@ class MailMagazineController
         $formData = $form->getData();
 
         // validationを実行する
-        if(!$form->isValid()) {
+        if (!$form->isValid()) {
             // エラーの場合はテンプレート選択画面に遷移する
             return $app->render('MailMagazine/Resource/template/admin/template_select.twig', array(
                     'form' => $form->createView(),
                     'new_subject' => $formData['subject'],
-                    'new_body' =>  $formData['body'],
-                    'new_htmlBody' =>  $formData['htmlBody'],
-                    'id' =>  $id,
+                    'new_body' => $formData['body'],
+                    'new_htmlBody' => $formData['htmlBody'],
+                    'id' => $id,
             ));
-
         }
-
 
         /** @var MailMagazineService $service */
         $service = $this->getMailMagazineService($app);
@@ -252,9 +252,11 @@ class MailMagazineController
 
     /**
      * 配信前処理
-     * 配信履歴データを作成する
+     * 配信履歴データを作成する.
+     *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function prepare(Application $app, Request $request)
@@ -284,7 +286,7 @@ class MailMagazineController
 
         // 配信履歴を登録する
         $sendId = $service->createMailMagazineHistory($data);
-        if(is_null($sendId)) {
+        if (is_null($sendId)) {
             $app->addError('admin.plugin.mailmagazine.send.register.failure', 'admin');
         }
 
@@ -300,13 +302,15 @@ class MailMagazineController
     /**
      * 配信処理
      * 配信終了後配信履歴に遷移する
-     * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる
+     * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる.
+     *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function commit(Application $app, Request $request) {
-
+    public function commit(Application $app, Request $request)
+    {
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -346,8 +350,10 @@ class MailMagazineController
 
     /**
      * テストメール送信
+     *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function sendTest(Application $app, Request $request)
@@ -363,11 +369,13 @@ class MailMagazineController
         $this->getMailMagazineService($app)->sendTestMail($data);
 
         log_info('テストメール配信処理完了');
+
         return $app->json(array('status' => true));
     }
 
     /**
      * @param Application $app
+     *
      * @return MailMagazineService
      */
     private function getMailMagazineService(Application $app)

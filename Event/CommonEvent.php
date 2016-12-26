@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Plugin\MailMagazine\Event;
-
 
 use Eccube\Application;
 use Eccube\Common\Constant;
@@ -17,15 +15,16 @@ class CommonEvent
      */
     protected $app;
 
-    function __construct($app)
+    public function __construct($app)
     {
         $this->app = $app;
     }
 
     /**
-     * カスタマーIDを取得する
+     * カスタマーIDを取得する.
      *
      * @param Request $request
+     *
      * @return int
      */
     protected function getEntryCustomerId($request)
@@ -53,8 +52,9 @@ class CommonEvent
     }
 
     /**
-     * メール送付情報を保存する
-     * @param int $customerId
+     * メール送付情報を保存する.
+     *
+     * @param int  $customerId
      * @param bool $mailmagaFlg
      */
     protected function saveMailmagaCustomer($customerId, $mailmagaFlg)

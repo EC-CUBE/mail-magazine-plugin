@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of EC-CUBE
+ * This file is part of EC-CUBE.
  *
  * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
  * http://www.lockon.co.jp/
@@ -14,7 +14,6 @@ namespace Plugin\MailMagazine\Tests\Web;
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\MailMagazine\Entity\MailmagaCustomer;
-use Plugin\MailMagazine\Entity\MailMagazineSendCustomer;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 
@@ -68,7 +67,6 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $this->app['orm.em']->flush();
 
         return $Customer;
-
     }
 
     protected function createSearchForm(\Eccube\Entity\Customer $MailCustomer, $birth_month = null)
@@ -77,29 +75,30 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $Order = $this->createOrder($MailCustomer);
         $order_detail = $Order->getOrderDetails();
         $old_date = new \DateTime('1980-01-01');
+
         return array(
-            '_token'            => 'dummy',
-            'multi'             => $MailCustomer->getId(),
-            'pref'              => $MailCustomer->getPref()->getId(),
-            'sex'               => array($MailCustomer->getSex()->getId()),
-            'birth_start'       => $old_date->format('Y-m-d'),
-            'birth_end'         => $MailCustomer->getBirth()->format('Y-m-d'),
-            'tel'               => array('tel01' => $MailCustomer->getTel01(),
+            '_token' => 'dummy',
+            'multi' => $MailCustomer->getId(),
+            'pref' => $MailCustomer->getPref()->getId(),
+            'sex' => array($MailCustomer->getSex()->getId()),
+            'birth_start' => $old_date->format('Y-m-d'),
+            'birth_end' => $MailCustomer->getBirth()->format('Y-m-d'),
+            'tel' => array('tel01' => $MailCustomer->getTel01(),
                 'tel02' => $MailCustomer->getTel02(),
-                'tel03' => $MailCustomer->getTel03()),
-            'buy_total_start'   => 0,
-            'buy_total_end'     => $MailCustomer->getBuyTotal(),
-            'buy_times_start'   => 0,
-            'buy_times_end'     => $MailCustomer->getBuyTimes(),
+                'tel03' => $MailCustomer->getTel03(), ),
+            'buy_total_start' => 0,
+            'buy_total_end' => $MailCustomer->getBuyTotal(),
+            'buy_times_start' => 0,
+            'buy_times_end' => $MailCustomer->getBuyTimes(),
             'create_date_start' => $old_date->format('Y-m-d'),
-            'create_date_end'   => $MailCustomer->getCreateDate()->format('Y-m-d'),
+            'create_date_end' => $MailCustomer->getCreateDate()->format('Y-m-d'),
             'update_date_start' => $old_date->format('Y-m-d'),
-            'update_date_end'   => $MailCustomer->getUpdateDate()->format('Y-m-d'),
-            'last_buy_start'    => $old_date->format('Y-m-d'),
-            'last_buy_end'      => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
-            'customer_status'   => array($MailCustomer->getStatus()->getId()),
-            'buy_product_code'  => $order_detail[0]->getProductName(),
-            'birth_month'       => $birth_month,
+            'update_date_end' => $MailCustomer->getUpdateDate()->format('Y-m-d'),
+            'last_buy_start' => $old_date->format('Y-m-d'),
+            'last_buy_end' => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
+            'customer_status' => array($MailCustomer->getStatus()->getId()),
+            'buy_product_code' => $order_detail[0]->getProductName(),
+            'birth_month' => $birth_month,
         );
     }
 
@@ -137,8 +136,6 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
 
         $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->createSendHistory($SendHistory);
 
-
         return $SendHistory;
     }
-
 }

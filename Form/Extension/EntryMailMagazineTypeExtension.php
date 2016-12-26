@@ -45,7 +45,7 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
         $builder
             ->add('mailmaga_flg', 'choice', array(
                 'label' => 'メールマガジン送付について',
-                'choices'   => array(
+                'choices' => array(
                     '1' => '受け取る',
                     '0' => '受け取らない',
                 ),
@@ -66,7 +66,6 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-
         $freeze = $form->getConfig()->getAttribute('freeze');
 
         if ($freeze) {
@@ -79,7 +78,6 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
                 }
             }
         }
-
     }
 
     public function getExtendedType()

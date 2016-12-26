@@ -30,8 +30,8 @@ class MailMagazineTemplateEditType extends AbstractType
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $app = $this->app;
@@ -41,19 +41,19 @@ class MailMagazineTemplateEditType extends AbstractType
                 'label' => '件名',
                 'required' => true,
                 'constraints' => array(
-                    new Assert\NotBlank()
-                )
+                    new Assert\NotBlank(),
+                ),
             ))
             ->add('body', 'textarea', array(
                 'label' => '本文 (テキスト形式)',
                 'required' => true,
                 'constraints' => array(
-                    new Assert\NotBlank()
-                )
+                    new Assert\NotBlank(),
+                ),
             ))
             ->add('htmlBody', 'textarea', array(
                 'label' => '本文 (HTML形式)',
-                'required' => false
+                'required' => false,
             ))
             ->addEventListener(FormEvents::POST_SUBMIT, function ($event) use ($app) {
             })
@@ -61,8 +61,8 @@ class MailMagazineTemplateEditType extends AbstractType
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
@@ -71,8 +71,8 @@ class MailMagazineTemplateEditType extends AbstractType
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'mail_magazine_template_edit';

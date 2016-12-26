@@ -19,18 +19,16 @@ use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine\Service\MailMagazineService;
 use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception as HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MailMagazineHistoryController
 {
-
     public function __construct()
     {
     }
 
     /**
-     * 配信履歴一覧
+     * 配信履歴一覧.
      */
     public function index(Application $app, Request $request)
     {
@@ -46,11 +44,11 @@ class MailMagazineHistoryController
         $pageNo = $request->get('page_no');
 
         $qb = $app['orm.em']->createQueryBuilder();
-        $qb->select("d")
-            ->from("\Plugin\MailMagazine\Entity\MailMagazineSendHistory", "d")
-            ->where("d.del_flg = :delFlg")
+        $qb->select('d')
+            ->from("\Plugin\MailMagazine\Entity\MailMagazineSendHistory", 'd')
+            ->where('d.del_flg = :delFlg')
             ->setParameter('delFlg', Constant::DISABLED)
-            ->orderBy("d.start_date", "DESC");
+            ->orderBy('d.start_date', 'DESC');
 
         $pagination = $app['paginator']()->paginate(
                 $qb,
@@ -59,13 +57,13 @@ class MailMagazineHistoryController
         );
 
         return $app->render('MailMagazine/Resource/template/admin/history_list.twig', array(
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ));
     }
 
     /**
-    * プレビュー
-    */
+     * プレビュー
+     */
     public function preview(Application $app, Request $request, $id)
     {
         // dtb_send_historyから対象レコード抽出
@@ -73,29 +71,33 @@ class MailMagazineHistoryController
         // パラメータ$idにマッチするデータが存在するか判定
         if (!$id) {
             $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         // 配信履歴を取得する
         $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
-        if(is_null($sendHistory)) {
+        if (is_null($sendHistory)) {
             $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         return $app->render('MailMagazine/Resource/template/admin/hitsory_preview.twig', array(
-            'history' => $sendHistory
+            'history' => $sendHistory,
         ));
     }
 
     /**
-     * 配信条件を表示する
+     * 配信条件を表示する.
      *
      * @param Application $app
-     * @param Request $request
-     * @param unknown $id
+     * @param Request     $request
+     * @param unknown     $id
+     *
      * @throws BadRequestHttpException
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function condition(Application $app, Request $request, $id)
@@ -104,14 +106,16 @@ class MailMagazineHistoryController
         // dtb_send_history.search_dataを逆シリアライズした上で、各変数をViewに渡す
         if (!$id) {
             $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
         // 配信履歴を取得する
         $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
-        if(is_null($sendHistory)) {
+        if (is_null($sendHistory)) {
             $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
@@ -124,7 +128,7 @@ class MailMagazineHistoryController
         $displayData = $this->searchDataToDisplayData($searchData);
 
         return $app->render('MailMagazine/Resource/template/admin/hitsory_condition.twig', array(
-            'search_data' => $displayData
+            'search_data' => $displayData,
         ));
     }
 
@@ -133,30 +137,31 @@ class MailMagazineHistoryController
      *
      * @param unknown $searchData
      */
-    protected function searchDataToDisplayData($searchData) {
+    protected function searchDataToDisplayData($searchData)
+    {
         $data = $searchData;
 
         // 会員種別
         $val = null;
-        if(!is_null($searchData['customer_status'])) {
-            if(count($searchData['customer_status']->toArray()) > 0) {
-                $val = implode(" ", $searchData['customer_status']->toArray());
+        if (!is_null($searchData['customer_status'])) {
+            if (count($searchData['customer_status']->toArray()) > 0) {
+                $val = implode(' ', $searchData['customer_status']->toArray());
             }
         }
         $data['customer_status'] = $val;
 
         // 性別
         $val = null;
-        if(!is_null($searchData['sex'])) {
-            if(count($searchData['sex']->toArray()) > 0) {
-                $val = implode(" ", $searchData['sex']->toArray());
+        if (!is_null($searchData['sex'])) {
+            if (count($searchData['sex']->toArray()) > 0) {
+                $val = implode(' ', $searchData['sex']->toArray());
             }
         }
         $data['sex'] = $val;
 
         // 誕生月
         $val = null;
-        if(!is_null($searchData['birth_month'])) {
+        if (!is_null($searchData['birth_month'])) {
             $val = $searchData['birth_month'] + 1;
         }
         $data['birth_month'] = $val;
@@ -166,17 +171,18 @@ class MailMagazineHistoryController
 
     /**
      * 配信履歴を論理削除する
-     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる
+     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
      * @param Application $app
-     * @param Request $request
-     * @param unknown $id
+     * @param Request     $request
+     * @param unknown     $id
+     *
      * @throws BadRequestHttpException
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function delete(Application $app, Request $request, $id)
     {
-
         // POSTかどうか判定
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -191,8 +197,9 @@ class MailMagazineHistoryController
         $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
 
         // 配信履歴がない場合はエラーメッセージを表示する
-        if(is_null($sendHistory)) {
+        if (is_null($sendHistory)) {
             $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
+
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
@@ -253,12 +260,13 @@ class MailMagazineHistoryController
         return $app->render('MailMagazine/Resource/template/admin/hitsory_result.twig', array(
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
-            'page_count' => $page_count
+            'page_count' => $page_count,
         ));
     }
 
     /**
      * @param Application $app
+     *
      * @return MailMagazineService
      */
     private function getMailMagazineService(Application $app)
@@ -268,6 +276,7 @@ class MailMagazineHistoryController
 
     /**
      * @param Application $app
+     *
      * @return MailMagazineSendHistoryRepository
      */
     private function getMailMagazineSendHistoryRepository(Application $app)

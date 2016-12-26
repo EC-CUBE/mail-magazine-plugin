@@ -24,7 +24,7 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * @var integer
+     * @var int
      */
     private $id;
 
@@ -44,7 +44,7 @@ class MailMagazineTemplate extends AbstractEntity
     private $html_body;
 
     /**
-     * @var integer
+     * @var int
      */
     private $del_flg;
 
@@ -59,16 +59,17 @@ class MailMagazineTemplate extends AbstractEntity
     private $update_date;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
     }
 
     /**
-     * Set template id
+     * Set template id.
      *
-     * @param  integer $id
+     * @param int $id
+     *
      * @return MailMagazineTemplate
      */
     public function setId($id)
@@ -79,9 +80,9 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Get template_id
+     * Get template_id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -89,7 +90,7 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Get subject
+     * Get subject.
      *
      * @return string
      */
@@ -99,9 +100,10 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Set subject
+     * Set subject.
      *
-     * @param  string $subject
+     * @param string $subject
+     *
      * @return MailMagazineTemplate
      */
     public function setSubject($subject)
@@ -112,9 +114,10 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Set del_flg
+     * Set del_flg.
      *
-     * @param  integer $delFlg
+     * @param int $delFlg
+     *
      * @return MailMagazineTemplate
      */
     public function setDelFlg($delFlg)
@@ -125,9 +128,9 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Get del_flg
+     * Get del_flg.
      *
-     * @return integer
+     * @return int
      */
     public function getDelFlg()
     {
@@ -135,9 +138,10 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Set create_date
+     * Set create_date.
      *
-     * @param  \DateTime $createDate
+     * @param \DateTime $createDate
+     *
      * @return MailMagazineTemplate
      */
     public function setCreateDate($createDate)
@@ -148,7 +152,7 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Get create_date
+     * Get create_date.
      *
      * @return \DateTime
      */
@@ -158,9 +162,10 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Set update_date
+     * Set update_date.
      *
-     * @param  \DateTime $updateDate
+     * @param \DateTime $updateDate
+     *
      * @return MailMagazineTemplate
      */
     public function setUpdateDate($updateDate)
@@ -171,7 +176,7 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Get update_date
+     * Get update_date.
      *
      * @return \DateTime
      */
@@ -181,9 +186,10 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Set body
+     * Set body.
      *
-     * @param  string $body
+     * @param string $body
+     *
      * @return MailMagazineTemplate
      */
     public function setBody($body)
@@ -194,7 +200,7 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
-     * Get body
+     * Get body.
      *
      * @return string
      */
@@ -213,11 +219,13 @@ class MailMagazineTemplate extends AbstractEntity
 
     /**
      * @param string $html_body
+     *
      * @return MailMagazineTemplate
      */
     public function setHtmlBody($html_body)
     {
         $this->html_body = $html_body;
+
         return $this;
     }
 }

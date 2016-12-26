@@ -21,7 +21,7 @@ use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
 
 // include log functions (for 3.0.0 - 3.0.11)
-require_once(__DIR__.'/../log.php');
+require_once __DIR__.'/../log.php';
 
 class MailMagazineServiceProvider implements ServiceProviderInterface
 {
@@ -48,10 +48,10 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
         });
 
         // イベント
-        $app['eccube.plugin.mail_magazine.event.mail_magazine'] = $app->share(function() use ($app) {
+        $app['eccube.plugin.mail_magazine.event.mail_magazine'] = $app->share(function () use ($app) {
             return new MailMagazine($app);
         });
-        $app['eccube.plugin.mail_magazine.event.mail_magazine_legacy'] = $app->share(function() use ($app) {
+        $app['eccube.plugin.mail_magazine.event.mail_magazine_legacy'] = $app->share(function () use ($app) {
             return new MailMagazineLegacy($app);
         });
 
@@ -165,6 +165,7 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
 
             // 配信内容設定
             $types[] = new \Plugin\MailMagazine\Form\Type\MailMagazineType($app);
+
             return $types;
         }));
 
@@ -172,6 +173,7 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
         $app['form.type.extensions'] = $app->share($app->extend('form.type.extensions', function ($extensions) use ($app) {
             $extensions[] = new EntryMailMagazineTypeExtension($app);
             $extensions[] = new CustomerMailMagazineTypeExtension($app);
+
             return $extensions;
         }));
 
@@ -185,43 +187,44 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
         // -----------------------------
         // メッセージ登録
         // -----------------------------
-        $file = __DIR__ . '/../Resource/locale/message.' . $app['locale'] . '.yml';
+        $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
         $app['translator']->addResource('yaml', $file, $app['locale']);
 
         // メニュー登録
         $app['config'] = $app->share($app->extend('config', function ($config) {
             $addNavi = array(
                 'id' => 'mailmagazine',
-                'name' => "メルマガ管理",
+                'name' => 'メルマガ管理',
                 'has_child' => true,
                 'icon' => 'cb-comment',
                 'child' => array(
                     array(
-                        'id' => "mailmagazine",
-                        'name' => "配信",
-                        'url' => "plugin_mail_magazine",
+                        'id' => 'mailmagazine',
+                        'name' => '配信',
+                        'url' => 'plugin_mail_magazine',
                     ),
                     array(
-                        'id' => "mailmagazine_template",
-                        'name' => "テンプレート設定",
-                        'url' => "plugin_mail_magazine_template",
+                        'id' => 'mailmagazine_template',
+                        'name' => 'テンプレート設定',
+                        'url' => 'plugin_mail_magazine_template',
                     ),
                     array(
-                        'id' => "mailmagazine_history",
-                        'name' => "配信履歴",
-                        'url' => "plugin_mail_magazine_history",
+                        'id' => 'mailmagazine_history',
+                        'name' => '配信履歴',
+                        'url' => 'plugin_mail_magazine_history',
                     ),
                 ),
             );
 
             $nav = $config['nav'];
             foreach ($nav as $key => $val) {
-                if ("setting" == $val['id']) {
+                if ('setting' == $val['id']) {
                     array_splice($nav, $key, 0, array($addNavi));
                     break;
                 }
             }
             $config['nav'] = $nav;
+
             return $config;
         }));
 

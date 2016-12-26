@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of EC-CUBE
+ * This file is part of EC-CUBE.
  *
  * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
  * http://www.lockon.co.jp/
@@ -16,8 +16,7 @@ use Plugin\MailMagazine\Tests\Web\MailMagazineCommon;
 class MailMagazineControllerTest extends MailMagazineCommon
 {
     /**
-     * Test routing
-     *
+     * Test routing.
      */
     public function testRoutingMailMagazine()
     {
@@ -29,14 +28,14 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
     public function testMailMagazineSearchWithBirthmonthLowOctorber()
     {
-        $MaiCustomer =  $this->createMailMagazineCustomer();
+        $MaiCustomer = $this->createMailMagazineCustomer();
         //test search with birth month < 10
         $MaiCustomer->setBirth(new \DateTime('2016-09-19'));
         $this->app['orm.em']->persist($MaiCustomer);
         $this->app['orm.em']->flush();
         //because 誕生月 select box value start from 0. We need minus 1
         $birth_month = $MaiCustomer->getBirth()->format('n') - 1;
-        $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
+        $searchForm = $this->createSearchForm($MaiCustomer, $birth_month);
         $crawler = $this->client->request(
             'POST',
             $this->app->url('plugin_mail_magazine'),
@@ -47,14 +46,14 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
     public function testMailMagazineSearchWithBirthmonthHightOctorber()
     {
-        $MaiCustomer =  $this->createMailMagazineCustomer();
+        $MaiCustomer = $this->createMailMagazineCustomer();
         //test search with birth month > 10
         $MaiCustomer->setBirth(new \DateTime('2016-11-19'));
         $this->app['orm.em']->persist($MaiCustomer);
         $this->app['orm.em']->flush();
         //because 誕生月 select box value start from 0. We need minus 1
         $birth_month = $MaiCustomer->getBirth()->format('n') - 1;
-        $searchForm = $this->createSearchForm($MaiCustomer,  $birth_month);
+        $searchForm = $this->createSearchForm($MaiCustomer, $birth_month);
         $crawler = $this->client->request(
             'POST',
             $this->app->url('plugin_mail_magazine'),
@@ -65,7 +64,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
     public function testMailMagazineSearchWithBirthmonthNull()
     {
-        $MaiCustomer =  $this->createMailMagazineCustomer();
+        $MaiCustomer = $this->createMailMagazineCustomer();
         $searchForm = $this->createSearchForm($MaiCustomer);
         $crawler = $this->client->request(
             'POST',
@@ -84,9 +83,9 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->app->url('plugin_mail_magazine_select', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
-                'subject'  => $MailTemplate->getSubject(),
-                'body'     => $MailTemplate->getBody(),
-                '_token'   => 'dummy',
+                'subject' => $MailTemplate->getSubject(),
+                'body' => $MailTemplate->getBody(),
+                '_token' => 'dummy',
             ))
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -102,9 +101,9 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->app->url('plugin_mail_magazine_select', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
-                'subject'  => $MailTemplate->getSubject(),
-                'body'     => $MailTemplate->getBody(),
-                '_token'   => 'dummy',
+                'subject' => $MailTemplate->getSubject(),
+                'body' => $MailTemplate->getBody(),
+                '_token' => 'dummy',
             ))
         );
     }
@@ -118,9 +117,9 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->app->url('plugin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
                 'template' => $MailTemplate->getId(),
-                'subject'  => $MailTemplate->getSubject(),
-                'body'     => $MailTemplate->getBody(),
-                '_token'   => 'dummy',
+                'subject' => $MailTemplate->getSubject(),
+                'body' => $MailTemplate->getBody(),
+                '_token' => 'dummy',
             ))
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -134,11 +133,11 @@ class MailMagazineControllerTest extends MailMagazineCommon
             'POST',
             $this->app->url('plugin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
             array('mail_magazine' => array(
-                'id'       => $MailTemplate->getId(),
+                'id' => $MailTemplate->getId(),
                 'template' => $MailTemplate->getId(),
-                'subject'  => $MailTemplate->getSubject(),
-                'body'     => $MailTemplate->getBody(),
-                '_token'   => 'dummy',
+                'subject' => $MailTemplate->getSubject(),
+                'body' => $MailTemplate->getBody(),
+                '_token' => 'dummy',
             ))
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -151,8 +150,8 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $MaiCustomer = $this->createMailMagazineCustomer();
         $searchForm = $this->createSearchForm($MaiCustomer);
         $searchForm['template'] = $MailTemplate->getId();
-        $searchForm['subject']  = $MailTemplate->getSubject();
-        $searchForm['body']     = $MailTemplate->getBody();
+        $searchForm['subject'] = $MailTemplate->getSubject();
+        $searchForm['body'] = $MailTemplate->getBody();
 
         $this->client->request(
             'POST',
@@ -173,36 +172,35 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
     public function testPagination()
     {
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 30; ++$i) {
             $this->createMailMagazineCustomer();
         }
         $searchForm = array(
             '_token' => 'dummy',
-            'sex' => array("1"),
-            "multi" => "",
-            "customer_status" => array(),
-            "birth_month" => "",
-            "birth_start" => "",
-            "birth_end" => "",
-            "pref" => "",
-            "tel" => array(),
-            "create_date_start" => "",
-            "create_date_end" => "",
-            "update_date_start" => "",
-            "update_date_end" => "",
-            "buy_total_start" => "",
-            "buy_total_end" => "",
-            "buy_times_start" => "",
-            "buy_times_end" => "",
-            "buy_product_code" => "",
-            "last_buy_start" => "",
-            "last_buy_end" => "",
+            'sex' => array('1'),
+            'multi' => '',
+            'customer_status' => array(),
+            'birth_month' => '',
+            'birth_start' => '',
+            'birth_end' => '',
+            'pref' => '',
+            'tel' => array(),
+            'create_date_start' => '',
+            'create_date_end' => '',
+            'update_date_start' => '',
+            'update_date_end' => '',
+            'buy_total_start' => '',
+            'buy_total_end' => '',
+            'buy_times_start' => '',
+            'buy_times_end' => '',
+            'buy_product_code' => '',
+            'last_buy_start' => '',
+            'last_buy_end' => '',
         );
         $crawler = $this->client->request(
             'POST',
             $this->app->url('plugin_mail_magazine'),
             array('mail_magazine' => $searchForm)
-
         );
         $pageNumber = $crawler->filter('.box-title strong')->html();
         $this->assertRegexp('/件/', $pageNumber);

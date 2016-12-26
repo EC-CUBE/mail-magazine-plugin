@@ -13,28 +13,28 @@ namespace Plugin\MailMagazine\Entity;
 
 /**
  * SendHistory
- * Plugin MailMagazine
+ * Plugin MailMagazine.
  */
 class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
 {
     /**
-     * @var integer
+     * @var int
      */
     private $id;
 
     /**
-    * @var integer
-    */
+     * @var int
+     */
     private $mail_method;
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     private $subject;
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     private $body;
 
     /**
@@ -43,71 +43,72 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     private $html_body;
 
     /**
-    * @var integer
-    */
+     * @var int
+     */
     private $send_count;
 
     /**
-    * @var integer
-    */
+     * @var int
+     */
     private $complete_count;
 
     /**
-     * @var integer
+     * @var int
      */
     private $error_count;
 
     /**
-    * @var \DateTime
-    */
+     * @var \DateTime
+     */
     private $start_date;
 
     /**
-    * @var \DateTime
-    */
+     * @var \DateTime
+     */
     private $end_date;
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     private $search_data;
 
     /**
-    * @var integer
-    */
+     * @var int
+     */
     private $del_flg;
 
     /**
-    * @var \DateTime
-    */
+     * @var \DateTime
+     */
     private $create_date;
 
     /**
-    * @var \DateTime
-    */
+     * @var \DateTime
+     */
     private $update_date;
 
     /**
-    * @var \Eccube\Entity\Member
-    */
+     * @var \Eccube\Entity\Member
+     */
     private $Creator;
 
     /**
-    * Get id
-    *
-    * @return integer
-    */
+     * Get id.
+     *
+     * @return int
+     */
     public function getId()
     {
         return $this->id;
     }
 
     /**
-    * Set mail_method
-    *
-    * @param  integer     $mailMethod
-    * @return SendHistory
-    */
+     * Set mail_method.
+     *
+     * @param int $mailMethod
+     *
+     * @return SendHistory
+     */
     public function setMailMethod($mailMethod)
     {
         $this->mail_method = $mailMethod;
@@ -116,21 +117,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get mail_method
-    *
-    * @return integer
-    */
+     * Get mail_method.
+     *
+     * @return int
+     */
     public function getMailMethod()
     {
         return $this->mail_method;
     }
 
     /**
-    * Set subject
-    *
-    * @param  string      $subject
-    * @return SendHistory
-    */
+     * Set subject.
+     *
+     * @param string $subject
+     *
+     * @return SendHistory
+     */
     public function setSubject($subject)
     {
         $this->subject = $subject;
@@ -139,21 +141,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get subject
-    *
-    * @return string
-    */
+     * Get subject.
+     *
+     * @return string
+     */
     public function getSubject()
     {
         return $this->subject;
     }
 
     /**
-    * Set body
-    *
-    * @param  string      $body
-    * @return SendHistory
-    */
+     * Set body.
+     *
+     * @param string $body
+     *
+     * @return SendHistory
+     */
     public function setBody($body)
     {
         $this->body = $body;
@@ -162,10 +165,10 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get body
-    *
-    * @return string
-    */
+     * Get body.
+     *
+     * @return string
+     */
     public function getBody()
     {
         return $this->body;
@@ -181,20 +184,23 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
 
     /**
      * @param string $html_body
+     *
      * @return MailMagazineSendHistory
      */
     public function setHtmlBody($html_body)
     {
         $this->html_body = $html_body;
+
         return $this;
     }
 
     /**
-    * Set send_count
-    *
-    * @param  integer     $sendCount
-    * @return SendHistory
-    */
+     * Set send_count.
+     *
+     * @param int $sendCount
+     *
+     * @return SendHistory
+     */
     public function setSendCount($sendCount)
     {
         $this->send_count = $sendCount;
@@ -203,21 +209,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get send_count
-    *
-    * @return integer
-    */
+     * Get send_count.
+     *
+     * @return int
+     */
     public function getSendCount()
     {
         return $this->send_count;
     }
 
     /**
-    * Set complete_count
-    *
-    * @param  integer     $completeCount
-    * @return SendHistory
-    */
+     * Set complete_count.
+     *
+     * @param int $completeCount
+     *
+     * @return SendHistory
+     */
     public function setCompleteCount($completeCount)
     {
         $this->complete_count = $completeCount;
@@ -226,10 +233,10 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get complete_count
-    *
-    * @return integer
-    */
+     * Get complete_count.
+     *
+     * @return int
+     */
     public function getCompleteCount()
     {
         return $this->complete_count;
@@ -245,20 +252,23 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
 
     /**
      * @param int $errorCount
+     *
      * @return MailMagazineSendHistory
      */
     public function setErrorCount($errorCount)
     {
         $this->error_count = $errorCount;
+
         return $this;
     }
 
     /**
-    * Set start_date
-    *
-    * @param  \DateTime   $startDate
-    * @return SendHistory
-    */
+     * Set start_date.
+     *
+     * @param \DateTime $startDate
+     *
+     * @return SendHistory
+     */
     public function setStartDate($startDate)
     {
         $this->start_date = $startDate;
@@ -267,21 +277,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get start_date
-    *
-    * @return \DateTime
-    */
+     * Get start_date.
+     *
+     * @return \DateTime
+     */
     public function getStartDate()
     {
         return $this->start_date;
     }
 
     /**
-    * Set end_date
-    *
-    * @param  \DateTime   $endDate
-    * @return SendHistory
-    */
+     * Set end_date.
+     *
+     * @param \DateTime $endDate
+     *
+     * @return SendHistory
+     */
     public function setEndDate($endDate)
     {
         $this->end_date = $endDate;
@@ -290,21 +301,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get end_date
-    *
-    * @return \DateTime
-    */
+     * Get end_date.
+     *
+     * @return \DateTime
+     */
     public function getEndDate()
     {
         return $this->end_date;
     }
 
     /**
-    * Set search_data
-    *
-    * @param  string      $searchData
-    * @return SendHistory
-    */
+     * Set search_data.
+     *
+     * @param string $searchData
+     *
+     * @return SendHistory
+     */
     public function setSearchData($searchData)
     {
         $this->search_data = $searchData;
@@ -313,21 +325,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get search_data
-    *
-    * @return string
-    */
+     * Get search_data.
+     *
+     * @return string
+     */
     public function getSearchData()
     {
         return $this->search_data;
     }
 
     /**
-    * Set del_flg
-    *
-    * @param  integer     $delFlg
-    * @return SendHistory
-    */
+     * Set del_flg.
+     *
+     * @param int $delFlg
+     *
+     * @return SendHistory
+     */
     public function setDelFlg($delFlg)
     {
         $this->del_flg = $delFlg;
@@ -336,21 +349,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get del_flg
-    *
-    * @return integer
-    */
+     * Get del_flg.
+     *
+     * @return int
+     */
     public function getDelFlg()
     {
         return $this->del_flg;
     }
 
     /**
-    * Set create_date
-    *
-    * @param  \DateTime   $createDate
-    * @return SendHistory
-    */
+     * Set create_date.
+     *
+     * @param \DateTime $createDate
+     *
+     * @return SendHistory
+     */
     public function setCreateDate($createDate)
     {
         $this->create_date = $createDate;
@@ -359,21 +373,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get create_date
-    *
-    * @return \DateTime
-    */
+     * Get create_date.
+     *
+     * @return \DateTime
+     */
     public function getCreateDate()
     {
         return $this->create_date;
     }
 
     /**
-    * Set update_date
-    *
-    * @param  \DateTime   $updateDate
-    * @return SendHistory
-    */
+     * Set update_date.
+     *
+     * @param \DateTime $updateDate
+     *
+     * @return SendHistory
+     */
     public function setUpdateDate($updateDate)
     {
         $this->update_date = $updateDate;
@@ -382,21 +397,22 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get update_date
-    *
-    * @return \DateTime
-    */
+     * Get update_date.
+     *
+     * @return \DateTime
+     */
     public function getUpdateDate()
     {
         return $this->update_date;
     }
 
     /**
-    * Set Creator
-    *
-    * @param  \Eccube\Entity\Member $creator
-    * @return SendHistory
-    */
+     * Set Creator.
+     *
+     * @param \Eccube\Entity\Member $creator
+     *
+     * @return SendHistory
+     */
     public function setCreator(\Eccube\Entity\Member $creator = null)
     {
         $this->Creator = $creator;
@@ -405,17 +421,18 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-    * Get Creator
-    *
-    * @return \Eccube\Entity\Member
-    */
+     * Get Creator.
+     *
+     * @return \Eccube\Entity\Member
+     */
     public function getCreator()
     {
         return $this->Creator;
     }
 
     /**
-     * 配信エラーの有無にかかわらず、すべて送信したかどうかの判定
+     * 配信エラーの有無にかかわらず、すべて送信したかどうかの判定.
+     *
      * @return bool 配信完了した場合はtrue
      */
     public function isComplete()

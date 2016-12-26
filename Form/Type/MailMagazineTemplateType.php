@@ -21,24 +21,23 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class MailMagazineTemplateType extends AbstractType
 {
-
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
             'class' => 'Plugin\MailMagazine\Entity\MailMagazineTemplate',
             'property' => 'subject',
             'label' => false,
-            'multiple'=> false,
+            'multiple' => false,
             'expanded' => false,
             'required' => false,
             'empty_value' => '-',
@@ -50,16 +49,16 @@ class MailMagazineTemplateType extends AbstractType
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'mail_magazine_template';
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return 'entity';

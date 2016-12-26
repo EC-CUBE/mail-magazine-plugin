@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of EC-CUBE
+ * This file is part of EC-CUBE.
  *
  * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
  * http://www.lockon.co.jp/
@@ -36,7 +36,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
                 'name02' => $faker->firstName,
             ),
             'kana' => array(
-                'kana01' => $faker->lastKanaName ,
+                'kana01' => $faker->lastKanaName,
                 'kana02' => $faker->firstKanaName,
             ),
             'company_name' => $faker->company,
@@ -71,8 +71,9 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
             ),
             'sex' => 1,
             'job' => 1,
-            '_token' => 'dummy'
+            '_token' => 'dummy',
         );
+
         return $form;
     }
 
@@ -109,7 +110,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->client->request('POST',
             $this->app->url('mypage_change'),
             array(
-                'entry' => $form
+                'entry' => $form,
             )
         );
         $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']

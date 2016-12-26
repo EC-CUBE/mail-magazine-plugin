@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of EC-CUBE
+ * This file is part of EC-CUBE.
  *
  * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
  * http://www.lockon.co.jp/
@@ -31,7 +31,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
                 'name02' => $faker->firstName,
             ),
             'kana' => array(
-                'kana01' => $faker->lastKanaName ,
+                'kana01' => $faker->lastKanaName,
                 'kana02' => $faker->firstKanaName,
             ),
             'company_name' => $faker->company,
@@ -67,8 +67,9 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
             'sex' => 1,
             'job' => 1,
             'status' => 1,
-            '_token' => 'dummy'
+            '_token' => 'dummy',
         );
+
         return $form;
     }
 
@@ -94,10 +95,10 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->client->request('POST',
             $this->app->url('admin_customer_edit', array('id' => $Customer->getId())),
             array(
-                'admin_customer' => $form
+                'admin_customer' => $form,
             )
         );
-        
+
         $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
             ->findOneBy(array('customer_id' => $Customer->getId()));
         $this->actual = $MailCustomer->getMailmagaFlg();
@@ -118,7 +119,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->client->request('POST',
             $this->app->url('admin_customer_edit', array('id' => $Customer->getId())),
             array(
-                'admin_customer' => $form
+                'admin_customer' => $form,
             )
         );
 

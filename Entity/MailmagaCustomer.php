@@ -13,25 +13,24 @@ namespace Plugin\MailMagazine\Entity;
 
 class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
 {
-
     /**
-     * @var integer
+     * @var int
      */
 //     private $template_id;
     private $id;
 
     /**
-     * @var integer
+     * @var int
      */
     private $customer_id;
 
     /**
-     * @var integer
+     * @var int
      */
     private $mailmaga_flg;
 
     /**
-     * @var integer
+     * @var int
      */
     private $del_flg;
 
@@ -46,16 +45,17 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     private $update_date;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
     }
 
     /**
-     * Set template id
+     * Set template id.
      *
-     * @param  integer $id
+     * @param int $id
+     *
      * @return MailMagazineTemplate
      */
     public function setId($id)
@@ -66,9 +66,9 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get template_id
+     * Get template_id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -76,9 +76,10 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set customer id
+     * Set customer id.
      *
-     * @param  string $id
+     * @param string $id
+     *
      * @return MailmagaCustomer
      */
     public function setCustomerId($customerId)
@@ -89,9 +90,9 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get customer_id
+     * Get customer_id.
      *
-     * @return integer
+     * @return int
      */
     public function getCustomerId()
     {
@@ -99,9 +100,9 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get subject
+     * Get subject.
      *
-     * @return integer
+     * @return int
      */
     public function getMailmagaFlg()
     {
@@ -109,9 +110,10 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set mailmag_flg
+     * Set mailmag_flg.
      *
-     * @param  integer $mailmag_flg
+     * @param int $mailmag_flg
+     *
      * @return MailmagaCustomer
      */
     public function setMailmagaFlg($mailmaga_flg)
@@ -122,9 +124,10 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set del_flg
+     * Set del_flg.
      *
-     * @param  integer $delFlg
+     * @param int $delFlg
+     *
      * @return Payment
      */
     public function setDelFlg($delFlg)
@@ -135,9 +138,9 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get del_flg
+     * Get del_flg.
      *
-     * @return integer
+     * @return int
      */
     public function getDelFlg()
     {
@@ -145,9 +148,10 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set create_date
+     * Set create_date.
      *
-     * @param  \DateTime $createDate
+     * @param \DateTime $createDate
+     *
      * @return Payment
      */
     public function setCreateDate($createDate)
@@ -158,7 +162,7 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get create_date
+     * Get create_date.
      *
      * @return \DateTime
      */
@@ -168,9 +172,10 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set update_date
+     * Set update_date.
      *
-     * @param  \DateTime $updateDate
+     * @param \DateTime $updateDate
+     *
      * @return Payment
      */
     public function setUpdateDate($updateDate)
@@ -181,7 +186,7 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get update_date
+     * Get update_date.
      *
      * @return \DateTime
      */
@@ -189,5 +194,4 @@ class MailmagaCustomer extends \Eccube\Entity\AbstractEntity
     {
         return $this->update_date;
     }
-
 }

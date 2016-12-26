@@ -42,7 +42,7 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
 
         $options = array(
             'label' => 'メールマガジン送付について',
-            'choices'   => array(
+            'choices' => array(
                 '1' => '受け取る',
                 '0' => '受け取らない',
             ),
@@ -61,7 +61,6 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
 
         $builder->add('mailmaga_flg', 'choice', $options);
     }
-
 
     public function getExtendedType()
     {

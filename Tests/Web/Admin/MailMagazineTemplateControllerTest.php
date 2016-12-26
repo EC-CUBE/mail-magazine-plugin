@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of EC-CUBE
+ * This file is part of EC-CUBE.
  *
  * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
  * http://www.lockon.co.jp/
@@ -18,15 +18,16 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     protected function createFormData()
     {
         $fake = $this->getFaker();
+
         return array(
-            'subject'   => $fake->word,
-            'body'      => $fake->word,
-            '_token'     => 'dummy'
+            'subject' => $fake->word,
+            'body' => $fake->word,
+            '_token' => 'dummy',
         );
     }
+
     /**
-     * Test routing
-     *
+     * Test routing.
      */
     public function testRoutingMailMagazineTemplate()
     {
@@ -77,7 +78,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     {
         $this->setExpectedException('\Symfony\Component\HttpKernel\Exception\BadRequestHttpException');
         $this->client->request('GET',
-            $this->app->url('plugin_mail_magazine_template_edit', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_template_edit', array('id' => null))
         );
     }
 
@@ -155,7 +156,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
 
         $this->client->request('GET',
-            $this->app->url('plugin_mail_magazine_template_preview', array( 'id' => $MailTemplate->getId()))
+            $this->app->url('plugin_mail_magazine_template_preview', array('id' => $MailTemplate->getId()))
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -164,7 +165,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testPreview_IdIsNull()
     {
         $this->client->request('GET',
-            $this->app->url('plugin_mail_magazine_template_preview', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_template_preview', array('id' => null))
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
@@ -173,7 +174,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testPreview_IdIncorrect()
     {
         $this->client->request('GET',
-            $this->app->url('plugin_mail_magazine_template_preview', array( 'id' => 9999999))
+            $this->app->url('plugin_mail_magazine_template_preview', array('id' => 9999999))
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
@@ -184,7 +185,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
 
         $this->client->request('POST',
-            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => $MailTemplate->getId()))
+            $this->app->url('plugin_mail_magazine_template_delete', array('id' => $MailTemplate->getId()))
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
@@ -193,7 +194,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testDelete_IdIsNull()
     {
         $this->client->request('POST',
-            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => null))
+            $this->app->url('plugin_mail_magazine_template_delete', array('id' => null))
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
@@ -202,7 +203,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testDelete_IdIncorrect()
     {
         $this->client->request('POST',
-            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => 9999999))
+            $this->app->url('plugin_mail_magazine_template_delete', array('id' => 9999999))
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
@@ -211,10 +212,9 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     public function testDelete_IdIsZero()
     {
         $this->client->request('POST',
-            $this->app->url('plugin_mail_magazine_template_delete', array( 'id' => 0))
+            $this->app->url('plugin_mail_magazine_template_delete', array('id' => 0))
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_template')));
     }
-
 }

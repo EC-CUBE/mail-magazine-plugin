@@ -19,7 +19,6 @@ use Doctrine\DBAL\Schema\Schema;
  */
 class Version201509010000 extends AbstractMigration
 {
-
     /**
      * @param Schema $schema
      */
@@ -61,7 +60,7 @@ class Version201509010000 extends AbstractMigration
      */
     protected function createPlgMailmagaCustomer(Schema $schema)
     {
-        $table = $schema->createTable("plg_mailmaga_customer");
+        $table = $schema->createTable('plg_mailmaga_customer');
         $table->addColumn('id', 'integer', array(
             'autoincrement' => true,
         ));

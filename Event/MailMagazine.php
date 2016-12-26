@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Plugin\MailMagazine\Event;
-
 
 use Eccube\Entity\Customer;
 use Eccube\Event\EventArgs;
@@ -10,9 +8,9 @@ use Eccube\Event\TemplateEvent;
 
 class MailMagazine extends CommonEvent
 {
-
     /**
-     * 新規会員登録画面のイベント処理
+     * 新規会員登録画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderEntryIndex(TemplateEvent $event)
@@ -21,7 +19,8 @@ class MailMagazine extends CommonEvent
     }
 
     /**
-     * 新規会員登録確認画面のイベント処理
+     * 新規会員登録確認画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderEntryConfirm(TemplateEvent $event)
@@ -30,7 +29,8 @@ class MailMagazine extends CommonEvent
     }
 
     /**
-     * 新規会員登録完了時のイベント処理
+     * 新規会員登録完了時のイベント処理.
+     *
      * @param EventArgs $event
      */
     public function onFrontEntryIndexComplete(EventArgs $event)
@@ -42,7 +42,8 @@ class MailMagazine extends CommonEvent
     }
 
     /**
-     * 会員情報編集画面のイベント処理
+     * 会員情報編集画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderMypageChange(TemplateEvent $event)
@@ -51,7 +52,8 @@ class MailMagazine extends CommonEvent
     }
 
     /**
-     * 会員情報編集完了時のイベント処理
+     * 会員情報編集完了時のイベント処理.
+     *
      * @param EventArgs $event
      */
     public function onFrontMypageChangeIndexComplete(EventArgs $event)
@@ -65,7 +67,8 @@ class MailMagazine extends CommonEvent
     }
 
     /**
-     * 管理用会員編集画面のイベント処理
+     * 管理用会員編集画面のイベント処理.
+     *
      * @param TemplateEvent $event
      */
     public function onRenderAdminCustomerEdit(TemplateEvent $event)
@@ -74,7 +77,8 @@ class MailMagazine extends CommonEvent
     }
 
     /**
-     * 管理用会員編集完了時のイベント処理
+     * 管理用会員編集完了時のイベント処理.
+     *
      * @param EventArgs $event
      */
     public function onAdminCustomerEditIndexComplete(EventArgs $event)
