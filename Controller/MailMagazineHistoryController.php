@@ -258,6 +258,7 @@ class MailMagazineHistoryController
         );
 
         return $app->render('MailMagazine/Resource/template/admin/hitsory_result.twig', array(
+            'historyId' => $id,
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
             'page_count' => $page_count,
