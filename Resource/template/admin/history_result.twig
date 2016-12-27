@@ -38,7 +38,7 @@
                                 <ul class="dropdown-menu">
                                     {% endfor %}
                                     {% for pageMax in pageMaxis if pageMax.name != page_count %}
-                                        <li><a href="{{ path('plugin_mail_magazine_history_result', {'id': app.request.query.get('id'), 'page_no': 1, 'page_count': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
+                                        <li><a href="{{ path('plugin_mail_magazine_history_result', {'id': historyId, 'page_no': 1, 'page_count': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
                                     {% endfor %}
                                 </ul>
                             </li>
@@ -80,7 +80,23 @@
                     </div>
                 </div>
             </div>
-            {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine_history_result' } %}
+            <div id="pagination_wrap" class="box-footer">
+                <div class="text-center">
+                    <ul class="pagination">
+                        {% if pagination.paginationData.previous is defined %}
+                            <li class="pagenation__item-previous"><a href="{{ path('plugin_mail_magazine_history_result', { 'id': historyId }|merge({'page_no': pagination.paginationData.previous})) }}" aria-label="Previous"><span aria-hidden="true">前へ</span></a></li>
+                        {% endif %}
+
+                        {% for page in pagination.paginationData.pagesInRange %}
+                            <li{% if page == pagination.paginationData.current %} class="pagenation__item active"{% endif %}><a href="{{ path('plugin_mail_magazine_history_result', { 'id': historyId }|merge({'page_no': page})) }}"><span>{{ page }}</span></a></li>
+                        {% endfor %}
+
+                        {% if pagination.paginationData.next is defined %}
+                            <li class="pagenation__item-next"><a href="{{ path('plugin_mail_magazine_history_result', { 'id': historyId }|merge({'page_no': pagination.paginationData.next})) }}" aria-label="Next"><span aria-hidden="true">次へ</span></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
         {% else %}
             <div class="box-header with-arrow">
                 <h3 class="box-title">該当するデータがありませんでした。</h3>

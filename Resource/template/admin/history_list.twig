@@ -133,7 +133,7 @@ $(function () {
                                                             <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;">配信条件</a>
                                                         </li>
                                                         <li>
-                                                            <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_result') }}?id={{ SendHistory.id }}'); return false;">配信結果</a>
+                                                            <a href="{{ url('plugin_mail_magazine_history_result', { id: SendHistory.id }) }}">配信結果</a>
                                                         </li>
                                                         <li>
                                                             <a href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">削除</a>
