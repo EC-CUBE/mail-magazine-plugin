@@ -148,31 +148,38 @@ class MailMagazineController
 
         $form->handleRequest($request);
 
-        $newSubject = '';
-        $newBody = '';
-        $newHtmlBody = '';
+        // テンプレート選択によるPOSTの場合はテンプレートからデータを取得する
+        if ($request->get('mode') == 'select') {
+            $newTemplate = $form->get('template')->getData();
+            $form = $app['form.factory']->createBuilder('mail_magazine', null)->getForm();
 
-        // テンプレートが選択されている場合はテンプレートデータを取得する
-        if ($id) {
-            // テンプレート選択から遷移した場合の処理
-            // 選択されたテンプレートのデータを取得する
-            $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
+            if ($id) {
+                // テンプレート「無し」が選択された場合は、選択されたテンプレートのデータを取得する
+                $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
 
-            if (is_null($Template)) {
-                throw new NotFoundHttpException();
+                if (is_null($Template)) {
+                    throw new NotFoundHttpException();
+                }
+
+                // テンプレートを表示する
+                $newSubject = $Template->getSubject();
+                $newBody = $Template->getBody();
+                $newHtmlBody = $Template->getHtmlBody();
+
+                $form->get('template')->setData($newTemplate);
+                $form->get('subject')->setData($newSubject);
+                $form->get('body')->setData($newBody);
+                $form->get('htmlBody')->setData($newHtmlBody);
+            } else {
+                // テンプレート「無し」が選択された場合は、フォームをクリアする
+                $form->get('subject')->setData('');
+                $form->get('body')->setData('');
+                $form->get('htmlBody')->setData('');
             }
-
-            // テンプレートを表示する
-            $newSubject = $Template->getSubject();
-            $newBody = $Template->getBody();
-            $newHtmlBody = $Template->getHtmlBody();
         }
 
         return $app->render('MailMagazine/Resource/template/admin/template_select.twig', array(
                 'form' => $form->createView(),
-                'new_subject' => $newSubject,
-                'new_body' => $newBody,
-                'new_htmlBody' => $newHtmlBody,
                 'id' => $id,
         ));
     }
