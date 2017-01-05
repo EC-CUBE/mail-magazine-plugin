@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Form\Extension;
 
 use Eccube\Entity\Customer;
 use Plugin\MailMagazine\Entity\MailmagaCustomer;
+use Plugin\MailMagazine\Util\Version;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -73,7 +74,11 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
             $choices = $view->vars['form']->children['mailmaga_flg']->vars['choices'];
             foreach ($choices as $choice) {
                 if ($choice->value == $value) {
-                    $view->vars['form']->children['mailmaga_flg']->vars['data'] = array('name' => $choice->label, 'id' => $value);
+                    if (Version::isSupport('3.0.13', '<')) {
+                        $view->vars['form']->children['mailmaga_flg']->vars['data'] = array('name' => $choice->label, 'id' => $value);
+                    } else {
+                        $view->vars['form']->children['mailmaga_flg']->vars['data'] = $choice->value;
+                    }
                     break;
                 }
             }
