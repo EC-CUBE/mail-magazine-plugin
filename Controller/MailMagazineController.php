@@ -151,7 +151,9 @@ class MailMagazineController
         // テンプレート選択によるPOSTの場合はテンプレートからデータを取得する
         if ($request->get('mode') == 'select') {
             $newTemplate = $form->get('template')->getData();
+            $data = $form->getData();
             $form = $app['form.factory']->createBuilder('mail_magazine', null)->getForm();
+            $form->setData($data);
 
             if ($id) {
                 // テンプレート「無し」が選択された場合は、選択されたテンプレートのデータを取得する
