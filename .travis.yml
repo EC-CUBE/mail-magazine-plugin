@@ -24,6 +24,9 @@ env:
     # ec-cube 3.0.9
     - ECCUBE_VERSION=3.0.9 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - ECCUBE_VERSION=3.0.9 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    # ec-cube 3.0.8
+    - ECCUBE_VERSION=3.0.8-for-plugin-test DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - ECCUBE_VERSION=3.0.8-for-plugin-test DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 
 matrix:
   fast_finish: true
@@ -33,7 +36,11 @@ matrix:
       sudo: required
       dist: trusty
   exclude:
-    # ec-cube 3.0.9-3.0.10 はphp7非対応のため実行しない
+    # ec-cube 3.0.8-3.0.10 はphp7非対応のため実行しない
+    - php: 7.0
+      env: ECCUBE_VERSION=3.0.8-for-plugin-test DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - php: 7.0
+      env: ECCUBE_VERSION=3.0.8-for-plugin-test DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
     - php: 7.0
       env: ECCUBE_VERSION=3.0.9 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - php: 7.0
