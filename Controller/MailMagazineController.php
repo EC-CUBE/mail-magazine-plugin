@@ -12,7 +12,6 @@
 namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
-use Eccube\Util\FormUtil;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Service\MailMagazineService;
@@ -57,7 +56,7 @@ class MailMagazineController
             // sessionのデータ保持
             if (Version::isSupportNewSession()) {
                 // Change new session rule
-                $viewData = FormUtil::getViewData($searchForm);
+                $viewData = \Eccube\Util\FormUtil::getViewData($searchForm);
                 $session->set('plugin.mailmagazine.search', $viewData);
             } else {
                 $session->set('plugin.mailmagazine.search', $searchData);
@@ -85,7 +84,7 @@ class MailMagazineController
                     $page_max = empty($pcount) ? $page_max : $pcount;
 
                     if (Version::isSupportNewSession()) {
-                        $searchData = FormUtil::submitAndGetData($searchForm, $searchData);
+                        $searchData = \Eccube\Util\FormUtil::submitAndGetData($searchForm, $searchData);
                     }
 
                     $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
