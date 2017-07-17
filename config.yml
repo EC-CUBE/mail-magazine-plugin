@@ -1,7 +1,7 @@
 name: MailMagazine
 event: MailMagazine
 code: MailMagazine
-version: 1.0.0
+version: 1.0.1
 service:
     - MailMagazineServiceProvider
 orm.path:
