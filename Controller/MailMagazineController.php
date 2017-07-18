@@ -15,16 +15,16 @@ use Eccube\Application;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Service\MailMagazineService;
+use Plugin\MailMagazine\Util\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Class MailMagazineController
+ */
 class MailMagazineController
 {
-    public function __construct()
-    {
-    }
-
     /**
      * 配信内容設定検索画面を表示する.
      * 左ナビゲーションの選択はGETで遷移する.
@@ -52,9 +52,15 @@ class MailMagazineController
             if ($searchForm->isValid()) {
                 $searchData = $searchForm->getData();
             }
-//            dump($request->get('mail_magazine'));exit;
+
             // sessionのデータ保持
-            $session->set('plugin.mailmagazine.search', $searchData);
+            if (Version::isSupportNewSession()) {
+                // Change new session rule
+                $viewData = \Eccube\Util\FormUtil::getViewData($searchForm);
+                $session->set('plugin.mailmagazine.search', $viewData);
+            } else {
+                $session->set('plugin.mailmagazine.search', $searchData);
+            }
 
             // 検索ボタンクリック時の処理
             $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
@@ -77,6 +83,10 @@ class MailMagazineController
                     $pcount = $request->get('page_max');
                     $page_max = empty($pcount) ? $page_max : $pcount;
 
+                    if (Version::isSupportNewSession()) {
+                        $searchData = \Eccube\Util\FormUtil::submitAndGetData($searchForm, $searchData);
+                    }
+
                     $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
                     $qb = $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
                         ->getQueryBuilderBySearchData($searchData);
@@ -87,26 +97,28 @@ class MailMagazineController
                         $page_max
                     );
 
-                    if (isset($searchData['sex']) && (count($searchData['sex']) > 0)) {
-                        $sex_ids = array();
-                        foreach ($searchData['sex'] as $Sex) {
-                            $sex_ids[] = $Sex->getId();
+                    if (!Version::isSupportNewSession()) {
+                        if (isset($searchData['sex']) && (count($searchData['sex']) > 0)) {
+                            $sex_ids = array();
+                            foreach ($searchData['sex'] as $Sex) {
+                                $sex_ids[] = $Sex->getId();
+                            }
+                            $searchData['sex'] = $app['eccube.repository.master.sex']
+                                ->findBy(array('id' => $sex_ids));
                         }
-                        $searchData['sex'] = $app['eccube.repository.master.sex']
-                            ->findBy(array('id' => $sex_ids));
-                    }
 
-                    if (isset($searchData['pref'])) {
-                        $searchData['pref'] = $app['eccube.repository.master.pref']
-                            ->find($searchData['pref']->getId());
-                    }
+                        if (isset($searchData['pref'])) {
+                            $searchData['pref'] = $app['eccube.repository.master.pref']
+                                ->find($searchData['pref']->getId());
+                        }
 
-                    if (isset($searchData['pagemax'])) {
-                        $searchData['pagemax'] = $app['eccube.repository.master.page_max']
-                            ->find($searchData['pagemax']->getId());
-                    }
+                        if (isset($searchData['pagemax'])) {
+                            $searchData['pagemax'] = $app['eccube.repository.master.page_max']
+                                ->find($searchData['pagemax']->getId());
+                        }
 
-                    $searchForm->setData($searchData);
+                        $searchForm->setData($searchData);
+                    }
                 }
             }
         }
