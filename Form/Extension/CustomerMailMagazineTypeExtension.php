@@ -30,7 +30,7 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
     {
         $mailmagaFlg = null;
         /** @var Customer $Customer */
-        $Customer = $options['data'];
+        $Customer = isset($options['data']) ? $options['data'] : null;
         if (!is_null($Customer)) {
             $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
             /** @var MailmagaCustomer $MailmagaCustomer */
