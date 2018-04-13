@@ -31,27 +31,40 @@ env:
     - ECCUBE_VERSION=3.0.16 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 
 matrix:
+  fail_fast: true
   fast_finish: true
   include:
     - php: 5.3
       dist: precise
+    - php: 7.1
+      env: ECCUBE_VERSION=master DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres COVERAGE=true
   exclude:
-    # ec-cube 3.0.9-3.0.10 はphp7非対応のため実行しない
+    - php: 7.1
+      env: ECCUBE_VERSION=master DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    # ec-cube 3.0.8-3.0.10 はphp7非対応のため実行しない
+    - php: 7.0
+      env: ECCUBE_VERSION=3.0.8-for-plugin-test DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - php: 7.0
+      env: ECCUBE_VERSION=3.0.8-for-plugin-test DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    - php: 7.1
+      env: ECCUBE_VERSION=3.0.8-for-plugin-test DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - php: 7.1
+      env: ECCUBE_VERSION=3.0.8-for-plugin-test DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
     - php: 7.0
       env: ECCUBE_VERSION=3.0.9 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
     - php: 7.0
       env: ECCUBE_VERSION=3.0.9 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
-    - php: 7.0
-      env: ECCUBE_VERSION=3.0.10 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
-    - php: 7.0
-      env: ECCUBE_VERSION=3.0.10 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
+    - php: 7.1
+      env: ECCUBE_VERSION=3.0.9 DB=mysql USER=root DBNAME=myapp_test DBPASS=' ' DBUSER=root
+    - php: 7.1
+      env: ECCUBE_VERSION=3.0.9 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 
 install:
   - gem install mime-types -v 2.99.1
   - gem install mailcatcher
 
 before_script:
-  - if [[ $PHP_SAPI = 'phpdbg' ]]; then echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini ; fi
+  - if [[ $COVERAGE ]]; then echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini ; fi
   # archive plugin
   - tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
   # clone ec-cube
@@ -73,16 +86,20 @@ before_script:
   - mailcatcher
 
 script:
-  # exec phpunit on ec-cube
-  - if [[ $PHP_SAPI = 'phpdbg' ]]; then phpdbg -qrr ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover ; fi
-  - if [[ $PHP_SAPI != 'phpdbg' ]]; then phpunit app/Plugin/${PLUGIN_CODE}/Tests ; fi
+ # exec phpunit on ec-cube
+   - if [ !$COVERAGE ]; then ./vendor/bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests; fi
+   - if [ $COVERAGE ]; then ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover; fi
 
 after_script:
   # disable plugin
   - php app/console plugin:develop disable --code=${PLUGIN_CODE}
   # uninstall plugin
-  - php app/console plugin:develop uninstall --code=${PLUGIN_CODE} --uninstall-force=true
+  - php app/console plugin:develop uninstall --code=${PLUGIN_CODE}
+  # re install plugin
+  - php app/console plugin:develop install --code=${PLUGIN_CODE}
+  # re enable plugin
+  - php app/console plugin:develop enable --code=${PLUGIN_CODE}
 
 after_success:
   # for coveralls
-  - if [[ $PHP_SAPI = 'phpdbg' ]]; then php vendor/bin/coveralls -v -x coverage.clover ; fi
+  - if [ $COVERAGE ]; then php vendor/bin/coveralls -v -x coverage.clover; fi
