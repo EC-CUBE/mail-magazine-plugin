@@ -184,54 +184,8 @@ class MailMagazineServiceProvider implements ServiceProviderInterface
             return new \Plugin\MailMagazine\Service\MailMagazineService($app);
         });
 
-        // -----------------------------
-        // メッセージ登録
-        // -----------------------------
-        $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
-        $app['translator']->addResource('yaml', $file, $app['locale']);
 
-        // メニュー登録
-        $app['config'] = $app->share($app->extend('config', function ($config) {
-            $addNavi = array(
-                'id' => 'mailmagazine',
-                'name' => 'メルマガ管理',
-                'has_child' => true,
-                'icon' => 'cb-comment',
-                'child' => array(
-                    array(
-                        'id' => 'mailmagazine',
-                        'name' => '配信',
-                        'url' => 'plugin_mail_magazine',
-                    ),
-                    array(
-                        'id' => 'mailmagazine_template',
-                        'name' => 'テンプレート設定',
-                        'url' => 'plugin_mail_magazine_template',
-                    ),
-                    array(
-                        'id' => 'mailmagazine_history',
-                        'name' => '配信履歴',
-                        'url' => 'plugin_mail_magazine_history',
-                    ),
-                ),
-            );
 
-            $nav = $config['nav'];
-            foreach ($nav as $key => $val) {
-                if ('setting' == $val['id']) {
-                    array_splice($nav, $key, 0, array($addNavi));
-                    break;
-                }
-            }
-            $config['nav'] = $nav;
-
-            return $config;
-        }));
-
-        // initialize logger (for 3.0.0 - 3.0.8)
-        if (!method_exists('Eccube\Application', 'getInstance')) {
-            eccube_log_init($app);
-        }
     }
 
     public function boot(BaseApplication $app)

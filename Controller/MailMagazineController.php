@@ -12,10 +12,13 @@
 namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Eccube\Controller\AbstractController;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Service\MailMagazineService;
-use Plugin\MailMagazine\Util\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -23,19 +26,23 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 /**
  * Class MailMagazineController
  */
-class MailMagazineController
+class MailMagazineController extends AbstractController
 {
     /**
      * 配信内容設定検索画面を表示する.
      * 左ナビゲーションの選択はGETで遷移する.
      *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine", name="plugin_mail_magazine")
+     * @Template("@MailMagazine/admin/index.twig")
+     *
      * @param Application $app
      * @param Request     $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response|array
      */
     public function index(Application $app, Request $request)
     {
+        die(var_dump(__METHOD__));
         $session = $request->getSession();
         $page_no = $request->get('page_no');
         $pageMaxis = $app['eccube.repository.master.page_max']->findAll();
@@ -123,28 +130,33 @@ class MailMagazineController
             }
         }
 
-        return $app->render(
-            'MailMagazine/Resource/template/admin/index.twig',
-            array('searchForm' => $searchForm->createView(),
-                'pagination' => $pagination,
-                'pageMaxis' => $pageMaxis,
-                'page_count' => $page_max,
-            )
-        );
+        return [
+            'searchForm' => $searchForm->createView(),
+            'pagination' => $pagination,
+            'pageMaxis' => $pageMaxis,
+            'page_count' => $page_max,
+        ];
     }
 
     /**
      * テンプレート選択
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/select/{id}",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_select"
+     * )
+     * @Template("@MailMagazine/admin/template_select.twig")
+     *
      * @param Application $app
      * @param Request     $request
      * @param string      $id
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response|array
      */
     public function select(Application $app, Request $request, $id = null)
     {
+        die(var_dump(__METHOD__));
         /** @var MailMagazineTemplate $Template */
         $Template = null;
 
@@ -192,15 +204,21 @@ class MailMagazineController
             }
         }
 
-        return $app->render('MailMagazine/Resource/template/admin/template_select.twig', array(
-                'form' => $form->createView(),
-                'id' => $id,
-        ));
+        return [
+            'form' => $form->createView(),
+            'id' => $id,
+        ];
     }
 
     /**
      * 確認画面の表示
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/confirm/{id}",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_confirm"
+     * )
+     * @Template("@MailMagazine/admin/confirm.twig")
      *
      * @param Application $app
      * @param Request     $request
@@ -208,6 +226,7 @@ class MailMagazineController
      */
     public function confirm(Application $app, Request $request, $id = null)
     {
+        die(var_dump(__METHOD__));
         // POSTでない場合は終了する
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -261,19 +280,21 @@ class MailMagazineController
         /** @var MailMagazineService $service */
         $service = $this->getMailMagazineService($app);
 
-        return $app->render('MailMagazine/Resource/template/admin/confirm.twig', array(
-                'form' => $form->createView(),
-                'subject_itm' => $form['subject']->getData(),
-                'body_itm' => $form['body']->getData(),
-                'htmlBody_itm' => $form['htmlBody']->getData(),
-                'id' => $id,
-                'testMailTo' => $service->getAdminEmail(),
-        ));
+        return [
+            'form' => $form->createView(),
+            'subject_itm' => $form['subject']->getData(),
+            'body_itm' => $form['body']->getData(),
+            'htmlBody_itm' => $form['htmlBody']->getData(),
+            'id' => $id,
+            'testMailTo' => $service->getAdminEmail(),
+        ];
     }
 
     /**
      * 配信前処理
      * 配信履歴データを作成する.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/prepare", name="plugin_mail_magazine_prepare")
      *
      * @param Application $app
      * @param Request     $request
@@ -282,6 +303,7 @@ class MailMagazineController
      */
     public function prepare(Application $app, Request $request)
     {
+        die(var_dump(__METHOD__));
         if ('POST' != $request->getMethod()) {
             throw new BadRequestHttpException();
         }
@@ -325,6 +347,8 @@ class MailMagazineController
      * 配信終了後配信履歴に遷移する
      * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる.
      *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/commit", name="plugin_mail_magazine_commit")
+     *
      * @param Application $app
      * @param Request     $request
      *
@@ -332,6 +356,7 @@ class MailMagazineController
      */
     public function commit(Application $app, Request $request)
     {
+        die(var_dump(__METHOD__));
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -371,6 +396,8 @@ class MailMagazineController
 
     /**
      * テストメール送信
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/test", name="plugin_mail_magazine_test")
      *
      * @param Application $app
      * @param Request     $request

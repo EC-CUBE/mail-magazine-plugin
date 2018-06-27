@@ -2,10 +2,6 @@ name: MailMagazine
 event: MailMagazine
 code: MailMagazine
 version: 1.0.1
-service:
-    - MailMagazineServiceProvider
-orm.path:
-    - /Resource/doctrine
 #form:
 #    onSetData:
 #        Form\Type\PaymentFragmentForm

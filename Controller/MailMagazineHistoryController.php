@@ -13,6 +13,9 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
@@ -29,9 +32,13 @@ class MailMagazineHistoryController
 
     /**
      * 配信履歴一覧.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history", name="plugin_mail_magazine_history")
+     * @Template("@MailMagazine/admin/history_list.twig")
      */
     public function index(Application $app, Request $request)
     {
+        die(var_dump(__METHOD__));
         // dtb_send_historyからdel_flg = 0のデータを抽出
         // リストをView変数に突っ込む
         $pagination = null;
@@ -56,16 +63,24 @@ class MailMagazineHistoryController
                 empty($searchData['pagemax']) ? 10 : $searchData['pagemax']->getId()
         );
 
-        return $app->render('MailMagazine/Resource/template/admin/history_list.twig', array(
+        return [
             'pagination' => $pagination,
-        ));
+        ];
     }
 
     /**
      * プレビュー
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/preview",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_history_preview"
+     * )
+     * @Template("@MailMagazine/admin/history_preview.twig")
+     *
      */
     public function preview(Application $app, Request $request, $id)
     {
+        die(var_dump(__METHOD__));
         // dtb_send_historyから対象レコード抽出
         // subject/bodyを抽出し、以下のViewへ渡す
         // パラメータ$idにマッチするデータが存在するか判定
@@ -84,13 +99,19 @@ class MailMagazineHistoryController
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
-        return $app->render('MailMagazine/Resource/template/admin/history_preview.twig', array(
+        return [
             'history' => $sendHistory,
-        ));
+        ];
     }
 
     /**
      * 配信条件を表示する.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/condition",
+     *      requirements={"id":"\d+|"},
+     *      name="plugin_mail_magazine_history_condition",
+     * )
+     * @Template("@MailMagazine/admin/history_condition.twig")
      *
      * @param Application $app
      * @param Request     $request
@@ -98,10 +119,11 @@ class MailMagazineHistoryController
      *
      * @throws BadRequestHttpException
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|array
      */
     public function condition(Application $app, Request $request, $id)
     {
+        die(var_dump(__METHOD__));
         // dtb_send_historyから対象レコード抽出
         // dtb_send_history.search_dataを逆シリアライズした上で、各変数をViewに渡す
         if (!$id) {
@@ -127,9 +149,9 @@ class MailMagazineHistoryController
         // 必要な項目のみ
         $displayData = $this->searchDataToDisplayData($searchData);
 
-        return $app->render('MailMagazine/Resource/template/admin/history_condition.twig', array(
+        return [
             'search_data' => $displayData,
-        ));
+        ];
     }
 
     /**
@@ -173,6 +195,11 @@ class MailMagazineHistoryController
      * 配信履歴を論理削除する
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/delete",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_history_delete"
+     * )
+     *
      * @param Application $app
      * @param Request     $request
      * @param unknown     $id
@@ -183,6 +210,7 @@ class MailMagazineHistoryController
      */
     public function delete(Application $app, Request $request, $id)
     {
+        die(var_dump(__METHOD__));
         // POSTかどうか判定
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -218,8 +246,16 @@ class MailMagazineHistoryController
         return $app->redirect($app->url('plugin_mail_magazine_history'));
     }
 
+    /**
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/retry", name="plugin_mail_magazine_history_retry")
+     *
+     * @param Application $app
+     * @param Request $request
+     * @return mixed
+     */
     public function retry(Application $app, Request $request)
     {
+        die(var_dump(__METHOD__));
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -237,8 +273,20 @@ class MailMagazineHistoryController
         return $app->json(array('status' => true));
     }
 
+    /**
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_history_result"
+     * )
+     * @Template("@MailMagazine/admin/history_result.twig")
+     *
+     * @param Application $app
+     * @param Request $request
+     * @return mixed
+     */
     public function result(Application $app, Request $request)
     {
+        die(var_dump(__METHOD__));
         $id = $request->get('id');
         $resultFile = $this->getMailMagazineService($app)->getHistoryFileName($id, false);
         /** @var MailMagazineSendHistory $History */
@@ -257,12 +305,12 @@ class MailMagazineHistoryController
             array('total' => $History->getCompleteCount())
         );
 
-        return $app->render('MailMagazine/Resource/template/admin/history_result.twig', array(
+        return [
             'historyId' => $id,
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
             'page_count' => $page_count,
-        ));
+        ];
     }
 
     /**

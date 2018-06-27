@@ -16,6 +16,9 @@ use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class MailMagazineTemplateController
 {
@@ -25,20 +28,31 @@ class MailMagazineTemplateController
 
     /**
      * 一覧表示.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template", name="plugin_mail_magazine_template")
+     * @Template("@MailMagazine/admin/template_list.twig")
+     *
      */
     public function index(Application $app, Request $request)
     {
+        die(var_dump(__METHOD__));
         // dtb_mailmagazine_templateからdel_flg != 0のデータを引っ張る
         // 下のarrayにViewの変数名と共に突っ込む
         $templateList = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->findAll();
 
-        return $app->render('MailMagazine/Resource/template/admin/template_list.twig', array(
-                'TemplateList' => $templateList,
-        ));
+        return [
+            'TemplateList' => $templateList,
+        ];
     }
 
     /**
      * preview画面表示.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/edit",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_template_edit"
+     * )
+     * @Template("@MailMagazine/admin/preview.twig")
      *
      * @param Application $app
      * @param Request     $request
@@ -48,6 +62,7 @@ class MailMagazineTemplateController
      */
     public function preview(Application $app, Request $request, $id)
     {
+        die(var_dump(__METHOD__));
         // id の存在確認
         // nullであれば一覧に戻る
         if (is_null($id) || strlen($id) == 0) {
@@ -68,13 +83,18 @@ class MailMagazineTemplateController
         }
 
         // プレビューページ表示
-        return $app->render('MailMagazine/Resource/template/admin/preview.twig', array(
-                'Template' => $template,
-        ));
+        return [
+            'Template' => $template,
+        ];
     }
 
     /**
      * メルマガテンプレートを論理削除.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/delete",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_template_delete"
+     * )
      *
      * @param Application $app
      * @param Request     $request
@@ -82,6 +102,7 @@ class MailMagazineTemplateController
      */
     public function delete(Application $app, Request $request, $id)
     {
+        die(var_dump(__METHOD__));
         // POSTかどうか判定
         // パラメータ$idにマッチするデータが存在するか判定
         // POSTかつ$idに対応するdtb_mailmagazine_templateのレコードがあれば、del_flg = 1に設定して更新
@@ -114,12 +135,19 @@ class MailMagazineTemplateController
     /**
      * テンプレート編集画面表示.
      *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/edit",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_template_edit"
+     * )
+     * @Template("@MailMagazine/admin/template_edit.twig")
+     *
      * @param Application $app
      * @param Request     $request
      * @param unknown     $id
      */
     public function edit(Application $app, Request $request, $id)
     {
+        die(var_dump(__METHOD__));
         // POST以外はエラーにする
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -149,14 +177,19 @@ class MailMagazineTemplateController
             ->createBuilder('mail_magazine_template_edit', $Template)
             ->getForm();
 
-        return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
-                'form' => $form->createView(),
-                'Template' => $Template,
-        ));
+        return [
+            'form' => $form->createView(),
+            'Template' => $Template,
+        ];
     }
 
     /**
      * テンプレート編集確定処理.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/commit/{id}",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_template_commit"
+     * )
      *
      * @param Application $app
      * @param Request     $request
@@ -164,6 +197,7 @@ class MailMagazineTemplateController
      */
     public function commit(Application $app, Request $request, $id)
     {
+        die(var_dump(__METHOD__));
         /** @var MailMagazineTemplateRepository $templateRepository */
         $templateRepository = $app['eccube.plugin.mail_magazine.repository.mail_magazine'];
         $Template = $id ? $templateRepository->find($id) : new MailMagazineTemplate();
@@ -231,6 +265,9 @@ class MailMagazineTemplateController
     /**
      * メルマガテンプレート登録画面を表示する.
      *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/regist", name="plugin_mail_magazine_template_regist")
+     * @Template("@MailMagazine/admin/template_edit.twig")
+     *
      * @param Application $app
      * @param Request     $request
      */
@@ -243,9 +280,9 @@ class MailMagazineTemplateController
             ->createBuilder('mail_magazine_template_edit', $Template)
             ->getForm();
 
-        return $app->render('MailMagazine/Resource/template/admin/template_edit.twig', array(
-                'form' => $form->createView(),
-                'Template' => $Template,
-        ));
+        return [
+            'form' => $form->createView(),
+            'Template' => $Template,
+        ];
     }
 }
