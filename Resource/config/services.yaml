@@ -1,0 +1,3 @@
+services:
+    Plugin\MailMagazine\Entity\AdminCustomerQueryCustomizer:
+        tags: ['eccube.query_customizer']

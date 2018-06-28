@@ -17,6 +17,7 @@ namespace Plugin\MailMagazine\Form\Type;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class MailMagazineTemplateType extends AbstractType
 {
@@ -54,6 +55,6 @@ class MailMagazineTemplateType extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 }

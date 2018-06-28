@@ -13,7 +13,6 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Eccube\Controller\AbstractController;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
@@ -22,6 +21,13 @@ use Plugin\MailMagazine\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Eccube\Repository\Master\PageMaxRepository;
+use Eccube\Util\FormUtil;
+use Eccube\Repository\CustomerRepository;
+use Knp\Component\Pager\Paginator;
+use Plugin\MailMagazine\Form\Type\MailMagazineType;
+use Doctrine\ORM\QueryBuilder;
+use Eccube\Common\Constant;
 
 /**
  * Class MailMagazineController
@@ -29,112 +35,112 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class MailMagazineController extends AbstractController
 {
     /**
+     * @var PageMaxRepository
+     */
+    protected $pageMaxRepository;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
+     * MailMagazineController constructor.
+     *
+     * @param PageMaxRepository $pageMaxRepository
+     * @param CustomerRepository $customerRepository
+     */
+    public function __construct(
+        PageMaxRepository $pageMaxRepository,
+        CustomerRepository $customerRepository
+    ) {
+        $this->pageMaxRepository = $pageMaxRepository;
+        $this->customerRepository = $customerRepository;
+    }
+
+    /**
      * 配信内容設定検索画面を表示する.
      * 左ナビゲーションの選択はGETで遷移する.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine", name="plugin_mail_magazine")
      * @Template("@MailMagazine/admin/index.twig")
      *
-     * @param Application $app
-     * @param Request     $request
+     * @param Request $request
+     * @param Paginator $paginator
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      */
-    public function index(Application $app, Request $request)
+    public function index(Request $request, Paginator $paginator)
     {
-        die(var_dump(__METHOD__));
         $session = $request->getSession();
-        $page_no = $request->get('page_no');
-        $pageMaxis = $app['eccube.repository.master.page_max']->findAll();
-        $page_max = $app['config']['default_page_count'];
-
-        $pagination = null;
-        $searchForm = $app['form.factory']
-            ->createBuilder('mail_magazine')
-            ->getForm();
-
-        if ('POST' === $request->getMethod()) {
-            $searchForm->handleRequest($request);
-            $searchData = array();
-            if ($searchForm->isValid()) {
-                $searchData = $searchForm->getData();
-            }
-
-            // sessionのデータ保持
-            if (Version::isSupportNewSession()) {
-                // Change new session rule
-                $viewData = \Eccube\Util\FormUtil::getViewData($searchForm);
-                $session->set('plugin.mailmagazine.search', $viewData);
-            } else {
-                $session->set('plugin.mailmagazine.search', $searchData);
-            }
-
-            // 検索ボタンクリック時の処理
-            $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
-            $qb = $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
-                ->getQueryBuilderBySearchData($searchData);
-
-            $pagination = $app['paginator']()->paginate(
-                $qb,
-                empty($searchData['pageno']) ? 1 : $searchData['pageno'],
-                $page_max
-            );
-        } else {
-            if (is_null($page_no)) {
-                // sessionを削除
-                $session->remove('plugin.mailmagazine.search');
-            } else {
-                // pagingなどの処理
-                $searchData = $session->get('plugin.mailmagazine.search');
-                if (!is_null($searchData)) {
-                    $pcount = $request->get('page_max');
-                    $page_max = empty($pcount) ? $page_max : $pcount;
-
-                    if (Version::isSupportNewSession()) {
-                        $searchData = \Eccube\Util\FormUtil::submitAndGetData($searchForm, $searchData);
-                    }
-
-                    $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']->setApplication($app);
-                    $qb = $app['eccube.plugin.mail_magazine.repository.mail_magazine_customer']
-                        ->getQueryBuilderBySearchData($searchData);
-
-                    $pagination = $app['paginator']()->paginate(
-                        $qb,
-                        $page_no,
-                        $page_max
-                    );
-
-                    if (!Version::isSupportNewSession()) {
-                        if (isset($searchData['sex']) && (count($searchData['sex']) > 0)) {
-                            $sex_ids = array();
-                            foreach ($searchData['sex'] as $Sex) {
-                                $sex_ids[] = $Sex->getId();
-                            }
-                            $searchData['sex'] = $app['eccube.repository.master.sex']
-                                ->findBy(array('id' => $sex_ids));
-                        }
-
-                        if (isset($searchData['pref'])) {
-                            $searchData['pref'] = $app['eccube.repository.master.pref']
-                                ->find($searchData['pref']->getId());
-                        }
-
-                        if (isset($searchData['pagemax'])) {
-                            $searchData['pagemax'] = $app['eccube.repository.master.page_max']
-                                ->find($searchData['pagemax']->getId());
-                        }
-
-                        $searchForm->setData($searchData);
-                    }
+        $pageNo = $request->get('page_no');
+        $pageMaxis = $this->pageMaxRepository->findAll();
+        $pageCount = $session->get('eccube.admin.customer.search.page_count', $this->eccubeConfig['eccube_default_page_count']);
+        $pageCountParam = $request->get('page_count');
+        if ($pageCountParam && is_numeric($pageCountParam)) {
+            foreach ($pageMaxis as $pageMax) {
+                if ($pageCountParam == $pageMax->getName()) {
+                    $pageCount = $pageMax->getName();
+                    $session->set('eccube.admin.customer.search.page_count', $pageCount);
+                    break;
                 }
             }
         }
+        $pageMax = $this->eccubeConfig['eccube_default_page_count'];
+
+        $pagination = null;
+        $searchForm = $this->formFactory
+            ->createBuilder(MailMagazineType::class)
+            ->getForm();
+        if ('POST' === $request->getMethod()) {
+            $searchForm->handleRequest($request);
+            if ($searchForm->isValid()) {
+                $searchData = $searchForm->getData();
+                $pageNo = 1;
+                $session->set('plugin.mailmagazine.search', FormUtil::getViewData($searchForm));
+                $session->set('plugin.mailmagazine.search.page_no', $pageNo);
+            } else {
+                return [
+                    'searchForm' => $searchForm->createView(),
+                    'pagination' => [],
+                    'pageMaxis' => $pageMaxis,
+                    'page_no' => $pageNo,
+                    'page_count' => $pageCount,
+                    'has_errors' => true,
+                ];
+            }
+        } else {
+            if (null !== $pageNo || $request->get('resume')) {
+                if ($pageNo) {
+                    $session->set('plugin.mailmagazine.search.page_no', (int) $pageNo);
+                } else {
+                    $pageNo = $session->get('plugin.mailmagazine.search.page_no', 1);
+                }
+                $viewData = $session->get('plugin.mailmagazine.search', []);
+            } else {
+                $pageNo = 1;
+                $viewData = FormUtil::getViewData($searchForm);
+                $session->set('plugin.mailmagazine.search', $viewData);
+                $session->set('plugin.mailmagazine.search.page_no', $pageNo);
+            }
+            $searchData = FormUtil::submitAndGetData($searchForm, $viewData);
+        }
+
+        $searchData['plg_mailmagazine_flg'] = Constant::ENABLED;
+        /** @var QueryBuilder $qb */
+        $qb = $this->customerRepository->getQueryBuilderBySearchData($searchData);
+        $pagination = $paginator->paginate(
+            $qb,
+            $pageNo,
+            $pageCount
+        );
 
         return [
             'searchForm' => $searchForm->createView(),
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
-            'page_count' => $page_max,
+            'page_count' => $pageMax,
+            'has_errors' => false
         ];
     }
 
