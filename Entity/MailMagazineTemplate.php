@@ -12,7 +12,16 @@
 namespace Plugin\MailMagazine\Entity;
 
 use Eccube\Entity\AbstractEntity;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * Class MailMagazineTemplate
+ *
+ * @package Plugin\MailMagazine\Entity
+ *
+ * @ORM\Table(name="plg_mailmaga_template")
+ * @ORM\Entity(repositoryClass="Plugin\MailMagazine\Repository\MailMagazineTemplateRepository")
+ */
 class MailMagazineTemplate extends AbstractEntity
 {
     /**
@@ -24,46 +33,48 @@ class MailMagazineTemplate extends AbstractEntity
     }
 
     /**
+     * @ORM\Id()
+     * @ORM\Column(name="template_id", type="integer", nullable=false, options={"unsigned": true})
+     * @ORM\GeneratedValue(strategy="AUTO")
+     *
      * @var int
      */
     private $id;
 
     /**
+     * @ORM\Column(name="subject", type="string", nullable=false, length=255)
+     *
      * @var string
      */
     private $subject;
 
     /**
+     * @ORM\Column(name="body", type="text", nullable=false)
+     *
      * @var string
      */
     private $body;
 
     /**
+     * @ORM\Column(name="html_body", type="text", nullable=false)
+     *
      * @var string
      */
     private $html_body;
 
     /**
-     * @var int
-     */
-    private $del_flg;
-
-    /**
+     * @ORM\Column(name="create_date", type="datetime", nullable=false)
+     *
      * @var \DateTime
      */
     private $create_date;
 
     /**
+     * @ORM\Column(name="update_date", type="datetime", nullable=false)
+     *
      * @var \DateTime
      */
     private $update_date;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-    }
 
     /**
      * Set template id.
@@ -111,30 +122,6 @@ class MailMagazineTemplate extends AbstractEntity
         $this->subject = $subject;
 
         return $this;
-    }
-
-    /**
-     * Set del_flg.
-     *
-     * @param int $delFlg
-     *
-     * @return MailMagazineTemplate
-     */
-    public function setDelFlg($delFlg)
-    {
-        $this->del_flg = $delFlg;
-
-        return $this;
-    }
-
-    /**
-     * Get del_flg.
-     *
-     * @return int
-     */
-    public function getDelFlg()
-    {
-        return $this->del_flg;
     }
 
     /**

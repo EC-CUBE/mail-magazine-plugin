@@ -17,14 +17,23 @@ namespace Plugin\MailMagazine\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Eccube\Common\EccubeConfig;
 
 class MailMagazineType extends AbstractType
 {
-    private $app;
+    /**
+     * @var EccubeConfig
+     */
+    protected $eccubeConfig;
 
-    public function __construct($app)
+    /**
+     * MailMagazineType constructor.
+     *
+     * @param EccubeConfig $eccubeConfig
+     */
+    public function __construct(EccubeConfig $eccubeConfig)
     {
-        $this->app = $app;
+        $this->eccubeConfig = $eccubeConfig;
     }
 
     /**
@@ -32,21 +41,20 @@ class MailMagazineType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $config = $this->app['config'];
         $builder
             // 会員ID・メールアドレス・名前・名前(フリガナ)
             ->add('multi', 'text', array(
                 'label' => '会員ID・メールアドレス・名前・名前(フリガナ)',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['stext_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_stext_len'])),
                 ),
             ))
             ->add('company_name', 'text', array(
                 'label' => '会社名',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['stext_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_stext_len'])),
                 ),
             ))
             ->add('pref', 'pref', array(
@@ -88,28 +96,28 @@ class MailMagazineType extends AbstractType
                 'label' => '購入金額',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['price_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_price_len'])),
                 ),
             ))
             ->add('buy_total_end', 'integer', array(
                 'label' => '購入金額',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['price_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_price_len'])),
                 ),
             ))
             ->add('buy_times_start', 'integer', array(
                 'label' => '購入回数',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['int_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_int_len'])),
                 ),
             ))
             ->add('buy_times_end', 'integer', array(
                 'label' => '購入回数',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['int_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_int_len'])),
                 ),
             ))
             ->add('create_date_start', 'date', array(
@@ -164,14 +172,14 @@ class MailMagazineType extends AbstractType
                 'label' => '購入商品名',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['stext_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_stext_len'])),
                 ),
             ))
             ->add('buy_product_code', 'text', array(
                 'label' => '購入商品コード',
                 'required' => false,
                 'constraints' => array(
-                    new Assert\Length(array('max' => $config['stext_len'])),
+                    new Assert\Length(array('max' => $this->eccubeConfig['eccube_stext_len'])),
                 ),
             ))
             ->add('buy_category', 'category', array(
@@ -219,8 +227,7 @@ class MailMagazineType extends AbstractType
             ->add('htmlBody', 'textarea', array(
                 'label' => '本文 (HTML形式)',
                 'required' => false,
-            ))
-            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+            ));
     }
 
     /**

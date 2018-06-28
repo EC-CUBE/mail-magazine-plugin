@@ -16,26 +16,16 @@ namespace Plugin\MailMagazine\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class MailMagazineTemplateEditType extends AbstractType
 {
-    public $app;
-
-    public function __construct(\Silex\Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $this->app;
-
         $builder
             ->add('subject', 'text', array(
                 'label' => '件名',
@@ -54,16 +44,15 @@ class MailMagazineTemplateEditType extends AbstractType
             ->add('htmlBody', 'textarea', array(
                 'label' => '本文 (HTML形式)',
                 'required' => false,
-            ))
-            ->addEventListener(FormEvents::POST_SUBMIT, function ($event) use ($app) {
-            })
-            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+            ));
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Plugin\MailMagazine\Entity\MailMagazineTemplate',

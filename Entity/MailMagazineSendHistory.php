@@ -11,83 +11,118 @@
 
 namespace Plugin\MailMagazine\Entity;
 
+use Eccube\Entity\AbstractEntity;
+use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\Member;
+
 /**
  * SendHistory
  * Plugin MailMagazine.
+ *
+ * @ORM\Table(name="plg_mailmaga_send_history")
+ * @ORM\Entity(repositoryClass="Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository")
  */
-class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
+class MailMagazineSendHistory extends AbstractEntity
 {
     /**
+     * @ORM\Column(name="send_id", type="integer", options={"unsigned": true})
+     * @ORM\Id()
+     * @ORM\GeneratedValue(strategy="AUTO")
+     *
      * @var int
      */
     private $id;
 
     /**
+     * @ORM\Column(name="mail_method", type="smallint", nullable=true, options={"unsigned": false})
+     *
      * @var int
      */
     private $mail_method;
 
     /**
+     * @ORM\Column(name="subject", type="string", nullable=true, length=255)
+     *
      * @var string
      */
     private $subject;
 
     /**
+     * @ORM\Column(name="body", type="text", nullable=true)
+     *
      * @var string
      */
     private $body;
 
     /**
+     * @ORM\Column(name="html_body", type="text", nullable=true)
+     *
      * @var string
      */
     private $html_body;
 
     /**
+     * @ORM\Column(name="send_count", type="integer", nullable=true, options={"unsigned": true})
+     *
      * @var int
      */
     private $send_count;
 
     /**
+     * @ORM\Column(name="complete_count", type="integer", nullable=true, options={"unsigned": true, "default": 0})
+     *
      * @var int
      */
     private $complete_count;
 
     /**
+     * @ORM\Column(name="error_count", type="integer", nullable=true, options={"unsigned": true, "default": 0})
+     *
      * @var int
      */
     private $error_count;
 
     /**
+     * @ORM\Column(name="start_date", type="datetime", nullable=true, options={"unsigned": true})
+     *
      * @var \DateTime
      */
     private $start_date;
 
     /**
+     * @ORM\Column(name="end_date", type="datetime", nullable=true, options={"unsigned": true})
+     *
      * @var \DateTime
      */
     private $end_date;
 
     /**
+     * @ORM\Column(name="search_data", type="text", nullable=true)
+     *
      * @var string
      */
     private $search_data;
 
     /**
-     * @var int
-     */
-    private $del_flg;
-
-    /**
+     * @ORM\Column(name="create_date", type="datetime", nullable=false)
+     *
      * @var \DateTime
      */
     private $create_date;
 
     /**
+     * @ORM\Column(name="update_date", type="datetime", nullable=false)
+     *
      * @var \DateTime
      */
     private $update_date;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Member")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="creator_id", referencedColumnName="id")
+     * })
+     *
      * @var \Eccube\Entity\Member
      */
     private $Creator;
@@ -107,7 +142,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param int $mailMethod
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setMailMethod($mailMethod)
     {
@@ -131,7 +166,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param string $subject
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setSubject($subject)
     {
@@ -155,7 +190,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param string $body
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setBody($body)
     {
@@ -199,7 +234,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param int $sendCount
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setSendCount($sendCount)
     {
@@ -223,7 +258,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param int $completeCount
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setCompleteCount($completeCount)
     {
@@ -267,7 +302,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param \DateTime $startDate
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setStartDate($startDate)
     {
@@ -291,7 +326,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param \DateTime $endDate
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setEndDate($endDate)
     {
@@ -315,7 +350,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param string $searchData
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setSearchData($searchData)
     {
@@ -335,35 +370,11 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set del_flg.
-     *
-     * @param int $delFlg
-     *
-     * @return SendHistory
-     */
-    public function setDelFlg($delFlg)
-    {
-        $this->del_flg = $delFlg;
-
-        return $this;
-    }
-
-    /**
-     * Get del_flg.
-     *
-     * @return int
-     */
-    public function getDelFlg()
-    {
-        return $this->del_flg;
-    }
-
-    /**
      * Set create_date.
      *
      * @param \DateTime $createDate
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setCreateDate($createDate)
     {
@@ -387,7 +398,7 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
      *
      * @param \DateTime $updateDate
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
     public function setUpdateDate($updateDate)
     {
@@ -409,11 +420,11 @@ class MailMagazineSendHistory extends \Eccube\Entity\AbstractEntity
     /**
      * Set Creator.
      *
-     * @param \Eccube\Entity\Member $creator
+     * @param Member $creator
      *
-     * @return SendHistory
+     * @return MailMagazineSendHistory
      */
-    public function setCreator(\Eccube\Entity\Member $creator = null)
+    public function setCreator(Member $creator = null)
     {
         $this->Creator = $creator;
 
