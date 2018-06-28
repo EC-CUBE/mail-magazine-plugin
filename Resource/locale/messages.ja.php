@@ -2,6 +2,11 @@
 return [
     'plugin.mailmagazine.title' => 'メルマガ管理',
     'plugin.mailmagazine.index.title' => '配信',
+    'plugin.mailmagazine.index.btn_select_template' => '配信内容を作成する',
+    'plugin.mailmagazine.select.card_title' => '配信内容の設定',
+    'plugin.mailmagazine.select.btn_back' => '検索画面に戻る',
+    'plugin.mailmagazine.select.btn_confirm' => '確認画面へ',
+    'plugin.mailmagazine.select.note_name' => '※ 名前差し込み時は {name} といれてください',
     'plugin.mailmagazine.template.title' => 'テンプレート設定',
     'plugin.mailmagazine.history.title' => '配信履歴',
     'admin.plugin.mailmagazine.template.save.complete' => 'メールテンプレート情報を保存しました。',

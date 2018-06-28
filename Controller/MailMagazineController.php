@@ -14,6 +14,7 @@ namespace Plugin\MailMagazine\Controller;
 use Eccube\Application;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Eccube\Controller\AbstractController;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
@@ -28,6 +29,8 @@ use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Form\Type\MailMagazineType;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Common\Constant;
+use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class MailMagazineController
@@ -45,17 +48,25 @@ class MailMagazineController extends AbstractController
     protected $customerRepository;
 
     /**
+     * @var MailMagazineTemplateRepository
+     */
+    protected $mailMagazineTemplateRepository;
+
+    /**
      * MailMagazineController constructor.
      *
      * @param PageMaxRepository $pageMaxRepository
      * @param CustomerRepository $customerRepository
+     * @param MailMagazineTemplateRepository $magazineTemplateRepository
      */
     public function __construct(
         PageMaxRepository $pageMaxRepository,
-        CustomerRepository $customerRepository
+        CustomerRepository $customerRepository,
+        MailMagazineTemplateRepository $magazineTemplateRepository
     ) {
         $this->pageMaxRepository = $pageMaxRepository;
         $this->customerRepository = $customerRepository;
+        $this->mailMagazineTemplateRepository = $magazineTemplateRepository;
     }
 
     /**
@@ -63,6 +74,7 @@ class MailMagazineController extends AbstractController
      * 左ナビゲーションの選択はGETで遷移する.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine", name="plugin_mail_magazine")
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_mail_magazine_page")
      * @Template("@MailMagazine/admin/index.twig")
      *
      * @param Request $request
@@ -148,32 +160,26 @@ class MailMagazineController extends AbstractController
      * テンプレート選択
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
+     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/select/{id}",
      *     requirements={"id":"\d+|"},
      *     name="plugin_mail_magazine_select"
      * )
      * @Template("@MailMagazine/admin/template_select.twig")
      *
-     * @param Application $app
      * @param Request     $request
      * @param string      $id
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      */
-    public function select(Application $app, Request $request, $id = null)
+    public function select(Request $request, $id = null)
     {
-        die(var_dump(__METHOD__));
         /** @var MailMagazineTemplate $Template */
         $Template = null;
 
-        // POSTでない場合は終了する
-        if ('POST' !== $request->getMethod()) {
-            throw new BadRequestHttpException();
-        }
-
         // Formの取得
-        $form = $app['form.factory']
-            ->createBuilder('mail_magazine', null)
+        $form = $this->formFactory
+            ->createBuilder(MailMagazineType::class, null)
             ->getForm();
 
         $form->handleRequest($request);
@@ -182,12 +188,12 @@ class MailMagazineController extends AbstractController
         if ($request->get('mode') == 'select') {
             $newTemplate = $form->get('template')->getData();
             $data = $form->getData();
-            $form = $app['form.factory']->createBuilder('mail_magazine', null)->getForm();
+            $form = $this->formFactory->createBuilder(MailMagazineType::class, null)->getForm();
             $form->setData($data);
 
             if ($id) {
                 // テンプレート「無し」が選択された場合は、選択されたテンプレートのデータを取得する
-                $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
+                $Template = $this->mailMagazineTemplateRepository->find($id);
 
                 if (is_null($Template)) {
                     throw new NotFoundHttpException();

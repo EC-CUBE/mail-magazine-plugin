@@ -318,7 +318,7 @@ function fnChangeActionSubmit(action) {
                                 <select class="custom-select" onchange="location = this.value;">
                                     {% for pageMax in pageMaxis %}
                                         <option {% if pageMax.name == page_count%} selected {% endif %}
-                                                value="{{ path('admin_customer_page', {'page_no': 1, 'page_count': pageMax.name}) }}">
+                                                value="{{ path('plugin_mail_magazine_page', {'page_no': 1, 'page_count': pageMax.name}) }}">
                                             {{ pageMax.name|e }}{{ 'common.label.num'|trans }}</option>
                                     {% endfor %}
                                 </select>
@@ -352,13 +352,13 @@ function fnChangeActionSubmit(action) {
                             </table>
                             <div class="row justify-content-md-center mb-4">
                                 {% if pagination.totalItemCount > 0 %}
-                                    {% include "@admin/styleguide_pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_customer_page' } %}
+                                    {% include "@admin/styleguide_pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine_page' } %}
                                 {% endif %}
                             </div>
                             <div class="row justify-content-md-center mb-4 ">
                                 <div class="col-auto">
                                     <button class="btn btn-ec-regular btn-lg" onclick="fnChangeActionSubmit('{{ url('plugin_mail_magazine_select') }}'); return false;">
-                                        配信内容を作成する
+                                        {{ 'plugin.mailmagazine.index.btn_select_template'|trans }}
                                     </button>
                                 </div>
                             </div>
