@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,48 +24,75 @@ use Plugin\MailMagazine\Service\MailMagazineService;
 use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Eccube\Repository\Master\PageMaxRepository;
 
-class MailMagazineHistoryController
+class MailMagazineHistoryController extends AbstractController
 {
-    public function __construct()
-    {
+    /**
+     * @var MailMagazineSendHistoryRepository
+     */
+    protected $mailMagazineSendHistoryRepository;
+
+    /**
+     * @var PageMaxRepository
+     */
+    protected $pageMaxRepository;
+
+    /**
+     * MailMagazineHistoryController constructor.
+     *
+     * @param MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
+     * @param PageMaxRepository $pageMaxRepository
+     */
+    public function __construct(
+        MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
+        PageMaxRepository $pageMaxRepository
+    ) {
+        $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
+        $this->pageMaxRepository = $pageMaxRepository;
     }
 
     /**
      * 配信履歴一覧.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history", name="plugin_mail_magazine_history")
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{page_no}",
+     *     requirements={"page_no" = "\d+"},
+     *     name="plugin_mail_magazine_history_page"
+     * )
      * @Template("@MailMagazine/admin/history_list.twig")
      */
-    public function index(Application $app, Request $request)
+    public function index(Request $request, Paginator $paginator, $page_no = 1)
     {
-        die(var_dump(__METHOD__));
-        // dtb_send_historyからdel_flg = 0のデータを抽出
+        $pageNo = $page_no;
+        $pageMaxis = $this->pageMaxRepository->findAll();
+        $pageCount = $this->eccubeConfig['eccube_default_page_count'];
+        $pageCountParam = $request->get('page_count');
+        if ($pageCountParam && is_numeric($pageCountParam)) {
+            foreach ($pageMaxis as $pageMax) {
+                if ($pageCountParam == $pageMax->getName()) {
+                    $pageCount = $pageMax->getName();
+                    break;
+                }
+            }
+        }
+
         // リストをView変数に突っ込む
         $pagination = null;
-        $searchForm = $app['form.factory']
+        $searchForm = $this->formFactory
             ->createBuilder()
             ->getForm();
         $searchForm->handleRequest($request);
         $searchData = $searchForm->getData();
 
-        $pageNo = $request->get('page_no');
+        $qb = $this->mailMagazineSendHistoryRepository->getQueryBuilderBySearchData($searchData);
 
-        $qb = $app['orm.em']->createQueryBuilder();
-        $qb->select('d')
-            ->from("\Plugin\MailMagazine\Entity\MailMagazineSendHistory", 'd')
-            ->where('d.del_flg = :delFlg')
-            ->setParameter('delFlg', Constant::DISABLED)
-            ->orderBy('d.start_date', 'DESC');
-
-        $pagination = $app['paginator']()->paginate(
-                $qb,
-                empty($pageNo) ? 1 : $pageNo,
-                empty($searchData['pagemax']) ? 10 : $searchData['pagemax']->getId()
-        );
+        $pagination = $paginator->paginate($qb, $pageNo, $pageCount);
 
         return [
             'pagination' => $pagination,
+            'pageMaxis' => $pageMaxis,
+            'page_count' => $pageCount
         ];
     }
 

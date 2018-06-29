@@ -86,21 +86,22 @@ class MailMagazineController extends AbstractController
      *
      * @param Request $request
      * @param Paginator $paginator
+     * @param integer $page_no
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      */
-    public function index(Request $request, Paginator $paginator)
+    public function index(Request $request, Paginator $paginator, $page_no = 1)
     {
         $session = $request->getSession();
-        $pageNo = $request->get('page_no');
+        $pageNo = $page_no;
         $pageMaxis = $this->pageMaxRepository->findAll();
-        $pageCount = $session->get('eccube.admin.customer.search.page_count', $this->eccubeConfig['eccube_default_page_count']);
+        $pageCount = $session->get('plugin.mailmagazine.search.page_count', $this->eccubeConfig['eccube_default_page_count']);
         $pageCountParam = $request->get('page_count');
         if ($pageCountParam && is_numeric($pageCountParam)) {
             foreach ($pageMaxis as $pageMax) {
                 if ($pageCountParam == $pageMax->getName()) {
                     $pageCount = $pageMax->getName();
-                    $session->set('eccube.admin.customer.search.page_count', $pageCount);
+                    $session->set('plugin.mailmagazine.search.page_count', $pageCount);
                     break;
                 }
             }
