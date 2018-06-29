@@ -12,14 +12,14 @@
 [メルマガ管理]-[配信内容設定]-[確認]画面
 #}
 
-{% extends 'default_frame.twig' %}
+{% extends '@admin/styleguide_frame.twig' %}
 
-{% set menus = ['mailmagazine', 'mailmagazine'] %}
+{% set menus = ['customer', 'mailmagazine', 'mailmagazine'] %}
 
-{% block title %}メルマガ管理{% endblock %}
-{% block sub_title %}配信{% endblock %}
+{% block title %}{{ 'plugin.mailmagazine.index.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
 
-{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
 {% block javascript %}
     <script>
@@ -30,7 +30,7 @@
         $(function () {
             $('#sendMailMagazine').on('click', function (e) {
                 e.preventDefault();
-                if (confirm('メールマガジンを配信します。\nよろしいですか？')) {
+                if (confirm('{{ 'plugin.mailmagazine.confirm.modal.confirm_prepare_message'|trans }}')) {
                     $(this).attr('disabled', 'disabled');
                     changeAction('{{ url('plugin_mail_magazine_prepare') }}');
                 }
@@ -49,7 +49,7 @@
                 }
             });
             $('#sendTestMail').on('click', function() {
-                if (confirm('テストメールを送信します。\nよろしいですか？')) {
+                if (confirm('{{ 'plugin.mailmagazine.confirm.modal.confirm_test_message'|trans }}')) {
                     $.post("{{ url('plugin_mail_magazine_test') }}", {
                         '_token': $('mail_magazine__token').val(),
                         'email': $('#testEmail').val(),
@@ -58,10 +58,10 @@
                         'body': $('#mail_magazine_body').val(),
                         'htmlBody': $('#mail_magazine_htmlBody').val()
                     }).done(function(res) {
-                        alert('テストメールを送信しました。');
+                        alert('{{ 'plugin.mailmagazine.confirm.modal.confirm_test_success_message'|trans }}');
                         $('#testSendModal').modal('hide');
                     }).fail(function (res) {
-                        alert('テストメールの送信に失敗しました。');
+                        alert('{{ 'plugin.mailmagazine.confirm.modal.confirm_test_fail_message'|trans }}');
                     });
                 }
             })
@@ -72,76 +72,91 @@
 {% block main %}
     <form name="form1" role="form" class="form-horizontal" id="form1" method="post" action="">
     {{ form_widget(form._token) }}
-    <div class="row" id="aside_wrap">
-        <div id="detail_wrap" class="col-md-9">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">配信内容の確認</h3>
-                </div><!-- /.box-header -->
-                <div class="box-body">
-                    <table class="table table-striped">
-                        <tbody>
-                            <tr>
-                                <th style="width: 20%;">件名</th>
-                                <td>{{ subject_itm }}</td>
-                            </tr>
-                            <tr>
-                                <th>本文 (テキスト形式)</th>
-                                <td><xmp>{{ body_itm }}</xmp></td>
-                            </tr>
-                            <tr>
-                                <th>本文 (HTML形式)</th>
-                                <td><xmp>{{ htmlBody_itm|raw }}</xmp></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div style="display: none">
-                        {{ form_rest(form) }}
+        <div class="c-outsideBlock">
+            <div class="c-outsideBlock__contents">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="d-inline-block" data-toggle="tooltip" data-placement="top" title="Tooltip">
+                                    <span class="card-title">
+                                        {{ 'plugin.mailmagazine.confirm.html'|trans }}
+                                    </span>
+                                    <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                </div>
+                            </div>
+                            <div class="col-4 text-right">
+                            </div>
+                        </div>
                     </div>
-
-                </div><!-- /.box-body -->
-            </div><!-- /.box -->
-            <div id="detail_box__footer" class="row hidden-xs hidden-sm">
-                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-                    <p><a href="{{ url('plugin_mail_magazine') }}" onclick="changeAction('{{ url('plugin_mail_magazine_select') }}/{{id}}'); return false;">配信内容の設定に戻る</a></p>
+                    <div class="card-body mb-lg-5">
+                        <div class="row">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th class="w-25">{{ 'plugin.mailmagazine.select.label_subject'|trans }}</th>
+                                        <td>{{ subject_itm }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ 'plugin.mailmagazine.select.label_body'|trans }}</th>
+                                        <td><xmp>{{ body_itm }}</xmp></td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ 'plugin.mailmagazine.select.label_body_html'|trans }}</th>
+                                        <td><xmp>{{ htmlBody_itm|raw }}</xmp></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="d-none">
+                                {{ form_rest(form) }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div id="common_box" class="col-md-3">
-            {# 配信するボタン #}
-            <div class="col_inner" id="aside_column">
-                <div class="col_inner">
-                    <div class="box no-header">
-                        <div class="box-body">
-                            <div class="row text-center">
-                                <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
-                                    <a class="btn btn-primary btn-block btn-lg active" role="button" data-toggle="modal" data-target="#testSendModal">テスト送信する</a>
-                                    <button class="btn btn-danger btn-block btn-lg" id="sendMailMagazine">配信する</button>
-                                </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-beseLink" href="{{ url('plugin_mail_magazine') }}"  onclick="changeAction('{{ url('plugin_mail_magazine_select') }}/{{id}}'); return false;">
+                                <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'plugin.mailmagazine.confirm.btn_back'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <a class="btn btn-primary btn-block btn-lg active" role="button" data-toggle="modal" data-target="#testSendModal">
+                                    {{ 'plugin.mailmagazine.confirm.btn_send_test'|trans }}
+                                </a>
                             </div>
-                        </div><!-- /.box-body -->
-                    </div><!-- /.box -->
+                            <div class="col-auto">
+                                <button class="btn btn-danger btn-block btn-lg" id="sendMailMagazine">
+                                    {{ 'plugin.mailmagazine.confirm.btn_send'|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div><!-- /.col -->
+            </div>
         </div>
-    </div>
     </form>
-
-{% endblock %}
-{% block modal %}
     <div id="testSendModal" class="modal" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">テスト送信</h4>
+                    <h4 class="modal-title">{{ 'plugin.mailmagazine.confirm.modal.title'|trans }}</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label for="testEmail" class="col-sm-2 control-label">送信先</label>
+                            <label for="testEmail" class="col-sm-2 control-label">
+                                {{ 'plugin.mailmagazine.confirm.modal.label_from'|trans }}
+                            </label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" id="testEmail" placeholder="メールアドレス" value="{{ testMailTo }}" required>
+                                <input type="email" class="form-control" id="testEmail" placeholder="{{ 'plugin.mailmagazine.confirm.modal.placeholder_from'|trans }}" value="{{ testMailTo }}" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -153,8 +168,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="sendTestMail">送信</button>
-                    <button class="btn btn-default" data-dismiss="modal">閉じる</button>
+                    <button class="btn btn-primary" id="sendTestMail">{{ 'plugin.mailmagazine.confirm.modal.btn_send'|trans }}</button>
+                    <button class="btn btn-default" data-dismiss="modal">{{ 'plugin.mailmagazine.confirm.modal.btn_cancel'|trans }}</button>
                 </div>
             </div>
         </div>

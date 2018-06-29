@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Eccube\Form\Type\Admin\SearchCustomerType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class MailMagazineType extends SearchCustomerType
 {
@@ -32,20 +33,26 @@ class MailMagazineType extends SearchCustomerType
         // 以降テンプレート選択で使用する項目
         $builder->add('id', HiddenType::class)
             ->add('template', MailMagazineTemplateType::class, array(
-                'label' => 'テンプレート',
+                'label' => 'plugin.mailmagazine.select.label_template',
                 'required' => false,
                 'mapped' => false,
             ))
             ->add('subject', TextType::class, array(
-                'label' => '件名',
+                'label' => 'plugin.mailmagazine.select.label_subject',
                 'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank()
+                ]
             ))
             ->add('body', TextareaType::class, array(
-                'label' => '本文 (テキスト形式)',
+                'label' => 'plugin.mailmagazine.select.label_body',
                 'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank()
+                ]
             ))
             ->add('htmlBody', TextareaType::class, array(
-                'label' => '本文 (HTML形式)',
+                'label' => 'plugin.mailmagazine.select.label_body_html',
                 'required' => false,
             ));
     }
@@ -54,6 +61,16 @@ class MailMagazineType extends SearchCustomerType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return 'mail_magazine';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getBlockPrefix()
     {
         return 'mail_magazine';
     }

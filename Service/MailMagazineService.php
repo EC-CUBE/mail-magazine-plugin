@@ -14,7 +14,14 @@ namespace Plugin\MailMagazine\Service;
 use Eccube\Application;
 use Eccube\Common\Constant;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
+use Eccube\Entity\BaseInfo;
+use Eccube\Common\EccubeConfig;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Eccube\Repository\CustomerRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * メルマガ配信処理のサービスクラス。
@@ -74,20 +81,74 @@ class MailMagazineService
      */
     private $lastSendMailHtmlBody = '';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $mailMagazineDir;
 
-    /** @var \Eccube\Entity\BaseInfo */
+    /**
+     * @var BaseInfo
+     */
     public $BaseInfo;
 
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-        $this->BaseInfo = $app['eccube.repository.base_info']->get();
-        $this->mailMagazineDir = str_replace(
-            '${ROOT_DIR}',
-            $app['config']['root_dir'],
-            $this->app['config']['MailMagazine']['const']['mail_magazine_dir']);
+    /**
+     * @var EccubeConfig
+     */
+    protected $eccubeConfig;
+
+    /**
+     * @var \Swift_Mailer
+     */
+    protected $mailer;
+
+    /**
+     * @var SessionInterface
+     */
+    protected $session;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
+     * @var MailMagazineSendHistoryRepository
+     */
+    protected $mailMagazineSendHistoryRepository;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
+     * MailMagazineService constructor.
+     *
+     * @param \Swift_Mailer $mailer
+     * @param BaseInfo $BaseInfo
+     * @param EccubeConfig $eccubeConfig
+     * @param SessionInterface $session
+     * @param CustomerRepository $customerRepository
+     * @param MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(
+        \Swift_Mailer $mailer,
+        BaseInfo $BaseInfo,
+        EccubeConfig $eccubeConfig,
+        SessionInterface $session,
+        CustomerRepository $customerRepository,
+        MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->mailer = $mailer;
+        $this->BaseInfo = $BaseInfo;
+        $this->eccubeConfig = $eccubeConfig;
+        $this->session = $session;
+        $this->customerRepository = $customerRepository;
+        $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
+        $this->entityManager = $entityManager;
+        $this->mailMagazineDir = $this->eccubeConfig['mail_magazine_dir'];
         if (!file_exists($this->mailMagazineDir)) {
             mkdir($this->mailMagazineDir);
         }
@@ -100,16 +161,17 @@ class MailMagazineService
      *                  email: 送信先メールアドレス
      *                  subject: 件名
      *                  body：本文
+     *
+     * @return int
      */
     public function sendMail($formData)
     {
         // メール送信
         /** @var \Swift_Message $message */
-        $message = \Swift_Message::newInstance()
+        $message = (new \Swift_Message())
             ->setSubject($formData['subject'])
-            ->setFrom(array($this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()))
-            ->setTo(array($formData['email']))
-            //             ->setBcc($this->BaseInfo->getEmail01())
+            ->setFrom([$this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()])
+            ->setTo([$formData['email']])
             ->setReplyTo($this->BaseInfo->getEmail03())
             ->setReturnPath($this->BaseInfo->getEmail04())
             ->setBody($formData['body']);
@@ -118,7 +180,7 @@ class MailMagazineService
             $message->addPart($formData['htmlBody'], 'text/html');
         }
 
-        return $this->app->mail($message);
+        return $this->mailer->send($message);
     }
 
     /**
@@ -133,11 +195,10 @@ class MailMagazineService
      */
     public function createMailMagazineHistory($formData)
     {
-        // メール配信先リストの取得
-        /** @var MailMagazineCustomerRepository $mailMagazineCustomerRepository */
-        $mailMagazineCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer'];
-        $mailMagazineCustomerRepository->setApplication($this->app);
-        $customerList = $mailMagazineCustomerRepository->getCustomerBySearchData($formData);
+        /** @var $qb QueryBuilder */
+        $formData['plg_mailmagazine_flg'] = Constant::ENABLED;
+        $qb = $this->customerRepository->getQueryBuilderBySearchData($formData);
+        $customerList = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
 
         $currentDatetime = new \DateTime();
 
@@ -155,7 +216,6 @@ class MailMagazineService
         $sendHistory->setSendCount(count($customerList));
         $sendHistory->setCompleteCount(0);
         $sendHistory->setErrorCount(0);
-        $sendHistory->setDelFlg(Constant::DISABLED);
 
         $sendHistory->setEndDate(null);
         $sendHistory->setUpdateDate(null);
@@ -174,7 +234,8 @@ class MailMagazineService
         // serializeのみだとDB登録時にデータが欠損するのでBase64にする
         $sendHistory->setSearchData(base64_encode(serialize($formData)));
 
-        $status = $this->app[self::REPOSITORY_SEND_HISTORY]->createSendHistory($sendHistory);
+        $status = $this->mailMagazineSendHistoryRepository->save($sendHistory);
+        $this->entityManager->flush();
         if (!$status) {
             return null;
         }
@@ -390,6 +451,14 @@ class MailMagazineService
         return $this->BaseInfo->getEmail03();
     }
 
+    /**
+     * Get history file name
+     *
+     * @param $historyId
+     * @param bool $input
+     *
+     * @return string
+     */
     public function getHistoryFileName($historyId, $input = true)
     {
         return $this->mailMagazineDir.'/mail_magazine_'.($input ? 'in' : 'out').'_'.$historyId.'.txt';
