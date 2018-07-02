@@ -21,10 +21,10 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th style="width: 20%;">会員ID・メールアドレス・お名前</th>
+                            <th class="w-25">{{ 'searchcustomer.label.multi'|trans }}</th>
                             <td>
                                 {% if search_data.multi is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.multi }}
                                 {% endif %}
@@ -32,156 +32,156 @@
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">会員種別</th>
+                            <th class="w-25">{{ 'searchcustomer.label.status'|trans }}</th>
                             <td>
                                 {% if search_data.customer_status is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.customer_status }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">性別</th>
+                            <th class="w-25">{{ 'searchorder.label.sex'|trans }}</th>
                             <td>
                                 {% if search_data.sex is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.sex }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">誕生月</th>
+                            <th class="w-25">{{ 'searchcustomer.label.birth_month'|trans }}</th>
                             <td>
                                 {% if search_data.birth_month is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.birth_month }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">誕生日</th>
+                            <th class="w-25">{{ 'searchcustomer.label.birth_date_start'|trans }} ～ {{ 'searchcustomer.label.birth_date_end'|trans }}</th>
                             <td>
                                 {% if search_data.birth_start is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.birth_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.birth_end is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.birth_end|date("Y/m/d") }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">都道府県</th>
+                            <th class="w-25">{{ 'searchcustomer.label.prefecture'|trans }}</th>
                             <td>
                                 {% if search_data.pref is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.pref }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">電話番号</th>
+                            <th class="w-25">{{ 'searchcustomer.label.tel'|trans }}</th>
                             <td>
                                 {% if search_data.tel is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.tel }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">登録日</th>
+                            <th class="w-25">{{ 'searchcustomer.label.create_date_start'|trans }} ～ {{ 'searchcustomer.label.create_date_end'|trans }}</th>
                             <td>
                                 {% if search_data.create_date_start is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.create_date_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.create_date_end is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.create_date_end|date("Y/m/d") }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">更新日</th>
+                            <th class="w-25">{{ 'searchcustomer.label.update_date_start'|trans }} ～ {{ 'searchcustomer.label.update_date_end'|trans }}</th>
                             <td>
                                 {% if search_data.update_date_start is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.update_date_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.update_date_end is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.update_date_end|date("Y/m/d") }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">購入金額</th>
+                            <th class="w-25">{{ 'searchcustomer.label.purchese_price_start'|trans }} ～ {{ 'searchcustomer.label.purchese_price_end'|trans }}</th>
                             <td>
                                 {% if search_data.buy_total_start is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_total_start }}
                                 {% endif %}
                                 ～
                                 {% if search_data.buy_total_end is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_total_end }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">購入回数</th>
+                            <th class="w-25">{{ 'searchcustomer.label.number_of_purchases_start'|trans }} ～ {{ 'searchcustomer.label.number_of_purchases_end'|trans }}</th>
                             <td>
                                 {% if search_data.buy_times_start is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_times_start }}
                                 {% endif %}
                                 ～
                                 {% if search_data.buy_times_end is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_times_end }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">購入商品名・コード</th>
+                            <th class="w-25">{{ 'searchcustomer.label.purchased_product_code'|trans }}</th>
                             <td>
                                 {% if search_data.buy_product_code is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_product_code }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th style="width: 20%;">最終購入日</th>
+                            <th class="w-25">{{ 'searchcustomer.label.last_purchase_start'|trans }} ～ {{ 'searchcustomer.label.last_purchase_end'|trans }}</th>
                             <td>
                                 {% if search_data.last_buy_start is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.last_buy_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.last_buy_end is null %}
-                                    (未指定)
+                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.last_buy_end|date("Y/m/d") }}
                                 {% endif %}

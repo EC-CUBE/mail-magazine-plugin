@@ -41,15 +41,23 @@ class MailMagazineHistoryController extends AbstractController
     protected $pageMaxRepository;
 
     /**
+     * @var MailMagazineService
+     */
+    protected $mailMagazineService;
+
+    /**
      * MailMagazineHistoryController constructor.
      *
+     * @param MailMagazineService $mailMagazineService
      * @param MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
      * @param PageMaxRepository $pageMaxRepository
      */
     public function __construct(
+        MailMagazineService $mailMagazineService,
         MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
         PageMaxRepository $pageMaxRepository
     ) {
+        $this->mailMagazineService = $mailMagazineService;
         $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
         $this->pageMaxRepository = $pageMaxRepository;
     }
@@ -63,6 +71,12 @@ class MailMagazineHistoryController extends AbstractController
      *     name="plugin_mail_magazine_history_page"
      * )
      * @Template("@MailMagazine/admin/history_list.twig")
+     *
+     * @param Request $request
+     * @param Paginator $paginator
+     * @param int $page_no
+     *
+     * @return array
      */
     public function index(Request $request, Paginator $paginator, $page_no = 1)
     {
@@ -277,38 +291,39 @@ class MailMagazineHistoryController extends AbstractController
      *     requirements={"id":"\d+|"},
      *     name="plugin_mail_magazine_history_result"
      * )
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}/{page_no}",
+     *     requirements={"id":"\d+|", "page_no" = "\d+"},
+     *     name="plugin_mail_magazine_history_result_page"
+     * )
      * @Template("@MailMagazine/admin/history_result.twig")
      *
-     * @param Application $app
      * @param Request $request
+     * @param MailMagazineSendHistory $mailMagazineSendHistory
+     * @param Paginator $paginator
+     * @param int $page_no
+     *
      * @return mixed
      */
-    public function result(Application $app, Request $request)
+    public function result(Request $request, MailMagazineSendHistory $mailMagazineSendHistory, Paginator $paginator, $page_no = 1)
     {
-        die(var_dump(__METHOD__));
-        $id = $request->get('id');
-        $resultFile = $this->getMailMagazineService($app)->getHistoryFileName($id, false);
-        /** @var MailMagazineSendHistory $History */
-        $History = $this->getMailMagazineSendHistoryRepository($app)->find($id);
+        $resultFile = $this->mailMagazineService->getHistoryFileName($mailMagazineSendHistory->getId(), false);
+        $pageMaxis = $this->pageMaxRepository->findAll();
+        $pageCount = $request->get('page_count');
+        $pageCount = $pageCount ? $pageCount : $this->eccubeConfig['eccube_default_page_count'];
 
-        $pageMaxis = $app['eccube.repository.master.page_max']->findAll();
-        $page_count = $request->get('page_count');
-        $page_count = $page_count ? $page_count : $app['config']['default_page_count'];
-
-        $pageNo = $request->get('page_no');
-        $paginator = new Paginator();
+        $pageNo = $page_no;
         $paginator->subscribe(new MailMagazineHistoryFilePaginationSubscriber());
         $pagination = $paginator->paginate($resultFile,
             empty($pageNo) ? 1 : $pageNo,
-            $page_count,
-            array('total' => $History->getCompleteCount())
+            $pageCount,
+            array('total' => 1)
         );
 
         return [
-            'historyId' => $id,
+            'historyId' => $mailMagazineSendHistory->getId(),
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
-            'page_count' => $page_count,
+            'page_count' => $pageCount,
         ];
     }
 

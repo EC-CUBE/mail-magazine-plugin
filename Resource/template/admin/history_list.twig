@@ -143,26 +143,30 @@ $(function () {
                                         <td class="icon_edit align-middle pr-3 text-center">
                                             <div class="row justify-content-end">
                                                 <div class="col-auto text-center">
-                                                    <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;">プレビュー</a>
-                                                    {#<a class="btn btn-ec-actionIcon action-mail" href="{{ url('admin_order_mail', {'id': Order.id}) }}" data-toggle="tooltip" data-placement="top" title data-original-title="{{ 'admin.order.index.btn_send_mail'|trans }}">#}
-                                                        {#<i class="fa fa-send fa-lg text-secondary" aria-hidden="true"></i>#}
-                                                    {#</a>#}
+                                                    <a href="{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}" >
+                                                        {{ 'plugin.mailmagazine.history.btn_preview'|trans }}
+                                                    </a>
                                                 </div>
                                                 <div class="col-auto text-center">
-                                                    <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;">配信条件</a>
-                                                    {#<a class="btn btn-ec-actionIcon" href="" data-toggle="tooltip" data-placement="top" title data-original-title="{{ 'admin.order.index.btn_form'|trans }}">#}
-                                                        {#<i class="fa fa-table fa-lg text-secondary" aria-hidden="true"></i>#}
-                                                    {#</a>#}
+                                                    <a href="{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}">
+                                                        {{ 'plugin.mailmagazine.history.btn_condition'|trans }}
+                                                    </a>
                                                 </div>
                                                 <div class="col-auto text-center">
-                                                    <a href="{{ url('plugin_mail_magazine_history_result', { id: SendHistory.id }) }}">配信結果</a>
+                                                    <a href="{{ url('plugin_mail_magazine_history_result', { id: SendHistory.id }) }}">
+                                                        {{ 'plugin.mailmagazine.history.btn_result'|trans }}
+                                                    </a>
                                                 </div>
                                                 <div class="col-auto text-center">
-                                                    <a href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">削除</a>
+                                                    <a href="#" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">
+                                                        {{ 'plugin.mailmagazine.history.btn_delete'|trans }}
+                                                    </a>
                                                 </div>
                                                 {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
                                                     <div class="col-auto text-center">
-                                                        <a href="#" class="retry-btn" data-id="{{ SendHistory.id }}">再試行</a>
+                                                        <a href="#" class="retry-btn" data-id="{{ SendHistory.id }}">
+                                                            {{ 'plugin.mailmagazine.history.btn_resend'|trans }}
+                                                        </a>
                                                     </div>
                                                 {% endif %}
                                             </div>

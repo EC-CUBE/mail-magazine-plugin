@@ -238,21 +238,22 @@ class MailMagazineService
             $formData['customer_status'] = $formData['customer_status']->toArray();
         }
 
-        // serializeのみだとDB登録時にデータが欠損するのでBase64にする
-        $sendHistory->setSearchData(base64_encode(serialize($formData)));
+        $sendId = null;
+        try {
+            // serializeのみだとDB登録時にデータが欠損するのでBase64にする
+            $sendHistory->setSearchData(base64_encode(serialize($formData)));
+            $this->mailMagazineSendHistoryRepository->save($sendHistory);
+            $this->entityManager->flush();
 
-        $status = $this->mailMagazineSendHistoryRepository->save($sendHistory);
-        $this->entityManager->flush();
-        if (!$status) {
-            return null;
+            $sendId = $sendHistory->getId();
+            $fp = fopen($this->getHistoryFileName($sendId), 'w');
+            foreach ($customerList as $customer) {
+                fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'].' '.$customer['name02'].PHP_EOL);
+            }
+            fclose($fp);
+        } catch (\Exception $e) {
+            log_error(__METHOD__, [$e]);
         }
-
-        $sendId = $sendHistory->getId();
-        $fp = fopen($this->getHistoryFileName($sendId), 'w');
-        foreach ($customerList as $customer) {
-            fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'].' '.$customer['name02'].PHP_EOL);
-        }
-        fclose($fp);
 
         return $sendId;
     }
