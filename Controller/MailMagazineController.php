@@ -90,7 +90,7 @@ class MailMagazineController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      */
-    public function index(Request $request, Paginator $paginator, $page_no = 1)
+    public function index(Request $request, Paginator $paginator, $page_no = 1, \Swift_Mailer $mailer)
     {
         $session = $request->getSession();
         $pageNo = $page_no;
@@ -311,16 +311,15 @@ class MailMagazineController extends AbstractController
      * 配信終了後配信履歴に遷移する
      * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる.
      *
+     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/commit", name="plugin_mail_magazine_commit")
      *
-     * @param Application $app
-     * @param Request     $request
+     * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function commit(Application $app, Request $request)
+    public function commit(Request $request)
     {
-        die(var_dump(__METHOD__));
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
@@ -331,7 +330,6 @@ class MailMagazineController extends AbstractController
 
         // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
         // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
-        $app['swiftmailer.use_spool'] = false;
 
         $id = $request->get('id');
         $offset = (int) $request->get('offset', 0);
@@ -339,23 +337,21 @@ class MailMagazineController extends AbstractController
 
         log_info('メルマガ配信処理開始', array('id' => $id, 'offset' => $offset, 'max' => $max));
 
-        /** @var MailMagazineService $service */
-        $service = $this->mailMagazineService;
         /** @var MailMagazineSendHistory $sendHistory */
-        $sendHistory = $service->sendrMailMagazine($id, $offset, $max);
+        $sendHistory = $this->mailMagazineService->sendMailMagazine($id, $offset, $max);
 
         if ($sendHistory->isComplete()) {
-            $service->sendMailMagazineCompleateReportMail();
+            $this->mailMagazineService->sendMailMagazineCompleateReportMail();
         }
 
         log_info('メルマガ配信処理完了', array('id' => $id, 'offset' => $offset, 'max' => $max));
 
-        return $app->json(array(
+        return $this->json([
             'status' => true,
             'id' => $id,
             'total' => $sendHistory->getSendCount(),
             'count' => $sendHistory->getCompleteCount(),
-        ));
+        ]);
     }
 
     /**

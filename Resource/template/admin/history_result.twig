@@ -56,10 +56,10 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'ステータス'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ '会員ID'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ '送信先'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ '名前'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.history.result.th_status'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.history.result.th_id'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.history.result.th_from'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.history.result.th_name'|trans }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,12 +67,18 @@
                                     <tr>
                                         <td class="align-middle text-left">
                                             {% if result.status == '0' %}
-                                                <span class="badge badge-ec-blue">未送信</span>
+                                                <span class="badge badge-ec-blue">
+                                                    {{ 'plugin.mailmagazine.history.result.status_unsend'|trans }}
+                                                </span>
                                             {% elseif result.status == '1' %}
-                                                <span class="badge badge-ec-green">送信済み</span>
+                                                <span class="badge badge-ec-green">
+                                                    {{ 'plugin.mailmagazine.history.result.status_sent'|trans }}
+                                                </span>
                                             {% elseif result.status == '2' %}
-                                                <span class="badge badge-ec-red">送信失敗</span>
-                                            {% else %}
+                                                <span class="badge badge-ec-red">
+                                                    {{ 'plugin.mailmagazine.history.result.status_fail'|trans }}
+                                                </span>
+                                    {% else %}
                                                 {{ result.status }}
                                             {% endif %}
                                         </td>

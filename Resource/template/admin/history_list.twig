@@ -27,10 +27,6 @@ function fnDelete(action) {
         document.form1.submit();
     }
 }
-function changeAction(action) {
-    document.form1.action = action;
-    document.form1.submit();
-}
 function sendMail(id, offset, token) {
     $.post('{{ url('plugin_mail_magazine_commit') }}', { id : id, offset: offset || 0, _token:token })
         .done(function(res) {
@@ -56,7 +52,7 @@ $(function () {
             lock = true;
             $('#sendModal').modal('show');
             var id = $(this).data('id');
-            $.post('{{ url('plugin_mail_magazine_history_retry') }}?id=' + id)
+            $.post($(this).data('url'))
                 .done(function() { sendMail(id, 0); })
                 .fail(function() { alert('エラーが発生しました。'); });
         }
@@ -74,9 +70,6 @@ $(function () {
     $('#sendModal').modal('show');
     sendMail({{ app.session.flashBag.get('eccube.plugin.mailmagazine.history')[0] }}, 0);
     {% endif %}
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
 })
 </script>
 {% endblock %}
@@ -158,13 +151,30 @@ $(function () {
                                                     </a>
                                                 </div>
                                                 <div class="col-auto text-center">
-                                                    <a href="#" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">
+                                                    <a href="#" data-toggle="modal" data-target="#deleteModal{{ SendHistory.id }}">
                                                         {{ 'plugin.mailmagazine.history.btn_delete'|trans }}
                                                     </a>
+                                                    <div id="deleteModal{{ SendHistory.id }}" class="modal" data-keyboard="false" data-backdrop="static">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">{{ 'plugin.mailmagazine.history.modal_del_message'|trans }}</h4>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-ec-regular" data-dismiss="modal">
+                                                                        {{ 'common.label.cancel'|trans }}
+                                                                    </button>
+                                                                    <button type="submit" class="btn btn-ec-delete" onclick="document.form1.action = '{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'">
+                                                                        {{ 'common.label.execute'|trans }}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
                                                     <div class="col-auto text-center">
-                                                        <a href="#" class="retry-btn" data-id="{{ SendHistory.id }}">
+                                                        <a href="#" class="retry-btn" data-id="{{ SendHistory.id }}" data-url="{{ url('plugin_mail_magazine_history_retry', {id: SendHistory.id}) }}">
                                                             {{ 'plugin.mailmagazine.history.btn_resend'|trans }}
                                                         </a>
                                                     </div>
@@ -193,22 +203,22 @@ $(function () {
         </div>
     </div>
 </form>
-    <div id="sendModal" class="modal" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">送信中...</h4>
+<div id="sendModal" class="modal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">送信中...</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div id="send-progress" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="progress">
-                        <div id="send-progress" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-                    </div>
-                    <div id="send-status-message"></div>
-                </div>
-                <div class="modal-footer" style="display: none;">
-                    <button type="button" class="btn btn-default btn-close">閉じる</button>
-                </div>
+                <div id="send-status-message"></div>
+            </div>
+            <div class="modal-footer" style="display: none;">
+                <button type="button" class="btn btn-default btn-close">閉じる</button>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

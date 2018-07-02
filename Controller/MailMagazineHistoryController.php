@@ -208,82 +208,71 @@ class MailMagazineHistoryController extends AbstractController
      * 配信履歴を論理削除する
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
+     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/delete",
      *     requirements={"id":"\d+|"},
      *     name="plugin_mail_magazine_history_delete"
      * )
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param unknown     $id
+     * @param MailMagazineSendHistory $mailMagazineSendHistory
      *
      * @throws BadRequestHttpException
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function delete(Application $app, Request $request, $id)
+    public function delete(MailMagazineSendHistory $mailMagazineSendHistory)
     {
-        die(var_dump(__METHOD__));
-        // POSTかどうか判定
-        if ('POST' !== $request->getMethod()) {
-            throw new BadRequestHttpException();
+        try {
+            $id = $mailMagazineSendHistory->getId();
+            $this->mailMagazineSendHistoryRepository->delete($mailMagazineSendHistory);
+            $this->entityManager->flush();
+
+            $this->mailMagazineService->unlinkHistoryFiles($id);
+
+            $this->addSuccess('admin.plugin.mailmagazine.history.delete.sucesss', 'admin');
+        } catch (\Exception $e) {
+            $this->addError('admin.flash.register_failed','admin');
         }
-
-        // パラメータ$idにマッチするデータが存在するか判定
-        if (!$id) {
-            throw new BadRequestHttpException();
-        }
-
-        // 配信履歴を取得する
-        $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
-
-        // 配信履歴がない場合はエラーメッセージを表示する
-        if (is_null($sendHistory)) {
-            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
-
-            return $app->redirect($app->url('plugin_mail_magazine_history'));
-        }
-
-        // POSTかつ$idに対応するdtb_send_historyのレコードがあれば、del_flg = 1に設定して更新
-        $sendHistory->setDelFlg(Constant::ENABLED);
-
-        $app['orm.em']->persist($sendHistory);
-        $app['orm.em']->flush($sendHistory);
-
-        $service = $this->getMailMagazineService($app);
-        $service->unlinkHistoryFiles($id);
-
-        $app->addSuccess('admin.plugin.mailmagazine.history.delete.sucesss', 'admin');
 
         // メルマガテンプレート一覧へリダイレクト
-        return $app->redirect($app->url('plugin_mail_magazine_history'));
+        return $this->redirect($this->generateUrl('plugin_mail_magazine_history'));
     }
 
     /**
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/retry", name="plugin_mail_magazine_history_retry")
      *
-     * @param Application $app
+     * @Method("POST")
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/retry",
+     *     requirements={"id":"\d+|"},
+     *     name="plugin_mail_magazine_history_retry"
+     * )
+     *
      * @param Request $request
+     * @param MailMagazineSendHistory $mailMagazineSendHistory
+     *
      * @return mixed
      */
-    public function retry(Application $app, Request $request)
+    public function retry(Request $request, MailMagazineSendHistory $mailMagazineSendHistory)
     {
-        die(var_dump(__METHOD__));
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();
         }
 
-        $id = $request->get('id');
+        try {
+            log_info('メルマガ再試行前処理開始', array('id' => $mailMagazineSendHistory->getId()));
 
-        log_info('メルマガ再試行前処理開始', array('id' => $id));
+            $this->mailMagazineService->markRetry($mailMagazineSendHistory->getId());
 
-        $service = $this->getMailMagazineService($app);
-        $service->markRetry($id);
+            log_info('メルマガ再試行前処理完了', array('id' => $mailMagazineSendHistory->getId()));
 
-        log_info('メルマガ再試行前処理完了', array('id' => $id));
+            $status = true;
+        } catch (\Exception $e) {
+            log_error(__METHOD__, [$e]);
+            $status = false;
+        }
 
-        return $app->json(array('status' => true));
+
+        return $this->json(['status' => $status]);
     }
 
     /**
@@ -325,25 +314,5 @@ class MailMagazineHistoryController extends AbstractController
             'pageMaxis' => $pageMaxis,
             'page_count' => $pageCount,
         ];
-    }
-
-    /**
-     * @param Application $app
-     *
-     * @return MailMagazineService
-     */
-    private function getMailMagazineService(Application $app)
-    {
-        return $app['eccube.plugin.mail_magazine.service.mail'];
-    }
-
-    /**
-     * @param Application $app
-     *
-     * @return MailMagazineSendHistoryRepository
-     */
-    private function getMailMagazineSendHistoryRepository(Application $app)
-    {
-        return $app['eccube.plugin.mail_magazine.repository.mail_magazine_history'];
     }
 }

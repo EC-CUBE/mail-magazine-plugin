@@ -56,17 +56,16 @@ class MailMagazineService
     // send_flagの定数
     /** メール未送信 */
     const SEND_FLAG_NONE = 0;
+
     /** メール送信成功 */
     const SEND_FLAG_SUCCESS = 1;
+
     /** メール送信失敗 */
     const SEND_FLAG_FAILURE = 2;
 
     // ====================================
     // 変数宣言
     // ====================================
-    /** @var \Eccube\Application */
-    public $app;
-
     /**
      * 最後の送信者に送信したメールの本文(テキスト形式).
      *
@@ -296,6 +295,11 @@ class MailMagazineService
         fclose($fout);
     }
 
+    /**
+     * Mark history to retry send
+     *
+     * @param $sendId
+     */
     public function markRetry($sendId)
     {
         // 再送時の前処理
@@ -319,17 +323,16 @@ class MailMagazineService
      * Send mailmagazine.
      * メールマガジンを送信する.
      *
-     * @param int $sendId 履歴ID
-     * @param int $offset 開始位置
-     * @param int $max    最大数
-     *
-     * @return MailMagazineSendHistory 送信履歴
+     * @param $sendId
+     * @param int $offset
+     * @param int $max
+     * @return bool|MailMagazineSendHistory
      */
-    public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
+    public function sendMailMagazine($sendId, $offset = 0, $max = 100)
     {
         // send_historyを取得する
         /** @var MailMagazineSendHistory $sendHistory */
-        $sendHistory = $this->app[self::REPOSITORY_SEND_HISTORY]->find($sendId);
+        $sendHistory = $this->mailMagazineSendHistoryRepository->find($sendId);
 
         if (is_null($sendHistory)) {
             // 削除されている場合は終了する
@@ -424,7 +427,8 @@ class MailMagazineService
         $sendHistory->setEndDate(new \DateTime());
         $sendHistory->setCompleteCount($offset > 0 ? $sendHistory->getCompleteCount() + $processCount : $processCount);
         $sendHistory->setErrorCount($errorCount);
-        $this->app[self::REPOSITORY_SEND_HISTORY]->updateSendHistory($sendHistory);
+        $this->mailMagazineSendHistoryRepository->save($sendHistory);
+        $this->entityManager->flush();
 
         return $sendHistory;
     }
@@ -472,9 +476,14 @@ class MailMagazineService
         return $this->mailMagazineDir.'/mail_magazine_'.($input ? 'in' : 'out').'_'.$historyId.'.txt';
     }
 
+    /**
+     * Delete history files
+     *
+     * @param $historyId
+     */
     public function unlinkHistoryFiles($historyId)
     {
-        foreach (array($this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)) as $f) {
+        foreach ([$this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)] as $f) {
             if (file_exists($f)) {
                 unlink($f);
             }
