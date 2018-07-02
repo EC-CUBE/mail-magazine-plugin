@@ -30,6 +30,7 @@ class MailMagazineSendHistoryRepository extends AbstractRepository
     /**
      * MailMagazineSendHistoryRepository constructor.
      *
+     * @param Queries $queries
      * @param ManagerRegistry $registry
      * @param string $entityClass
      */

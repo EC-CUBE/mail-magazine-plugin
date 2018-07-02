@@ -30,6 +30,10 @@ class MailMagazineType extends SearchCustomerType
     {
         parent::buildForm($builder, $options);
 
+        $constraints = isset($options['eccube_form_options']['constraints'])
+            ? $options['eccube_form_options']['constraints']
+            : true;
+
         // 以降テンプレート選択で使用する項目
         $builder->add('id', HiddenType::class)
             ->add('template', MailMagazineTemplateType::class, array(
@@ -40,16 +44,12 @@ class MailMagazineType extends SearchCustomerType
             ->add('subject', TextType::class, array(
                 'label' => 'plugin.mailmagazine.select.label_subject',
                 'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank()
-                ]
+                'constraints' => $constraints ? [new Assert\NotBlank()] : []
             ))
             ->add('body', TextareaType::class, array(
                 'label' => 'plugin.mailmagazine.select.label_body',
                 'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank()
-                ]
+                'constraints' => $constraints ? [new Assert\NotBlank()] : []
             ))
             ->add('htmlBody', TextareaType::class, array(
                 'label' => 'plugin.mailmagazine.select.label_body_html',

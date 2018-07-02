@@ -112,6 +112,12 @@ class MailMagazineController extends AbstractController
         $searchForm = $this->formFactory
             ->createBuilder(MailMagazineType::class)
             ->getForm();
+
+        $searchForm->remove('id');
+        $searchForm->remove('subject');
+        $searchForm->remove('body');
+        $searchForm->remove('htmlBody');
+
         if ('POST' === $request->getMethod()) {
             $searchForm->handleRequest($request);
             if ($searchForm->isValid()) {
@@ -185,13 +191,13 @@ class MailMagazineController extends AbstractController
         /** @var MailMagazineTemplate $Template */
         $Template = null;
 
-        // Formの取得
-        $form = $this->formFactory
-            ->createBuilder(MailMagazineType::class, null)
-            ->getForm();
 
         // テンプレート選択によるPOSTの場合はテンプレートからデータを取得する
         if ($request->get('mode') == 'select') {
+            // Formの取得
+            $form = $this->formFactory
+                ->createBuilder(MailMagazineType::class)
+                ->getForm();
             $form->handleRequest($request);
             $newTemplate = $form->get('template')->getData();
             $data = $form->getData();
@@ -222,6 +228,9 @@ class MailMagazineController extends AbstractController
                 $form->get('htmlBody')->setData('');
             }
         } elseif ($request->get('mode') == 'confirm') {
+            $form = $this->formFactory
+                ->createBuilder(MailMagazineType::class)
+                ->getForm();
             $form->handleRequest($request);
             if ($form->isValid()) {
                 return $this->render('@MailMagazine/admin/confirm.twig', [
@@ -233,6 +242,15 @@ class MailMagazineController extends AbstractController
                     'testMailTo' => $this->mailMagazineService->getAdminEmail(),
                 ]);
             }
+        } else {
+            $form = $this->formFactory
+                ->createBuilder(MailMagazineType::class, null, [
+                    'eccube_form_options' => [
+                        'constraints' => false
+                    ]
+                ])
+                ->getForm();
+            $form->handleRequest($request);
         }
 
         return [

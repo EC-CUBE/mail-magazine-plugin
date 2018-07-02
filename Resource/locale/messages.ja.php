@@ -26,6 +26,7 @@ return [
     'plugin.mailmagazine.confirm.modal.confirm_test_fail_message' => 'テストメールの送信に失敗しました。',
     'plugin.mailmagazine.template.title' => 'テンプレート設定',
     'plugin.mailmagazine.history.title' => '配信履歴',
+    'plugin.mailmagazine.history.preview.btn_back' => '戻る',
     'admin.plugin.mailmagazine.template.save.complete' => 'メールテンプレート情報を保存しました。',
     'admin.plugin.mailmagazine.template.save.failure' => 'メールテンプレート情報の保存に失敗しました。',
     'admin.plugin.mailmagazine.template.data.notfound' => 'メールテンプレートが存在しません。',

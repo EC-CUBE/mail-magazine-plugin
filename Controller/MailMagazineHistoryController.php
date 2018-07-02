@@ -25,6 +25,8 @@ use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;
+use Eccube\Entity\Master\CustomerStatus;
+use Eccube\Entity\Master\Sex;
 
 class MailMagazineHistoryController extends AbstractController
 {
@@ -105,30 +107,15 @@ class MailMagazineHistoryController extends AbstractController
      * )
      * @Template("@MailMagazine/admin/history_preview.twig")
      *
+     * @param MailMagazineSendHistory $mailMagazineSendHistory
+     *
+     * @return array
      */
-    public function preview(Application $app, Request $request, $id)
+    public function preview(MailMagazineSendHistory $mailMagazineSendHistory)
     {
-        die(var_dump(__METHOD__));
-        // dtb_send_historyから対象レコード抽出
-        // subject/bodyを抽出し、以下のViewへ渡す
-        // パラメータ$idにマッチするデータが存在するか判定
-        if (!$id) {
-            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
-
-            return $app->redirect($app->url('plugin_mail_magazine_history'));
-        }
-
         // 配信履歴を取得する
-        $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
-
-        if (is_null($sendHistory)) {
-            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
-
-            return $app->redirect($app->url('plugin_mail_magazine_history'));
-        }
-
         return [
-            'history' => $sendHistory,
+            'history' => $mailMagazineSendHistory,
         ];
     }
 
@@ -141,37 +128,17 @@ class MailMagazineHistoryController extends AbstractController
      * )
      * @Template("@MailMagazine/admin/history_condition.twig")
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param unknown     $id
+     * @param MailMagazineSendHistory $mailMagazineSendHistory
      *
      * @throws BadRequestHttpException
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|array
      */
-    public function condition(Application $app, Request $request, $id)
+    public function condition(MailMagazineSendHistory $mailMagazineSendHistory)
     {
-        die(var_dump(__METHOD__));
-        // dtb_send_historyから対象レコード抽出
-        // dtb_send_history.search_dataを逆シリアライズした上で、各変数をViewに渡す
-        if (!$id) {
-            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
-
-            return $app->redirect($app->url('plugin_mail_magazine_history'));
-        }
-
-        // 配信履歴を取得する
-        $sendHistory = $this->getMailMagazineSendHistoryRepository($app)->find($id);
-
-        if (is_null($sendHistory)) {
-            $app->addError('admin.plugin.mailmagazine.history.datanotfound', 'admin');
-
-            return $app->redirect($app->url('plugin_mail_magazine_history'));
-        }
-
         // 検索条件をアンシリアライズする
         // base64,serializeされているので注意すること
-        $searchData = unserialize(base64_decode($sendHistory->getSearchData()));
+        $searchData = unserialize(base64_decode($mailMagazineSendHistory->getSearchData()));
 
         // 区分値を文字列に変更する
         // 必要な項目のみ
@@ -185,29 +152,33 @@ class MailMagazineHistoryController extends AbstractController
     /**
      * search_dataの配列を表示用に変換する.
      *
-     * @param unknown $searchData
+     * @param array $searchData
+     *
+     * @return array
      */
     protected function searchDataToDisplayData($searchData)
     {
         $data = $searchData;
 
         // 会員種別
-        $val = null;
-        if (!is_null($searchData['customer_status'])) {
-            if (count($searchData['customer_status']->toArray()) > 0) {
-                $val = implode(' ', $searchData['customer_status']->toArray());
-            }
+        $val = [];
+        if (isset($searchData['customer_status']) && is_array($searchData['customer_status'])) {
+            array_map(function ($CustomerStatus) use (&$val) {
+                /** @var \Eccube\Entity\Master\CustomerStatus $CustomerStatus */
+                $val[] = $CustomerStatus->getName();
+            }, $searchData['customer_status']);
         }
-        $data['customer_status'] = $val;
+        $data['customer_status'] = implode(', ', $val);
 
         // 性別
-        $val = null;
-        if (!is_null($searchData['sex'])) {
-            if (count($searchData['sex']->toArray()) > 0) {
-                $val = implode(' ', $searchData['sex']->toArray());
-            }
+        $val = [];
+        if (isset($searchData['sex']) && is_array($searchData['sex'])) {
+            array_map(function ($Sex) use (&$val) {
+                /** @var Sex $Sex */
+                $val[] = $Sex->getName();
+            }, $searchData['sex']);
         }
-        $data['sex'] = $val;
+        $data['sex'] = implode(', ', $val);
 
         // 誕生月
         $val = null;

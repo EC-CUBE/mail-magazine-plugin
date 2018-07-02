@@ -11,7 +11,6 @@
 
 namespace Plugin\MailMagazine\Service;
 
-use Eccube\Application;
 use Eccube\Common\Constant;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Eccube\Entity\BaseInfo;
@@ -22,6 +21,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * メルマガ配信処理のサービスクラス。
@@ -230,6 +230,13 @@ class MailMagazineService
         unset($formData['id']);
         unset($formData['subject']);
         unset($formData['body']);
+
+        if (isset($formData['sex']) && $formData['sex'] instanceof ArrayCollection) {
+            $formData['sex'] = $formData['sex']->toArray();
+        }
+        if (isset($formData['customer_status']) && $formData['customer_status'] instanceof ArrayCollection) {
+            $formData['customer_status'] = $formData['customer_status']->toArray();
+        }
 
         // serializeのみだとDB登録時にデータが欠損するのでBase64にする
         $sendHistory->setSearchData(base64_encode(serialize($formData)));
