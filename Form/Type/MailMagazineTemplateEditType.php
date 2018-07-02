@@ -18,6 +18,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class MailMagazineTemplateEditType extends AbstractType
 {
@@ -27,22 +29,22 @@ class MailMagazineTemplateEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('subject', 'text', array(
-                'label' => '件名',
+            ->add('subject', TextType::class, array(
+                'label' => 'plugin.mailmagazine.select.label_subject',
                 'required' => true,
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('body', 'textarea', array(
-                'label' => '本文 (テキスト形式)',
+            ->add('body', TextareaType::class, array(
+                'label' => 'plugin.mailmagazine.select.label_body',
                 'required' => true,
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
             ))
-            ->add('htmlBody', 'textarea', array(
-                'label' => '本文 (HTML形式)',
+            ->add('htmlBody', TextareaType::class, array(
+                'label' => 'plugin.mailmagazine.select.label_body_html',
                 'required' => false,
             ));
     }

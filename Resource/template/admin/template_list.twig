@@ -7,81 +7,96 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends 'default_frame.twig' %}
+{% extends '@admin/styleguide_frame.twig' %}
 
-{% set menus = ['mailmagazine', 'mailmagazine_template'] %}
+{% set menus = ['customer', 'mailmagazine', 'mailmagazine_template'] %}
 
-{% block title %}メルマガ管理{% endblock %}
-{% block sub_title %}テンプレート一覧{% endblock %}
+{% block title %}{{ 'plugin.mailmagazine.template.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
 
 {% block javascript %}
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.core.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.widget.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js"></script>
-
-<script>
-function fnDelete(action) {
-    if (confirm('このテンプレートを削除しても宜しいですか？')) {
-        document.form1.action = action;
-        document.form1.submit();
-    }
-}
-function changeAction(action) {
-    document.form1.action = action;
-    document.form1.submit();
-}
-</script>
-
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.widget.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js', 'admin') }}"></script>
 {% endblock %}
 
-
 {% block main %}
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">テンプレート一覧</h3>
-                </div><!-- /.box-header -->
-                <div class="box-body">
-                    <form name="form1" id="form1" method="post" action="">
-                        <div class="table_list">
-                            <div class="table-responsive with-border">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>作成日</th>
-                                        <th>件名</th>
-                                        <th>編集</th>
-                                        <th>削除</th>
-                                        <th>プレビュー</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for Template in TemplateList %}
-                                        <tr>
-                                            <td>{{ Template.create_date|date("Y.m.d") }}</td>
-                                            <td>{{ Template.subject }}</td>
-                                            <td><a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_template_edit', { id: Template.id }) }}'); document.form1.submit(); return false;">編集</a></td>
-                                            <td><a href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_template_delete', { id: Template.id }) }}'); document.form1.submit(); return false;">削除</a></td>
-                                            <td><a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_template_preview', { id: Template.id }) }}'); document.form1.submit(); return false;">プレビュー</a></td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="d-inline-block" data-toggle="tooltip" data-placement="top" title="Tooltip">
+                                    <span class="card-title">
+                                        {{ 'plugin.mailmagazine.template.card_title'|trans }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-4 text-right">
                             </div>
                         </div>
-                    </form>
-                    <div class="row">
-                        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-                            <a href="{{ url('plugin_mail_magazine_template_regist') }}" class="btn btn-primary btn-block btn-lg">テンプレートを新規登録</a>
-                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_created_date'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_subject'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_edit'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_del'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'プレビュー'|trans }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for Template in TemplateList %}
+                                <tr>
+                                    <td>{{ Template.create_date|date_day }}</td>
+                                    <td>{{ Template.subject }}</td>
+                                    <td><a href="{{ url('plugin_mail_magazine_template_edit', { id: Template.id }) }}">{{ 'plugin.mailmagazine.template.btn_edit'|trans }}</a></td>
+                                    <td>
+                                        <a href="#" data-toggle="modal" data-target="#deleteModal{{ Template.id }}">{{ 'plugin.mailmagazine.template.btn_del'|trans }}</a>
+                                        <div id="deleteModal{{ Template.id }}" class="modal" data-keyboard="false" data-backdrop="static">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">{{ 'plugin.mailmagazine.template.modal_del_message'|trans }}</h4>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-ec-regular" data-dismiss="modal">
+                                                            {{ 'common.label.cancel'|trans }}
+                                                        </button>
+                                                        <form action="{{ url('plugin_mail_magazine_template_delete', { id: Template.id }) }}" method="post" enctype="application/x-www-form-urlencoded">
+                                                            <button type="submit" class="btn btn-ec-delete">
+                                                                {{ 'common.label.execute'|trans }}
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url('plugin_mail_magazine_template_preview', { id: Template.id }) }}">
+                                            {{ 'plugin.mailmagazine.template.btn_review'|trans }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div><!-- /.box -->
-
+                <div class="row justify-content-md-center mb-4 ">
+                    <div class="col-auto">
+                        <a class="btn btn-ec-regular btn-lg" href="{{ url('plugin_mail_magazine_template_regist') }}">
+                            {{ 'plugin.mailmagazine.template.btn_new'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 {% endblock %}

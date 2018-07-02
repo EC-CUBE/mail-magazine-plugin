@@ -39,7 +39,7 @@ class MailMagazineTemplateRepository extends AbstractRepository
     /**
      * find all.
      *
-     * @return type
+     * @return array
      */
     public function findAll()
     {
