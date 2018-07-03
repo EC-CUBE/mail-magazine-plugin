@@ -1,13 +1,15 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\MailMagazine\Controller;
 
@@ -165,7 +167,7 @@ class MailMagazineController extends AbstractController
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
             'page_count' => $pageMax,
-            'has_errors' => false
+            'has_errors' => false,
         ];
     }
 
@@ -189,7 +191,6 @@ class MailMagazineController extends AbstractController
     {
         /** @var MailMagazineTemplate $Template */
         $Template = null;
-
 
         // テンプレート選択によるPOSTの場合はテンプレートからデータを取得する
         if ($request->get('mode') == 'select') {
@@ -245,8 +246,8 @@ class MailMagazineController extends AbstractController
             $form = $this->formFactory
                 ->createBuilder(MailMagazineType::class, null, [
                     'eccube_form_options' => [
-                        'constraints' => false
-                    ]
+                        'constraints' => false,
+                    ],
                 ])
                 ->getForm();
             $form->handleRequest($request);
@@ -269,7 +270,7 @@ class MailMagazineController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function prepare( Request $request)
+    public function prepare(Request $request)
     {
         log_info('メルマガ配信前処理開始');
 
@@ -299,7 +300,7 @@ class MailMagazineController extends AbstractController
         // フラッシュスコープにIDを保持してリダイレクト後に送信処理を開始できるようにする
         $this->session->getFlashBag()->add('eccube.plugin.mailmagazine.history', $sendId);
 
-        log_info('メルマガ配信前処理完了', array('sendId' => $sendId));
+        log_info('メルマガ配信前処理完了', ['sendId' => $sendId]);
 
         // 配信履歴画面に遷移する
         return $this->redirect($this->generateUrl('plugin_mail_magazine_history'));
@@ -334,7 +335,7 @@ class MailMagazineController extends AbstractController
         $offset = (int) $request->get('offset', 0);
         $max = (int) $request->get('max', 100);
 
-        log_info('メルマガ配信処理開始', array('id' => $id, 'offset' => $offset, 'max' => $max));
+        log_info('メルマガ配信処理開始', ['id' => $id, 'offset' => $offset, 'max' => $max]);
 
         /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $this->mailMagazineService->sendMailMagazine($id, $offset, $max);
@@ -343,7 +344,7 @@ class MailMagazineController extends AbstractController
             $this->mailMagazineService->sendMailMagazineCompleateReportMail();
         }
 
-        log_info('メルマガ配信処理完了', array('id' => $id, 'offset' => $offset, 'max' => $max));
+        log_info('メルマガ配信処理完了', ['id' => $id, 'offset' => $offset, 'max' => $max]);
 
         return $this->json([
             'status' => true,

@@ -1,8 +1,10 @@
 <?php
-/**
- * This file is part of EC-CUBE.
+
+/*
+ * This file is part of EC-CUBE
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
  * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
@@ -39,7 +41,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $crawler = $this->client->request(
             'POST',
             $this->app->url('plugin_mail_magazine'),
-            array('mail_magazine' => $searchForm)
+            ['mail_magazine' => $searchForm]
         );
         $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
     }
@@ -57,7 +59,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $crawler = $this->client->request(
             'POST',
             $this->app->url('plugin_mail_magazine'),
-            array('mail_magazine' => $searchForm)
+            ['mail_magazine' => $searchForm]
         );
         $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
     }
@@ -69,7 +71,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $crawler = $this->client->request(
             'POST',
             $this->app->url('plugin_mail_magazine'),
-            array('mail_magazine' => $searchForm)
+            ['mail_magazine' => $searchForm]
         );
         $this->assertContains('が該当しました', $crawler->filter('h3.box-title')->text());
     }
@@ -80,13 +82,13 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('plugin_mail_magazine_select', array('id' => $MailTemplate->getId())),
-            array('mail_magazine' => array(
+            $this->app->url('plugin_mail_magazine_select', ['id' => $MailTemplate->getId()]),
+            ['mail_magazine' => [
                 'template' => $MailTemplate->getId(),
                 'subject' => $MailTemplate->getSubject(),
                 'body' => $MailTemplate->getBody(),
                 '_token' => 'dummy',
-            ))
+            ]]
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -98,13 +100,13 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $MailTemplate = $this->createMagazineTemplate();
         $this->client->request(
             'GET',
-            $this->app->url('plugin_mail_magazine_select', array('id' => $MailTemplate->getId())),
-            array('mail_magazine' => array(
+            $this->app->url('plugin_mail_magazine_select', ['id' => $MailTemplate->getId()]),
+            ['mail_magazine' => [
                 'template' => $MailTemplate->getId(),
                 'subject' => $MailTemplate->getSubject(),
                 'body' => $MailTemplate->getBody(),
                 '_token' => 'dummy',
-            ))
+            ]]
         );
     }
 
@@ -114,13 +116,13 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('plugin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
-            array('mail_magazine' => array(
+            $this->app->url('plugin_mail_magazine_confirm', ['id' => $MailTemplate->getId()]),
+            ['mail_magazine' => [
                 'template' => $MailTemplate->getId(),
                 'subject' => $MailTemplate->getSubject(),
                 'body' => $MailTemplate->getBody(),
                 '_token' => 'dummy',
-            ))
+            ]]
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -131,14 +133,14 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('plugin_mail_magazine_confirm', array('id' => $MailTemplate->getId())),
-            array('mail_magazine' => array(
+            $this->app->url('plugin_mail_magazine_confirm', ['id' => $MailTemplate->getId()]),
+            ['mail_magazine' => [
                 'id' => $MailTemplate->getId(),
                 'template' => $MailTemplate->getId(),
                 'subject' => $MailTemplate->getSubject(),
                 'body' => $MailTemplate->getBody(),
                 '_token' => 'dummy',
-            ))
+            ]]
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -155,8 +157,8 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->client->request(
             'POST',
-            $this->app->url('plugin_mail_magazine_prepare', array('id' => $MailTemplate->getId())),
-            array('mail_magazine' => $searchForm)
+            $this->app->url('plugin_mail_magazine_prepare', ['id' => $MailTemplate->getId()]),
+            ['mail_magazine' => $searchForm]
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('plugin_mail_magazine_history')));
@@ -175,16 +177,16 @@ class MailMagazineControllerTest extends MailMagazineCommon
         for ($i = 0; $i < 30; ++$i) {
             $this->createMailMagazineCustomer();
         }
-        $searchForm = array(
+        $searchForm = [
             '_token' => 'dummy',
-            'sex' => array('1'),
+            'sex' => ['1'],
             'multi' => '',
-            'customer_status' => array(),
+            'customer_status' => [],
             'birth_month' => '',
             'birth_start' => '',
             'birth_end' => '',
             'pref' => '',
-            'tel' => array(),
+            'tel' => [],
             'create_date_start' => '',
             'create_date_end' => '',
             'update_date_start' => '',
@@ -196,11 +198,11 @@ class MailMagazineControllerTest extends MailMagazineCommon
             'buy_product_code' => '',
             'last_buy_start' => '',
             'last_buy_end' => '',
-        );
+        ];
         $crawler = $this->client->request(
             'POST',
             $this->app->url('plugin_mail_magazine'),
-            array('mail_magazine' => $searchForm)
+            ['mail_magazine' => $searchForm]
         );
         $pageNumber = $crawler->filter('.box-title strong')->html();
         $this->assertRegexp('/件/', $pageNumber);

@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\MailMagazine\Entity;
 
 use Eccube\Doctrine\Query\WhereClause;
@@ -12,6 +24,7 @@ class AdminCustomerQueryCustomizer extends WhereCustomizer
      *
      * @param array $params
      * @param $queryKey
+     *
      * @return WhereClause[]
      */
     protected function createStatements($params, $queryKey)
@@ -21,10 +34,9 @@ class AdminCustomerQueryCustomizer extends WhereCustomizer
         }
 
         return [WhereClause::eq('c.mailmaga_flg', ':mailmaga_flg', [
-            'mailmaga_flg' => $params['plg_mailmagazine_flg']
+            'mailmaga_flg' => $params['plg_mailmagazine_flg'],
         ])];
     }
-
 
     /**
      * {@inheritdoc}

@@ -1,8 +1,10 @@
 <?php
-/**
- * This file is part of EC-CUBE.
+
+/*
+ * This file is part of EC-CUBE
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
  * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
@@ -30,49 +32,49 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $password = $faker->lexify('????????');
         $birth = $faker->dateTimeBetween;
 
-        $form = array(
-            'name' => array(
+        $form = [
+            'name' => [
                 'name01' => $faker->lastName,
                 'name02' => $faker->firstName,
-            ),
-            'kana' => array(
+            ],
+            'kana' => [
                 'kana01' => $faker->lastKanaName,
                 'kana02' => $faker->firstKanaName,
-            ),
+            ],
             'company_name' => $faker->company,
-            'zip' => array(
+            'zip' => [
                 'zip01' => $faker->postcode1(),
                 'zip02' => $faker->postcode2(),
-            ),
-            'address' => array(
+            ],
+            'address' => [
                 'pref' => '5',
                 'addr01' => $faker->city,
                 'addr02' => $faker->streetAddress,
-            ),
-            'tel' => array(
+            ],
+            'tel' => [
                 'tel01' => $tel[0],
                 'tel02' => $tel[1],
                 'tel03' => $tel[2],
-            ),
-            'fax' => array(
+            ],
+            'fax' => [
                 'fax01' => $tel[0],
                 'fax02' => $tel[1],
                 'fax03' => $tel[2],
-            ),
+            ],
             'email' => $email,
-            'password' => array(
+            'password' => [
                 'first' => $password,
                 'second' => $password,
-            ),
-            'birth' => array(
+            ],
+            'birth' => [
                 'year' => $birth->format('Y'),
                 'month' => $birth->format('n'),
                 'day' => $birth->format('j'),
-            ),
+            ],
             'sex' => 1,
             'job' => 1,
             '_token' => 'dummy',
-        );
+        ];
 
         return $form;
     }
@@ -109,12 +111,12 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
 
         $this->client->request('POST',
             $this->app->url('mypage_change'),
-            array(
+            [
                 'entry' => $form,
-            )
+            ]
         );
         $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
-            ->findOneBy(array('customer_id' => $this->User->getId()));
+            ->findOneBy(['customer_id' => $this->User->getId()]);
         $this->actual = $MailCustomer->getMailmagaFlg();
         $this->expected = $updateFlg;
         $this->verify();

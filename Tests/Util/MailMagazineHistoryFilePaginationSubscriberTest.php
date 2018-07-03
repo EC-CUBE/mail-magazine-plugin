@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\MailMagazine\Test\Util;
 
 use Knp\Component\Pager\Pagination\AbstractPagination;
@@ -59,12 +70,12 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         $actual = $this->newPagination($file, 1, 4, 10);
         self::assertEquals(10, $actual->getTotalItemCount());
         self::assertEquals(
-            array(
-                array('status' => '1', 'customerId' => '0', 'email' => '0_create_mail_magazine_history@example.com', 'name' => 'name01_0 name02_0'),
-                array('status' => '1', 'customerId' => '1', 'email' => '1_create_mail_magazine_history@example.com', 'name' => 'name01_1 name02_1'),
-                array('status' => '1', 'customerId' => '2', 'email' => '2_create_mail_magazine_history@example.com', 'name' => 'name01_2 name02_2'),
-                array('status' => '1', 'customerId' => '3', 'email' => '3_create_mail_magazine_history@example.com', 'name' => 'name01_3 name02_3'),
-            ),
+            [
+                ['status' => '1', 'customerId' => '0', 'email' => '0_create_mail_magazine_history@example.com', 'name' => 'name01_0 name02_0'],
+                ['status' => '1', 'customerId' => '1', 'email' => '1_create_mail_magazine_history@example.com', 'name' => 'name01_1 name02_1'],
+                ['status' => '1', 'customerId' => '2', 'email' => '2_create_mail_magazine_history@example.com', 'name' => 'name01_2 name02_2'],
+                ['status' => '1', 'customerId' => '3', 'email' => '3_create_mail_magazine_history@example.com', 'name' => 'name01_3 name02_3'],
+            ],
             $actual->getItems()
         );
     }
@@ -88,12 +99,12 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         $actual = $this->newPagination($file, 2, 4, 10);
         self::assertEquals(10, $actual->getTotalItemCount());
         self::assertEquals(
-            array(
-                array('status' => '1', 'customerId' => '4', 'email' => '4_create_mail_magazine_history@example.com', 'name' => 'name01_4 name02_4'),
-                array('status' => '1', 'customerId' => '5', 'email' => '5_create_mail_magazine_history@example.com', 'name' => 'name01_5 name02_5'),
-                array('status' => '1', 'customerId' => '6', 'email' => '6_create_mail_magazine_history@example.com', 'name' => 'name01_6 name02_6'),
-                array('status' => '1', 'customerId' => '7', 'email' => '7_create_mail_magazine_history@example.com', 'name' => 'name01_7 name02_7'),
-            ),
+            [
+                ['status' => '1', 'customerId' => '4', 'email' => '4_create_mail_magazine_history@example.com', 'name' => 'name01_4 name02_4'],
+                ['status' => '1', 'customerId' => '5', 'email' => '5_create_mail_magazine_history@example.com', 'name' => 'name01_5 name02_5'],
+                ['status' => '1', 'customerId' => '6', 'email' => '6_create_mail_magazine_history@example.com', 'name' => 'name01_6 name02_6'],
+                ['status' => '1', 'customerId' => '7', 'email' => '7_create_mail_magazine_history@example.com', 'name' => 'name01_7 name02_7'],
+            ],
             $actual->getItems()
         );
     }
@@ -117,10 +128,10 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         $actual = $this->newPagination($file, 3, 4, 10);
         self::assertEquals(10, $actual->getTotalItemCount());
         self::assertEquals(
-            array(
-                array('status' => '1', 'customerId' => '8', 'email' => '8_create_mail_magazine_history@example.com', 'name' => 'name01_8 name02_8'),
-                array('status' => '1', 'customerId' => '9', 'email' => '9_create_mail_magazine_history@example.com', 'name' => 'name01_9 name02_9'),
-            ),
+            [
+                ['status' => '1', 'customerId' => '8', 'email' => '8_create_mail_magazine_history@example.com', 'name' => 'name01_8 name02_8'],
+                ['status' => '1', 'customerId' => '9', 'email' => '9_create_mail_magazine_history@example.com', 'name' => 'name01_9 name02_9'],
+            ],
             $actual->getItems()
         );
     }
@@ -138,7 +149,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         $paginator = new Paginator();
         $paginator->subscribe(new MailMagazineHistoryFilePaginationSubscriber());
 
-        return $paginator->paginate($file, $page, $limit, array('total' => $total));
+        return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }
 
     private function file($name = 'out.txt')

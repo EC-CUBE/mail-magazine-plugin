@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\MailMagazine\Event;
 
 use Knp\Component\Pager\Event\ItemsEvent;
@@ -13,7 +24,7 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
         $file = $event->target;
         if (!file_exists($file)) {
             $event->count = 0;
-            $event->items = array();
+            $event->items = [];
 
             return;
         }
@@ -24,7 +35,7 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
         $fp = fopen($file, 'r');
         $count = $event->getLimit();
 
-        $event->items = array();
+        $event->items = [];
         while ($line = fgets($fp)) {
             if ($skip-- > 0) {
                 continue;
@@ -33,20 +44,20 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
                 break;
             }
             list($status, $customerId, $email, $name) = explode(',', str_replace(PHP_EOL, '', $line), 4);
-            $event->items[] = array(
+            $event->items[] = [
                 'status' => $status,
                 'customerId' => $customerId,
                 'email' => $email,
                 'name' => $name,
-            );
+            ];
             --$count;
         }
     }
 
     public static function getSubscribedEvents()
     {
-        return array(
-            'knp_pager.items' => array('items', 1),
-        );
+        return [
+            'knp_pager.items' => ['items', 1],
+        ];
     }
 }

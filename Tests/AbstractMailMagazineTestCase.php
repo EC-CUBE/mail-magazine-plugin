@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\MailMagazine\Tests;
 
 use Eccube\Common\Constant;
@@ -58,10 +69,10 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
 
     protected function createHistory(\Eccube\Entity\Customer $Customer)
     {
-        return $this->mailMagazineService->createMailMagazineHistory(array(
+        return $this->mailMagazineService->createMailMagazineHistory([
             'subject' => 'subject',
             'body' => 'body',
             'multi' => $Customer->getEmail(),
-        ));
+        ]);
     }
 }

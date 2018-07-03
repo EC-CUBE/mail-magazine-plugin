@@ -1,13 +1,16 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /*
  * メルマガテンプレート選択コンボボックス用に作成
  */
@@ -21,13 +24,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class MailMagazineTemplateType extends AbstractType
 {
-
     /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'class' => 'Plugin\MailMagazine\Entity\MailMagazineTemplate',
             'property' => 'subject',
             'label' => false,
@@ -39,7 +41,7 @@ class MailMagazineTemplateType extends AbstractType
                 return $er->createQueryBuilder('mt')
                     ->orderBy('mt.id', 'ASC');
             },
-        ));
+        ]);
     }
 
     /**

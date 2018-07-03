@@ -1,13 +1,15 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\MailMagazine\Service;
 
@@ -194,7 +196,7 @@ class MailMagazineService
      */
     public function createMailMagazineHistory($formData)
     {
-        /** @var $qb QueryBuilder */
+        /* @var $qb QueryBuilder */
         $formData['plg_mailmagazine_flg'] = Constant::ENABLED;
         $qb = $this->customerRepository->getQueryBuilderBySearchData($formData);
         $customerList = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
@@ -326,6 +328,7 @@ class MailMagazineService
      * @param $sendId
      * @param int $offset
      * @param int $max
+     *
      * @return bool|MailMagazineSendHistory
      */
     public function sendMailMagazine($sendId, $offset = 0, $max = 100)
@@ -375,12 +378,12 @@ class MailMagazineService
                 continue;
             }
 
-            $mailData = array(
+            $mailData = [
                 'email' => $email,
                 'subject' => $sendHistory->getSubject(),
                 'body' => $sendHistory->getBody(),
                 'htmlBody' => $sendHistory->getHtmlBody(),
-            );
+            ];
             $this->replaceMailVars($mailData, $name);
 
             // 送信した本文を保持する
@@ -442,12 +445,12 @@ class MailMagazineService
     {
         $subject = date('Y年m月d日H時i分').'　下記メールの配信が完了しました。';
 
-        $mailData = array(
+        $mailData = [
                 'email' => $this->getAdminEmail(),
                 'subject' => $subject,
                 'body' => $this->lastSendMailBody,
                 'htmlBody' => $this->lastSendMailHtmlBody,
-        );
+        ];
 
         try {
             return $this->sendMail($mailData);
@@ -507,7 +510,7 @@ class MailMagazineService
      */
     public function replaceMailVars(&$mailData, $name)
     {
-        foreach (array('subject', 'body', 'htmlBody') as $key) {
+        foreach (['subject', 'body', 'htmlBody'] as $key) {
             $mailData[$key] = preg_replace('/{name}/', $name, $mailData[$key]);
         }
     }

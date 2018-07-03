@@ -1,13 +1,15 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\MailMagazine\Form\Extension;
 
@@ -30,24 +32,24 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
             $mailmagaFlg = $Customer->getMailmagaFlg();
         }
 
-        $options = array(
+        $options = [
             'label' => 'admin.plugin.mailmagazine.customer.label_mailmagazine',
-            'choices' => array(
+            'choices' => [
                 'admin.plugin.mailmagazine.customer.label_mailmagazine_yes' => '1',
                 'admin.plugin.mailmagazine.customer.label_mailmagazine_no' => '0',
-            ),
+            ],
             'expanded' => true,
             'multiple' => false,
             'required' => true,
-            'constraints' => array(
+            'constraints' => [
                 new Assert\NotBlank(),
-            ),
+            ],
             'mapped' => true,
             'eccube_form_options' => [
                 'auto_render' => true,
-                'form_theme' => '@MailMagazine/admin/mailmagazine.twig'
-            ]
-        );
+                'form_theme' => '@MailMagazine/admin/mailmagazine.twig',
+            ],
+        ];
 
         if (!is_null($mailmagaFlg)) {
             $optiopns['data'] = $mailmagaFlg;

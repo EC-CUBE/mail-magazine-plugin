@@ -1,13 +1,15 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\MailMagazine\Controller;
 
@@ -105,7 +107,7 @@ class MailMagazineHistoryController extends AbstractController
         return [
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
-            'page_count' => $pageCount
+            'page_count' => $pageCount,
         ];
     }
 
@@ -175,7 +177,7 @@ class MailMagazineHistoryController extends AbstractController
         $val = [];
         if (isset($searchData['customer_status']) && is_array($searchData['customer_status'])) {
             array_map(function ($CustomerStatus) use (&$val) {
-                /** @var \Eccube\Entity\Master\CustomerStatus $CustomerStatus */
+                /* @var \Eccube\Entity\Master\CustomerStatus $CustomerStatus */
                 $val[] = $CustomerStatus->getName();
             }, $searchData['customer_status']);
         }
@@ -185,7 +187,7 @@ class MailMagazineHistoryController extends AbstractController
         $val = [];
         if (isset($searchData['sex']) && is_array($searchData['sex'])) {
             array_map(function ($Sex) use (&$val) {
-                /** @var Sex $Sex */
+                /* @var Sex $Sex */
                 $val[] = $Sex->getName();
             }, $searchData['sex']);
         }
@@ -228,7 +230,7 @@ class MailMagazineHistoryController extends AbstractController
 
             $this->addSuccess('admin.plugin.mailmagazine.history.delete.sucesss', 'admin');
         } catch (\Exception $e) {
-            $this->addError('admin.flash.register_failed','admin');
+            $this->addError('admin.flash.register_failed', 'admin');
         }
 
         // メルマガテンプレート一覧へリダイレクト
@@ -236,7 +238,6 @@ class MailMagazineHistoryController extends AbstractController
     }
 
     /**
-     *
      * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/retry",
      *     requirements={"id":"\d+|"},
@@ -256,18 +257,17 @@ class MailMagazineHistoryController extends AbstractController
         }
 
         try {
-            log_info('メルマガ再試行前処理開始', array('id' => $mailMagazineSendHistory->getId()));
+            log_info('メルマガ再試行前処理開始', ['id' => $mailMagazineSendHistory->getId()]);
 
             $this->mailMagazineService->markRetry($mailMagazineSendHistory->getId());
 
-            log_info('メルマガ再試行前処理完了', array('id' => $mailMagazineSendHistory->getId()));
+            log_info('メルマガ再試行前処理完了', ['id' => $mailMagazineSendHistory->getId()]);
 
             $status = true;
         } catch (\Exception $e) {
             log_error(__METHOD__, [$e]);
             $status = false;
         }
-
 
         return $this->json(['status' => $status]);
     }
@@ -302,7 +302,7 @@ class MailMagazineHistoryController extends AbstractController
         $pagination = $paginator->paginate($resultFile,
             empty($pageNo) ? 1 : $pageNo,
             $pageCount,
-            array('total' => 1)
+            ['total' => 1]
         );
 
         return [

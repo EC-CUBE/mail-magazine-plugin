@@ -1,8 +1,10 @@
 <?php
-/**
- * This file is part of EC-CUBE.
+
+/*
+ * This file is part of EC-CUBE
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
  * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
@@ -76,16 +78,16 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $order_detail = $Order->getOrderDetails();
         $old_date = new \DateTime('1980-01-01');
 
-        return array(
+        return [
             '_token' => 'dummy',
             'multi' => $MailCustomer->getId(),
             'pref' => $MailCustomer->getPref()->getId(),
-            'sex' => array($MailCustomer->getSex()->getId()),
+            'sex' => [$MailCustomer->getSex()->getId()],
             'birth_start' => $old_date->format('Y-m-d'),
             'birth_end' => $MailCustomer->getBirth()->format('Y-m-d'),
-            'tel' => array('tel01' => $MailCustomer->getTel01(),
+            'tel' => ['tel01' => $MailCustomer->getTel01(),
                 'tel02' => $MailCustomer->getTel02(),
-                'tel03' => $MailCustomer->getTel03(), ),
+                'tel03' => $MailCustomer->getTel03(), ],
             'buy_total_start' => 0,
             'buy_total_end' => $MailCustomer->getBuyTotal(),
             'buy_times_start' => 0,
@@ -96,10 +98,10 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'update_date_end' => $MailCustomer->getUpdateDate()->format('Y-m-d'),
             'last_buy_start' => $old_date->format('Y-m-d'),
             'last_buy_end' => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
-            'customer_status' => array($MailCustomer->getStatus()->getId()),
+            'customer_status' => [$MailCustomer->getStatus()->getId()],
             'buy_product_code' => $order_detail[0]->getProductName(),
             'birth_month' => $birth_month,
-        );
+        ];
     }
 
     protected function createSendHistoy(\Eccube\Entity\Customer $MailCustomer)

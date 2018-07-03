@@ -1,13 +1,16 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /*
  * メルマガテンプレート設定用
  */
@@ -29,24 +32,24 @@ class MailMagazineTemplateEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('subject', TextType::class, array(
+            ->add('subject', TextType::class, [
                 'label' => 'plugin.mailmagazine.select.label_subject',
                 'required' => true,
-                'constraints' => array(
+                'constraints' => [
                     new Assert\NotBlank(),
-                ),
-            ))
-            ->add('body', TextareaType::class, array(
+                ],
+            ])
+            ->add('body', TextareaType::class, [
                 'label' => 'plugin.mailmagazine.select.label_body',
                 'required' => true,
-                'constraints' => array(
+                'constraints' => [
                     new Assert\NotBlank(),
-                ),
-            ))
-            ->add('htmlBody', TextareaType::class, array(
+                ],
+            ])
+            ->add('htmlBody', TextareaType::class, [
                 'label' => 'plugin.mailmagazine.select.label_body_html',
                 'required' => false,
-            ));
+            ]);
     }
 
     /**
@@ -56,9 +59,9 @@ class MailMagazineTemplateEditType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'Plugin\MailMagazine\Entity\MailMagazineTemplate',
-        ));
+        ]);
     }
 
     /**

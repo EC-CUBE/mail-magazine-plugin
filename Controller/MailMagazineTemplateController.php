@@ -1,13 +1,15 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\MailMagazine\Controller;
 
@@ -44,11 +46,11 @@ class MailMagazineTemplateController extends AbstractController
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template", name="plugin_mail_magazine_template")
      * @Template("@MailMagazine/admin/template_list.twig")
-     *
      */
     public function index()
     {
         $templateList = $this->mailMagazineTemplateRepository->findAll();
+
         return [
             'TemplateList' => $templateList,
         ];
