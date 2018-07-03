@@ -19,7 +19,7 @@ use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine\Service\MailMagazineService;
-use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
+use Plugin\MailMagazine\Event\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;

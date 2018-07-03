@@ -12,39 +12,29 @@
 namespace Plugin\MailMagazine\Form\Extension;
 
 use Eccube\Entity\Customer;
-use Plugin\MailMagazine\Entity\MailmagaCustomer;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Eccube\Form\Type\Admin\CustomerType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
 {
-    private $app;
-
-    public function __construct(\Eccube\Application $app)
-    {
-        $this->app = $app;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $mailmagaFlg = null;
+
         /** @var Customer $Customer */
         $Customer = isset($options['data']) ? $options['data'] : null;
-        if (!is_null($Customer)) {
-            $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
-            /** @var MailmagaCustomer $MailmagaCustomer */
-            $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
-            if (!is_null($MailmagaCustomer)) {
-                $mailmagaFlg = $MailmagaCustomer->getMailmagaFlg();
-            }
+        if ($Customer instanceof Customer) {
+            $mailmagaFlg = $Customer->getMailmagaFlg();
         }
 
         $options = array(
-            'label' => 'メールマガジン送付について',
+            'label' => 'admin.plugin.mailmagazine.customer.label_mailmagazine',
             'choices' => array(
-                '1' => '受け取る',
-                '0' => '受け取らない',
+                'admin.plugin.mailmagazine.customer.label_mailmagazine_yes' => '1',
+                'admin.plugin.mailmagazine.customer.label_mailmagazine_no' => '0',
             ),
             'expanded' => true,
             'multiple' => false,
@@ -52,18 +42,27 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
             'constraints' => array(
                 new Assert\NotBlank(),
             ),
-            'mapped' => false,
+            'mapped' => true,
+            'eccube_form_options' => [
+                'auto_render' => true,
+                'form_theme' => '@MailMagazine/admin/mailmagazine.twig'
+            ]
         );
 
         if (!is_null($mailmagaFlg)) {
-            $options['data'] = $mailmagaFlg;
+            $optiopns['data'] = $mailmagaFlg;
         }
 
-        $builder->add('mailmaga_flg', 'choice', $options);
+        $builder->add('mailmaga_flg', ChoiceType::class, $options);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getExtendedType()
     {
-        return 'admin_customer';
+        return CustomerType::class;
     }
 }

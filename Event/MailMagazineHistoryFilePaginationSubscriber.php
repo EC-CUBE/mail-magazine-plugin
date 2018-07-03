@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\MailMagazine\Util;
+namespace Plugin\MailMagazine\Event;
 
 use Knp\Component\Pager\Event\ItemsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

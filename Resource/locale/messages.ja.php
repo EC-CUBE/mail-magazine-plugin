@@ -73,4 +73,7 @@ return [
     'admin.plugin.mailmagazine.history.th_unsend' => '未配信数',
     'admin.plugin.mailmagazine.history.notice_search_no_data' => '検索条件に該当するデータがありませんでした。',
     'admin.plugin.mailmagazine.history.notice_no_data' => '該当するデータがありませんでした。',
+    'admin.plugin.mailmagazine.customer.label_mailmagazine' => 'メールマガジン送付について',
+    'admin.plugin.mailmagazine.customer.label_mailmagazine_yes' => '受け取る',
+    'admin.plugin.mailmagazine.customer.label_mailmagazine_no' => '受け取らない',
 ];

@@ -5,7 +5,7 @@ namespace Plugin\MailMagazine\Test\Util;
 use Knp\Component\Pager\Pagination\AbstractPagination;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Tests\AbstractMailMagazineTestCase;
-use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
+use Plugin\MailMagazine\Event\MailMagazineHistoryFilePaginationSubscriber;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
 {
