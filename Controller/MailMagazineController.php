@@ -11,7 +11,6 @@
 
 namespace Plugin\MailMagazine\Controller;
 
-use Eccube\Application;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;

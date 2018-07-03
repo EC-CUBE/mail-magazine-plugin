@@ -37,6 +37,7 @@ return [
     'plugin.mailmagazine.template.th_del' => '削除',
     'plugin.mailmagazine.template.th_preview' => 'プレビュー',
     'plugin.mailmagazine.template.card_title' => 'テンプレート一覧',
+    'plugin.mailmagazine.template.preview.btn_back' => '戻る',
     'plugin.mailmagazine.history.title' => '配信履歴',
     'plugin.mailmagazine.history.btn_preview' => 'プレビュー',
     'plugin.mailmagazine.history.btn_condition' => '配信条件',

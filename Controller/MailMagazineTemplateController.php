@@ -11,16 +11,15 @@
 
 namespace Plugin\MailMagazine\Controller;
 
-use Eccube\Application;
 use Eccube\Controller\AbstractController;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Plugin\MailMagazine\Form\Type\MailMagazineTemplateEditType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class MailMagazineTemplateController extends AbstractController
 {
@@ -64,82 +63,46 @@ class MailMagazineTemplateController extends AbstractController
      * )
      * @Template("@MailMagazine/admin/preview.twig")
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param unknown     $id
+     * @param MailMagazineTemplate $mailMagazineTemplate
      *
-     * @return void|\Symfony\Component\HttpFoundation\Response
+     * @return array
      */
-    public function preview(Application $app, Request $request, $id)
+    public function preview(MailMagazineTemplate $mailMagazineTemplate)
     {
-        die(var_dump(__METHOD__));
-        // id の存在確認
-        // nullであれば一覧に戻る
-        if (is_null($id) || strlen($id) == 0) {
-            $app->addError('admin.plugin.mailmagazine.template.data.illegalaccess', 'admin');
-
-            // メルマガテンプレート一覧へリダイレクト
-            return $app->redirect($app->url('plugin_mail_magazine_template'));
-        }
-
-        // パラメータ$idにマッチするデータが存在するか判定
-        // あれば、subject/bodyを取得
-        $template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
-        if (is_null($template)) {
-            // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
-            $app->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
-
-            return $app->redirect($app->url('plugin_mail_magazine_template'));
-        }
-
         // プレビューページ表示
         return [
-            'Template' => $template,
+            'Template' => $mailMagazineTemplate,
         ];
     }
 
     /**
      * メルマガテンプレートを論理削除.
      *
+     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/delete",
      *     requirements={"id":"\d+|"},
      *     name="plugin_mail_magazine_template_delete"
      * )
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param unknown     $id
+     * @param MailMagazineTemplate $mailMagazineTemplate
+     *
+     * @return RedirectResponse
      */
-    public function delete(Application $app, Request $request, $id)
+    public function delete(MailMagazineTemplate $mailMagazineTemplate)
     {
-        die(var_dump(__METHOD__));
         // POSTかどうか判定
         // パラメータ$idにマッチするデータが存在するか判定
         // POSTかつ$idに対応するdtb_mailmagazine_templateのレコードがあれば、del_flg = 1に設定して更新
-        if ('POST' === $request->getMethod()) {
-            // idがからの場合はメルマガテンプレート一覧へリダイレクト
-            if (is_null($id) || strlen($id) == 0) {
-                $app->addError('admin.plugin.mailmagazine.template.data.illegalaccess', 'admin');
-
-                return $app->redirect($app->url('plugin_mail_magazine_template'));
-            }
-
-            // メルマガテンプレートを取得する
-            $template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
-
-            if (is_null($template)) {
-                // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
-                $app->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
-
-                return $app->redirect($app->url('plugin_mail_magazine_template'));
-            }
-
-            // メルマガテンプレートを削除する
-            $app['eccube.plugin.mail_magazine.repository.mail_magazine']->delete($template);
+        try {
+            $this->mailMagazineTemplateRepository->delete($mailMagazineTemplate);
+            $this->entityManager->flush();
+            $this->addSuccess('admin.delete.complete', 'admin');
+        } catch (\Exception $e) {
+            $this->addError('admin.delete.failed', 'admin');
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $app->redirect($app->url('plugin_mail_magazine_template'));
+        return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
     }
 
     /**
@@ -151,60 +114,37 @@ class MailMagazineTemplateController extends AbstractController
      * )
      * @Template("@MailMagazine/admin/template_edit.twig")
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param unknown     $id
+     * @param MailMagazineTemplate $mailMagazineTemplate
+     *
+     * @return array
      */
-    public function edit(Application $app, Request $request, $id)
+    public function edit(MailMagazineTemplate $mailMagazineTemplate)
     {
-        die(var_dump(__METHOD__));
-        // POST以外はエラーにする
-        if ('POST' !== $request->getMethod()) {
-            throw new BadRequestHttpException();
-        }
-        // id の存在確認
-        // nullであれば一覧に戻る
-        if (is_null($id) || strlen($id) == 0) {
-            $app->addError('admin.plugin.mailmagazine.template.data.illegalaccess', 'admin');
-
-            // メルマガテンプレート一覧へリダイレクト
-            return $app->redirect($app->url('plugin_mail_magazine_template'));
-        }
-
-        // 選択したメルマガテンプレートを検索
-        // 存在しなければメッセージを表示
-        $Template = $app['eccube.plugin.mail_magazine.repository.mail_magazine']->find($id);
-
-        if (is_null($Template)) {
-            // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
-            $app->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
-
-            return $app->redirect($app->url('plugin_mail_magazine_template'));
-        }
-
         // formの作成
-        $form = $app['form.factory']
-            ->createBuilder('mail_magazine_template_edit', $Template)
+        $form = $this->formFactory
+            ->createBuilder(MailMagazineTemplateEditType::class, $mailMagazineTemplate)
             ->getForm();
 
         return [
             'form' => $form->createView(),
-            'Template' => $Template,
+            'Template' => $mailMagazineTemplate,
         ];
     }
 
     /**
      * テンプレート編集確定処理.
      *
+     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/commit/{id}",
      *     requirements={"id":"\d+|"},
      *     name="plugin_mail_magazine_template_commit"
      * )
      * @Template("@MailMagazine/admin/template_edit.twig")
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param int     $id
+     * @param Request $request
+     * @param int $id
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function commit(Request $request, $id = null)
     {

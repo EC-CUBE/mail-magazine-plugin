@@ -11,8 +11,6 @@
 
 namespace Plugin\MailMagazine\Controller;
 
-use Eccube\Application;
-use Eccube\Common\Constant;
 use Eccube\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -25,7 +23,6 @@ use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;
-use Eccube\Entity\Master\CustomerStatus;
 use Eccube\Entity\Master\Sex;
 
 class MailMagazineHistoryController extends AbstractController

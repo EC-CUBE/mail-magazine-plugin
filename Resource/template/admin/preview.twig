@@ -7,46 +7,56 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends 'default_frame.twig' %}
+{% extends '@admin/styleguide_frame.twig' %}
 
-{% set menus = ['mailmagazine', 'mailmagazine_template'] %}
+{% set menus = ['customer', 'mailmagazine', 'mailmagazine_template'] %}
 
-{% block title %}メルマガ管理{% endblock %}
-{% block sub_title %}テンプレート一覧{% endblock %}
-
-{% block javascript %}
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.core.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.widget.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js"></script>
-{% endblock %}
+{% block title %}{{ 'plugin.mailmagazine.template.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
 
 {% block main %}
-
-    <div class="table_list">
-        <div class="table-responsive with-border">
-            <table class="table table-striped">
-                <tbody>
-                    <tr>
-                        <th style="width: 20%;">Subject</th>
-                        <td>{{ Template.subject }}</td>
-                    </tr>
-                    <tr>
-                        <th>本文 (テキスト形式)</th>
-                        <td><xmp>{{ Template.body }}</xmp></td>
-                    </tr>
-                    <tr>
-                        <th>本文 (HTML形式)</th>
-                        <td><xmp>{{ Template.htmlBody|raw }}</xmp></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-        <div class="row">
-            <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-                <p><a href="{{ url('plugin_mail_magazine_template') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <tbody>
+                            <tr>
+                                <th class="w-25">{{ 'plugin.mailmagazine.select.label_subject'|trans }}</th>
+                                <td>{{ Template.subject }}</td>
+                            </tr>
+                            <tr>
+                                <th class="w-25">{{ 'plugin.mailmagazine.select.label_body'|trans }}</th>
+                                <td><xmp>{{ Template.body }}</xmp></td>
+                            </tr>
+                            <tr>
+                                <th class="w-25">{{ 'plugin.mailmagazine.select.label_body_html'|trans }}</th>
+                                <td><xmp>{{ Template.htmlBody|raw }}</xmp></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-
+    </div>
+    <div class="c-conversionArea">
+        <div class="c-conversionArea__container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-6">
+                    <div class="c-conversionArea__leftBlockItem">
+                        <a class="c-beseLink" href="{{ url('plugin_mail_magazine_template') }}">
+                            <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'plugin.mailmagazine.template.preview.btn_back'|trans }}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row align-items-center justify-content-end">
+                        <div class="col-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
