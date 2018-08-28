@@ -15,6 +15,7 @@ namespace Plugin\MailMagazine\Service;
 
 use Eccube\Common\Constant;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
+use Eccube\Repository\BaseInfoRepository;
 use Eccube\Entity\BaseInfo;
 use Eccube\Common\EccubeConfig;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -53,7 +54,6 @@ class MailMagazineService
     // ====================================
     // 定数宣言
     // ====================================
-    const REPOSITORY_SEND_HISTORY = 'eccube.plugin.mail_magazine.repository.mail_magazine_history';
 
     // send_flagの定数
     /** メール未送信 */
@@ -126,16 +126,19 @@ class MailMagazineService
      * MailMagazineService constructor.
      *
      * @param \Swift_Mailer $mailer
-     * @param BaseInfo $BaseInfo
+     * @param BaseInfoRepository $baseInfoRepository
      * @param EccubeConfig $eccubeConfig
      * @param SessionInterface $session
      * @param CustomerRepository $customerRepository
      * @param MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
      * @param EntityManagerInterface $entityManager
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function __construct(
         \Swift_Mailer $mailer,
-        BaseInfo $BaseInfo,
+        BaseInfoRepository $baseInfoRepository,
         EccubeConfig $eccubeConfig,
         SessionInterface $session,
         CustomerRepository $customerRepository,
@@ -143,7 +146,7 @@ class MailMagazineService
         EntityManagerInterface $entityManager
     ) {
         $this->mailer = $mailer;
-        $this->BaseInfo = $BaseInfo;
+        $this->BaseInfo = $baseInfoRepository->get();
         $this->eccubeConfig = $eccubeConfig;
         $this->session = $session;
         $this->customerRepository = $customerRepository;
@@ -153,6 +156,16 @@ class MailMagazineService
         if (!file_exists($this->mailMagazineDir)) {
             mkdir($this->mailMagazineDir);
         }
+    }
+
+    /**
+     * Get mailMagazineDir
+     *
+     * @return string
+     */
+    public function getMailMagazineDir()
+    {
+        return $this->mailMagazineDir;
     }
 
     /**
@@ -331,7 +344,7 @@ class MailMagazineService
      *
      * @return bool|MailMagazineSendHistory
      */
-    public function sendMailMagazine($sendId, $offset = 0, $max = 100)
+    public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
     {
         // send_historyを取得する
         /** @var MailMagazineSendHistory $sendHistory */

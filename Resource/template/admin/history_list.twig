@@ -7,12 +7,12 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends '@admin/styleguide_frame.twig' %}
+{% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['customer', 'mailmagazine', 'mailmagazine_history'] %}
+{% set menus = ['mailmagazine', 'mailmagazine_history'] %}
 
-{% block title %}{{ 'plugin.mailmagazine.history.title'|trans }}{% endblock %}
-{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
+{% block title %}{{ 'mailmagazine.history.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'mailmagazine.title'|trans }}{% endblock %}
 
 {% block javascript %}
     <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
@@ -66,9 +66,9 @@ $(function () {
     $('#sendModal .btn-close').on('click', function() {
         location.reload(true);
     });
-    {% if app.session.flashBag.has('eccube.plugin.mailmagazine.history') %}
+    {% if app.session.flashBag.has('eccube.mailmagazine.history') %}
     $('#sendModal').modal('show');
-    sendMail({{ app.session.flashBag.get('eccube.plugin.mailmagazine.history')[0] }}, 0);
+    sendMail({{ app.session.flashBag.get('eccube.mailmagazine.history')[0] }}, 0);
     {% endif %}
 })
 </script>
@@ -78,7 +78,7 @@ $(function () {
 <form name="form1" id="form1" method="post" action="">
     <div class="c-outsideBlock__contents mb-5">
         {% if pagination %}
-            <span class="font-weight-bold ml-2">{{ 'admin.plugin.mailmagazine.history.search_count'|trans({'%count%':pagination.totalItemCount}) }}</span>
+            <span class="font-weight-bold ml-2">{{ 'admin.mailmagazine.history.search_count'|trans({'%count%':pagination.totalItemCount}) }}</span>
         {% endif %}
     </div>
     <div class="c-contentsArea__cols">
@@ -93,9 +93,9 @@ $(function () {
                             <div class="d-inline-block mr-2">
                                 <select class="custom-select" onchange="location = this.value;">
                                     {% for pageMax in pageMaxis %}
-                                        <option {% if pageMax.name == page_count%} selected {% endif %}
-                                                value="{{ path('plugin_mail_magazine_history_page', {'page_no': 1, 'page_count': pageMax.name}) }}">
-                                            {{ pageMax.name|e }}{{ 'common.label.num'|trans }}</option>
+                                        <option {% if pageMax.name == page_count %} selected {% endif %}
+                                                value="{{ path('admin_customer_page', {'page_no': 1, 'page_count': pageMax.name }) }}">
+                                            {{ 'admin.common.count'|trans({ '%count%': pageMax.name }) }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -109,13 +109,13 @@ $(function () {
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.plugin.mailmagazine.history.th_send_start_time'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.plugin.mailmagazine.history.th_send_end_time'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.plugin.mailmagazine.history.th_subject'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.plugin.mailmagazine.history.th_send_total'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.plugin.mailmagazine.history.th_send_complete'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.plugin.mailmagazine.history.th_send_fail'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.plugin.mailmagazine.history.th_unsend'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_send_start_time'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_send_end_time'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_subject'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_send_total'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_send_complete'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_send_fail'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_unsend'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2 text-center pr-3">&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -137,28 +137,28 @@ $(function () {
                                             <div class="row justify-content-end">
                                                 <div class="col-auto text-center">
                                                     <a href="{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}" >
-                                                        {{ 'plugin.mailmagazine.history.btn_preview'|trans }}
+                                                        {{ 'mailmagazine.history.btn_preview'|trans }}
                                                     </a>
                                                 </div>
                                                 <div class="col-auto text-center">
                                                     <a href="{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}">
-                                                        {{ 'plugin.mailmagazine.history.btn_condition'|trans }}
+                                                        {{ 'mailmagazine.history.btn_condition'|trans }}
                                                     </a>
                                                 </div>
                                                 <div class="col-auto text-center">
                                                     <a href="{{ url('plugin_mail_magazine_history_result', { id: SendHistory.id }) }}">
-                                                        {{ 'plugin.mailmagazine.history.btn_result'|trans }}
+                                                        {{ 'mailmagazine.history.btn_result'|trans }}
                                                     </a>
                                                 </div>
                                                 <div class="col-auto text-center">
                                                     <a href="#" data-toggle="modal" data-target="#deleteModal{{ SendHistory.id }}">
-                                                        {{ 'plugin.mailmagazine.history.btn_delete'|trans }}
+                                                        {{ 'mailmagazine.history.btn_delete'|trans }}
                                                     </a>
                                                     <div id="deleteModal{{ SendHistory.id }}" class="modal" data-keyboard="false" data-backdrop="static">
                                                         <div class="modal-dialog" role="document">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h4 class="modal-title">{{ 'plugin.mailmagazine.history.modal_del_message'|trans }}</h4>
+                                                                    <h4 class="modal-title">{{ 'mailmagazine.history.modal_del_message'|trans }}</h4>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-ec-regular" data-dismiss="modal">
@@ -175,7 +175,7 @@ $(function () {
                                                 {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
                                                     <div class="col-auto text-center">
                                                         <a href="#" class="retry-btn" data-id="{{ SendHistory.id }}" data-url="{{ url('plugin_mail_magazine_history_retry', {id: SendHistory.id}) }}">
-                                                            {{ 'plugin.mailmagazine.history.btn_resend'|trans }}
+                                                            {{ 'mailmagazine.history.btn_resend'|trans }}
                                                         </a>
                                                     </div>
                                                 {% endif %}
@@ -187,7 +187,7 @@ $(function () {
                             </table>
                             <div class="row justify-content-md-center mb-4">
                                 {% if pagination.totalItemCount > 0 %}
-                                    {% include "@admin/styleguide_pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine_page' } %}
+                                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_customer_page' } %}
                                 {% endif %}
                             </div>
                         </div>
@@ -195,7 +195,7 @@ $(function () {
                 {% else %}
                     <div class="card rounded border-0">
                         <div class="card-body p-4">
-                            <div class="text-center text-muted">{{ 'admin.plugin.mailmagazine.history.notice_no_data'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.mailmagazine.history.notice_no_data'|trans }}</div>
                         </div>
                     </div>
                 {% endif %}

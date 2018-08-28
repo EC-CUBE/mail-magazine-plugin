@@ -33,21 +33,21 @@ class MailMagazineTemplateEditType extends AbstractType
     {
         $builder
             ->add('subject', TextType::class, [
-                'label' => 'plugin.mailmagazine.select.label_subject',
+                'label' => 'mailmagazine.select.label_subject',
                 'required' => true,
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],
             ])
             ->add('body', TextareaType::class, [
-                'label' => 'plugin.mailmagazine.select.label_body',
+                'label' => 'mailmagazine.select.label_body',
                 'required' => true,
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],
             ])
             ->add('htmlBody', TextareaType::class, [
-                'label' => 'plugin.mailmagazine.select.label_body_html',
+                'label' => 'mailmagazine.select.label_body_html',
                 'required' => false,
             ]);
     }

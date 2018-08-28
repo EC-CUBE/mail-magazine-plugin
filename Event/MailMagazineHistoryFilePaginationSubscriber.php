@@ -15,11 +15,31 @@ namespace Plugin\MailMagazine\Event;
 
 use Knp\Component\Pager\Event\ItemsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Plugin\MailMagazine\Service\MailMagazineService;
 
 class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var MailMagazineService
+     */
+    protected $mailMagazineService;
+
+    /**
+     * MailMagazineHistoryFilePaginationSubscriber constructor.
+     * @param MailMagazineService $mailMagazineService
+     */
+    public function __construct(MailMagazineService $mailMagazineService)
+    {
+        $this->mailMagazineService = $mailMagazineService;
+    }
+
     public function items(ItemsEvent $event)
     {
+        $mailMagazineDir = $this->mailMagazineService->getMailMagazineDir();
+        if (!is_string($event->target) || strpos($event->target, $mailMagazineDir) !== 0) {
+            return;
+        }
+
         $event->stopPropagation();
         $file = $event->target;
         if (!file_exists($file)) {

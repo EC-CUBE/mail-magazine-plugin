@@ -7,12 +7,12 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends '@admin/styleguide_frame.twig' %}
+{% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['customer', 'mailmagazine', 'mailmagazine_template'] %}
+{% set menus = ['mailmagazine', 'mailmagazine_template'] %}
 
-{% block title %}{{ 'plugin.mailmagazine.template.title'|trans }}{% endblock %}
-{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
+{% block title %}{{ 'mailmagazine.template.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'mailmagazine.title'|trans }}{% endblock %}
 
 {% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
@@ -73,7 +73,7 @@
                                 {{ form_errors(form.htmlBody) }}
                             </div>
                         </div>
-                        <span class="help-block">{{ 'plugin.mailmagazine.select.note_name'|trans }}</span>
+                        <span class="help-block">{{ 'mailmagazine.select.note_name'|trans }}</span>
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                     <div class="col-6">
                         <div class="c-conversionArea__leftBlockItem">
                             <a class="c-beseLink" href="{{ url('plugin_mail_magazine_template') }}">
-                                <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'plugin.mailmagazine.template.title'|trans }}</span>
+                                <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'mailmagazine.template.title'|trans }}</span>
                             </a>
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                         <div class="row align-items-center justify-content-end">
                             <div class="col-auto">
                                 <button class="btn btn-ec-conversion px-5" type="submit">
-                                    {{ 'plugin.mailmagazine.template.btn_save'|trans }}
+                                    {{ 'mailmagazine.template.btn_save'|trans }}
                                 </button>
                             </div>
                         </div>

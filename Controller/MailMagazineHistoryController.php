@@ -15,8 +15,7 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
@@ -207,10 +206,10 @@ class MailMagazineHistoryController extends AbstractController
      * 配信履歴を論理削除する
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
-     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/delete",
      *     requirements={"id":"\d+|"},
-     *     name="plugin_mail_magazine_history_delete"
+     *     name="plugin_mail_magazine_history_delete",
+     *     methods={"POST"}
      * )
      *
      * @param MailMagazineSendHistory $mailMagazineSendHistory
@@ -228,7 +227,7 @@ class MailMagazineHistoryController extends AbstractController
 
             $this->mailMagazineService->unlinkHistoryFiles($id);
 
-            $this->addSuccess('admin.plugin.mailmagazine.history.delete.sucesss', 'admin');
+            $this->addSuccess('admin.mailmagazine.history.delete.sucesss', 'admin');
         } catch (\Exception $e) {
             $this->addError('admin.flash.register_failed', 'admin');
         }
@@ -238,10 +237,10 @@ class MailMagazineHistoryController extends AbstractController
     }
 
     /**
-     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/retry",
      *     requirements={"id":"\d+|"},
-     *     name="plugin_mail_magazine_history_retry"
+     *     name="plugin_mail_magazine_history_retry",
+     *     methods={"POST"}
      * )
      *
      * @param Request $request
@@ -298,7 +297,6 @@ class MailMagazineHistoryController extends AbstractController
         $pageCount = $pageCount ? $pageCount : $this->eccubeConfig['eccube_default_page_count'];
 
         $pageNo = $page_no;
-        $paginator->subscribe(new MailMagazineHistoryFilePaginationSubscriber());
         $pagination = $paginator->paginate($resultFile,
             empty($pageNo) ? 1 : $pageNo,
             $pageCount,

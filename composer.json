@@ -1,0 +1,9 @@
+{
+  "name": "MailMagazine",
+  "version": "1.0.1",
+  "description": "MailMagazine",
+  "type": "eccube-plugin",
+  "extra": {
+    "code": "MailMagazine"
+  }
+}

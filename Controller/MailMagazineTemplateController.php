@@ -18,8 +18,7 @@ use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Plugin\MailMagazine\Form\Type\MailMagazineTemplateEditType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -80,10 +79,10 @@ class MailMagazineTemplateController extends AbstractController
     /**
      * メルマガテンプレートを論理削除.
      *
-     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/delete",
      *     requirements={"id":"\d+|"},
-     *     name="plugin_mail_magazine_template_delete"
+     *     name="plugin_mail_magazine_template_delete",
+     *     methods={"POST"}
      * )
      *
      * @param MailMagazineTemplate $mailMagazineTemplate
@@ -136,10 +135,10 @@ class MailMagazineTemplateController extends AbstractController
     /**
      * テンプレート編集確定処理.
      *
-     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/commit/{id}",
      *     requirements={"id":"\d+|"},
-     *     name="plugin_mail_magazine_template_commit"
+     *     name="plugin_mail_magazine_template_commit",
+     *     methods={"POST"}
      * )
      * @Template("@MailMagazine/admin/template_edit.twig")
      *
@@ -154,7 +153,7 @@ class MailMagazineTemplateController extends AbstractController
 
         // データが存在しない場合はメルマガテンプレート一覧へリダイレクト
         if (is_null($Template)) {
-            $this->addError('admin.plugin.mailmagazine.template.data.notfound', 'admin');
+            $this->addError('admin.mailmagazine.template.data.notfound', 'admin');
 
             return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
         }
@@ -180,9 +179,9 @@ class MailMagazineTemplateController extends AbstractController
                 $this->mailMagazineTemplateRepository->save($Template);
                 $this->entityManager->flush();
                 // 成功時のメッセージを登録する
-                $this->addSuccess('admin.plugin.mailmagazine.template.save.complete', 'admin');
+                $this->addSuccess('admin.mailmagazine.template.save.complete', 'admin');
             } catch (\Exception $e) {
-                $this->addError('admin.plugin.mailmagazine.template.save.failure', 'admin');
+                $this->addError('admin.mailmagazine.template.save.failure', 'admin');
 
                 return [
                     'form' => $form->createView(),

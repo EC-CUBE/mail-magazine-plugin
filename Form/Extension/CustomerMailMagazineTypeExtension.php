@@ -33,10 +33,10 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
         }
 
         $options = [
-            'label' => 'admin.plugin.mailmagazine.customer.label_mailmagazine',
+            'label' => 'admin.mailmagazine.customer.label_mailmagazine',
             'choices' => [
-                'admin.plugin.mailmagazine.customer.label_mailmagazine_yes' => '1',
-                'admin.plugin.mailmagazine.customer.label_mailmagazine_no' => '0',
+                'admin.mailmagazine.customer.label_mailmagazine_yes' => '1',
+                'admin.mailmagazine.customer.label_mailmagazine_no' => '0',
             ],
             'expanded' => true,
             'multiple' => false,

@@ -14,8 +14,7 @@
 namespace Plugin\MailMagazine\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 use Eccube\Controller\AbstractController;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
@@ -96,13 +95,13 @@ class MailMagazineController extends AbstractController
         $session = $request->getSession();
         $pageNo = $page_no;
         $pageMaxis = $this->pageMaxRepository->findAll();
-        $pageCount = $session->get('plugin.mailmagazine.search.page_count', $this->eccubeConfig['eccube_default_page_count']);
+        $pageCount = $session->get('mailmagazine.search.page_count', $this->eccubeConfig['eccube_default_page_count']);
         $pageCountParam = $request->get('page_count');
         if ($pageCountParam && is_numeric($pageCountParam)) {
             foreach ($pageMaxis as $pageMax) {
                 if ($pageCountParam == $pageMax->getName()) {
                     $pageCount = $pageMax->getName();
-                    $session->set('plugin.mailmagazine.search.page_count', $pageCount);
+                    $session->set('mailmagazine.search.page_count', $pageCount);
                     break;
                 }
             }
@@ -124,8 +123,8 @@ class MailMagazineController extends AbstractController
             if ($searchForm->isValid()) {
                 $searchData = $searchForm->getData();
                 $pageNo = 1;
-                $session->set('plugin.mailmagazine.search', FormUtil::getViewData($searchForm));
-                $session->set('plugin.mailmagazine.search.page_no', $pageNo);
+                $session->set('mailmagazine.search', FormUtil::getViewData($searchForm));
+                $session->set('mailmagazine.search.page_no', $pageNo);
             } else {
                 return [
                     'searchForm' => $searchForm->createView(),
@@ -139,16 +138,16 @@ class MailMagazineController extends AbstractController
         } else {
             if (null !== $pageNo || $request->get('resume')) {
                 if ($pageNo) {
-                    $session->set('plugin.mailmagazine.search.page_no', (int) $pageNo);
+                    $session->set('mailmagazine.search.page_no', (int) $pageNo);
                 } else {
-                    $pageNo = $session->get('plugin.mailmagazine.search.page_no', 1);
+                    $pageNo = $session->get('mailmagazine.search.page_no', 1);
                 }
-                $viewData = $session->get('plugin.mailmagazine.search', []);
+                $viewData = $session->get('mailmagazine.search', []);
             } else {
                 $pageNo = 1;
                 $viewData = FormUtil::getViewData($searchForm);
-                $session->set('plugin.mailmagazine.search', $viewData);
-                $session->set('plugin.mailmagazine.search.page_no', $pageNo);
+                $session->set('mailmagazine.search', $viewData);
+                $session->set('mailmagazine.search.page_no', $pageNo);
             }
             $searchData = FormUtil::submitAndGetData($searchForm, $viewData);
         }
@@ -175,10 +174,10 @@ class MailMagazineController extends AbstractController
      * テンプレート選択
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
-     * @Method("POST")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/select/{id}",
      *     requirements={"id":"\d+|"},
-     *     name="plugin_mail_magazine_select"
+     *     name="plugin_mail_magazine_select",
+     *     methods={"POST"}
      * )
      * @Template("@MailMagazine/admin/template_select.twig")
      *
@@ -263,8 +262,7 @@ class MailMagazineController extends AbstractController
      * 配信前処理
      * 配信履歴データを作成する.
      *
-     * @Method("POST")
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/prepare", name="plugin_mail_magazine_prepare")
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/prepare", name="plugin_mail_magazine_prepare", methods={"POST"})
      *
      * @param Request     $request
      *
@@ -294,11 +292,11 @@ class MailMagazineController extends AbstractController
         // 配信履歴を登録する
         $sendId = $service->createMailMagazineHistory($data);
         if (is_null($sendId)) {
-            $this->addError('admin.plugin.mailmagazine.send.register.failure', 'admin');
+            $this->addError('admin.mailmagazine.send.register.failure', 'admin');
         }
 
         // フラッシュスコープにIDを保持してリダイレクト後に送信処理を開始できるようにする
-        $this->session->getFlashBag()->add('eccube.plugin.mailmagazine.history', $sendId);
+        $this->session->getFlashBag()->add('eccube.mailmagazine.history', $sendId);
 
         log_info('メルマガ配信前処理完了', ['sendId' => $sendId]);
 
@@ -311,8 +309,7 @@ class MailMagazineController extends AbstractController
      * 配信終了後配信履歴に遷移する
      * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる.
      *
-     * @Method("POST")
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/commit", name="plugin_mail_magazine_commit")
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/commit", name="plugin_mail_magazine_commit", methods={"POST"})
      *
      * @param Request $request
      *
@@ -338,7 +335,7 @@ class MailMagazineController extends AbstractController
         log_info('メルマガ配信処理開始', ['id' => $id, 'offset' => $offset, 'max' => $max]);
 
         /** @var MailMagazineSendHistory $sendHistory */
-        $sendHistory = $this->mailMagazineService->sendMailMagazine($id, $offset, $max);
+        $sendHistory = $this->mailMagazineService->sendrMailMagazine($id, $offset, $max);
 
         if ($sendHistory->isComplete()) {
             $this->mailMagazineService->sendMailMagazineCompleateReportMail();
@@ -357,8 +354,7 @@ class MailMagazineController extends AbstractController
     /**
      * テストメール送信
      *
-     * @Method("POST")
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/test", name="plugin_mail_magazine_test")
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/test", name="plugin_mail_magazine_test", methods={"POST"})
      *
      * @param Request $request
      *

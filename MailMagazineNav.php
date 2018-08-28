@@ -15,7 +15,7 @@ namespace Plugin\MailMagazine;
 
 use Eccube\Common\EccubeNav;
 
-class Nav implements EccubeNav
+class MailMagazineNav implements EccubeNav
 {
     /**
      * {@inheritdoc}
@@ -25,29 +25,28 @@ class Nav implements EccubeNav
     public static function getNav()
     {
         return [
-            'customer' => [
+            'mailmagazine' => [
                 'id' => 'mailmagazine',
-                'name' => 'plugin.mailmagazine.title',
-                'has_child' => true,
-                'icon' => 'cb-comment',
-                'child' => [
-                    [
+                'name' => 'mailmagazine.title',
+                'icon' => 'fa-envelope',
+                'children' => [
+                    'mailmagazine' => [
                         'id' => 'mailmagazine',
-                        'name' => 'plugin.mailmagazine.index.title',
+                        'name' => 'mailmagazine.index.title',
                         'url' => 'plugin_mail_magazine',
                     ],
-                    [
+                    'mailmagazine_template' => [
                         'id' => 'mailmagazine_template',
-                        'name' => 'plugin.mailmagazine.template.title',
+                        'name' => 'mailmagazine.template.title',
                         'url' => 'plugin_mail_magazine_template',
                     ],
-                    [
+                    'mailmagazine_history' => [
                         'id' => 'mailmagazine_history',
-                        'name' => 'plugin.mailmagazine.history.title',
+                        'name' => 'mailmagazine.history.title',
                         'url' => 'plugin_mail_magazine_history',
                     ],
                 ],
-            ],
+            ]
         ];
     }
 }

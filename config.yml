@@ -1,9 +1,0 @@
-name: MailMagazine
-event: MailMagazine
-code: MailMagazine
-version: 1.0.1
-#form:
-#    onSetData:
-#        Form\Type\PaymentFragmentForm
-const:
-    mail_magazine_dir: ${ROOT_DIR}/app/mail_magazine

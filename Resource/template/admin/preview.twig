@@ -7,12 +7,12 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends '@admin/styleguide_frame.twig' %}
+{% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['customer', 'mailmagazine', 'mailmagazine_template'] %}
+{% set menus = ['mailmagazine', 'mailmagazine_template'] %}
 
-{% block title %}{{ 'plugin.mailmagazine.template.title'|trans }}{% endblock %}
-{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
+{% block title %}{{ 'mailmagazine.template.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'mailmagazine.title'|trans }}{% endblock %}
 
 {% block main %}
     <div class="c-contentsArea__cols">
@@ -23,15 +23,15 @@
                         <table class="table table-striped">
                             <tbody>
                             <tr>
-                                <th class="w-25">{{ 'plugin.mailmagazine.select.label_subject'|trans }}</th>
+                                <th class="w-25">{{ 'mailmagazine.select.label_subject'|trans }}</th>
                                 <td>{{ Template.subject }}</td>
                             </tr>
                             <tr>
-                                <th class="w-25">{{ 'plugin.mailmagazine.select.label_body'|trans }}</th>
+                                <th class="w-25">{{ 'mailmagazine.select.label_body'|trans }}</th>
                                 <td><xmp>{{ Template.body }}</xmp></td>
                             </tr>
                             <tr>
-                                <th class="w-25">{{ 'plugin.mailmagazine.select.label_body_html'|trans }}</th>
+                                <th class="w-25">{{ 'mailmagazine.select.label_body_html'|trans }}</th>
                                 <td><xmp>{{ Template.htmlBody|raw }}</xmp></td>
                             </tr>
                             </tbody>
@@ -47,7 +47,7 @@
                 <div class="col-6">
                     <div class="c-conversionArea__leftBlockItem">
                         <a class="c-beseLink" href="{{ url('plugin_mail_magazine_template') }}">
-                            <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'plugin.mailmagazine.template.preview.btn_back'|trans }}</span>
+                            <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'mailmagazine.template.preview.btn_back'|trans }}</span>
                         </a>
                     </div>
                 </div>

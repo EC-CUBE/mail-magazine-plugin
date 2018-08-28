@@ -7,12 +7,12 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends '@admin/styleguide_frame.twig' %}
+{% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['customer', 'mailmagazine', 'mailmagazine_history'] %}
+{% set menus = ['mailmagazine', 'mailmagazine_history'] %}
 
-{% block title %}{{ 'plugin.mailmagazine.history.title'|trans }}{% endblock %}
-{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
+{% block title %}{{ 'mailmagazine.history.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'mailmagazine.title'|trans }}{% endblock %}
 
 {% block main %}
     <div class="c-contentsArea__cols">
@@ -24,7 +24,7 @@
                             <th class="w-25">{{ 'searchcustomer.label.multi'|trans }}</th>
                             <td>
                                 {% if search_data.multi is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.multi }}
                                 {% endif %}
@@ -35,7 +35,7 @@
                             <th class="w-25">{{ 'searchcustomer.label.status'|trans }}</th>
                             <td>
                                 {% if search_data.customer_status is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.customer_status }}
                                 {% endif %}
@@ -45,7 +45,7 @@
                             <th class="w-25">{{ 'searchorder.label.sex'|trans }}</th>
                             <td>
                                 {% if search_data.sex is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.sex }}
                                 {% endif %}
@@ -55,7 +55,7 @@
                             <th class="w-25">{{ 'searchcustomer.label.birth_month'|trans }}</th>
                             <td>
                                 {% if search_data.birth_month is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.birth_month }}
                                 {% endif %}
@@ -65,13 +65,13 @@
                             <th class="w-25">{{ 'searchcustomer.label.birth_date_start'|trans }} ～ {{ 'searchcustomer.label.birth_date_end'|trans }}</th>
                             <td>
                                 {% if search_data.birth_start is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.birth_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.birth_end is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.birth_end|date("Y/m/d") }}
                                 {% endif %}
@@ -81,7 +81,7 @@
                             <th class="w-25">{{ 'searchcustomer.label.prefecture'|trans }}</th>
                             <td>
                                 {% if search_data.pref is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.pref }}
                                 {% endif %}
@@ -91,7 +91,7 @@
                             <th class="w-25">{{ 'searchcustomer.label.tel'|trans }}</th>
                             <td>
                                 {% if search_data.tel is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.tel }}
                                 {% endif %}
@@ -101,13 +101,13 @@
                             <th class="w-25">{{ 'searchcustomer.label.create_date_start'|trans }} ～ {{ 'searchcustomer.label.create_date_end'|trans }}</th>
                             <td>
                                 {% if search_data.create_date_start is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.create_date_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.create_date_end is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.create_date_end|date("Y/m/d") }}
                                 {% endif %}
@@ -117,13 +117,13 @@
                             <th class="w-25">{{ 'searchcustomer.label.update_date_start'|trans }} ～ {{ 'searchcustomer.label.update_date_end'|trans }}</th>
                             <td>
                                 {% if search_data.update_date_start is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.update_date_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.update_date_end is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.update_date_end|date("Y/m/d") }}
                                 {% endif %}
@@ -133,13 +133,13 @@
                             <th class="w-25">{{ 'searchcustomer.label.purchese_price_start'|trans }} ～ {{ 'searchcustomer.label.purchese_price_end'|trans }}</th>
                             <td>
                                 {% if search_data.buy_total_start is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_total_start }}
                                 {% endif %}
                                 ～
                                 {% if search_data.buy_total_end is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_total_end }}
                                 {% endif %}
@@ -149,13 +149,13 @@
                             <th class="w-25">{{ 'searchcustomer.label.number_of_purchases_start'|trans }} ～ {{ 'searchcustomer.label.number_of_purchases_end'|trans }}</th>
                             <td>
                                 {% if search_data.buy_times_start is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_times_start }}
                                 {% endif %}
                                 ～
                                 {% if search_data.buy_times_end is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_times_end }}
                                 {% endif %}
@@ -165,7 +165,7 @@
                             <th class="w-25">{{ 'searchcustomer.label.purchased_product_code'|trans }}</th>
                             <td>
                                 {% if search_data.buy_product_code is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.buy_product_code }}
                                 {% endif %}
@@ -175,13 +175,13 @@
                             <th class="w-25">{{ 'searchcustomer.label.last_purchase_start'|trans }} ～ {{ 'searchcustomer.label.last_purchase_end'|trans }}</th>
                             <td>
                                 {% if search_data.last_buy_start is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.last_buy_start|date("Y/m/d") }}
                                 {% endif %}
                                 ～
                                 {% if search_data.last_buy_end is null %}
-                                    ({{ 'plugin.mailmagazine.history.condition.label_null'|trans }})
+                                    ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
                                     {{ search_data.last_buy_end|date("Y/m/d") }}
                                 {% endif %}
@@ -198,7 +198,7 @@
                 <div class="col-6">
                     <div class="c-conversionArea__leftBlockItem">
                         <a class="c-beseLink" href="{{ url('plugin_mail_magazine_history') }}">
-                            <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'plugin.mailmagazine.history.preview.btn_back'|trans }}</span>
+                            <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'mailmagazine.history.preview.btn_back'|trans }}</span>
                         </a>
                     </div>
                 </div>

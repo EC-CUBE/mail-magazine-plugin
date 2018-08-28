@@ -40,22 +40,22 @@ class MailMagazineType extends SearchCustomerType
         // 以降テンプレート選択で使用する項目
         $builder->add('id', HiddenType::class)
             ->add('template', MailMagazineTemplateType::class, [
-                'label' => 'plugin.mailmagazine.select.label_template',
+                'label' => 'mailmagazine.select.label_template',
                 'required' => false,
                 'mapped' => false,
             ])
             ->add('subject', TextType::class, [
-                'label' => 'plugin.mailmagazine.select.label_subject',
+                'label' => 'mailmagazine.select.label_subject',
                 'required' => true,
                 'constraints' => $constraints ? [new Assert\NotBlank()] : [],
             ])
             ->add('body', TextareaType::class, [
-                'label' => 'plugin.mailmagazine.select.label_body',
+                'label' => 'mailmagazine.select.label_body',
                 'required' => true,
                 'constraints' => $constraints ? [new Assert\NotBlank()] : [],
             ])
             ->add('htmlBody', TextareaType::class, [
-                'label' => 'plugin.mailmagazine.select.label_body_html',
+                'label' => 'mailmagazine.select.label_body_html',
                 'required' => false,
             ]);
     }

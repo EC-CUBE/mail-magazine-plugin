@@ -13,10 +13,10 @@
 
 namespace Plugin\MailMagazine\Tests;
 
-use Eccube\Common\Constant;
 use Eccube\Tests\Service\AbstractServiceTestCase;
-use Plugin\MailMagazine\Entity\MailmagaCustomer;
 use Plugin\MailMagazine\Service\MailMagazineService;
+use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
+use Eccube\Entity\Customer;
 
 abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
 {
@@ -33,16 +33,18 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->mailMagazineService = $this->app['eccube.plugin.mail_magazine.service.mail'];
-        $this->mailMagazineSendHistoryRepository = $this->app[MailMagazineService::REPOSITORY_SEND_HISTORY];
+        $this->mailMagazineService = $this->container->get(MailMagazineService::class);
+        $this->mailMagazineSendHistoryRepository = $this->container->get(MailMagazineSendHistoryRepository::class);
     }
 
     /**
+     * Create customer + mail magazine flag
+     *
      * @param string $email
      * @param string $name01
      * @param string $name02
      *
-     * @return \Eccube\Entity\Customer
+     * @return Customer
      */
     protected function createMailmagaCustomer($email = 'mail_magazine_service_test@example.com', $name01 = 'name01', $name02 = 'name02')
     {
@@ -53,21 +55,22 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
         if ($name02) {
             $c->setName02($name02);
         }
-        $this->app['orm.em']->persist($c);
-        $this->app['orm.em']->flush($c);
+        $c->setMailmagaFlg(1);
 
-        $mc = new MailmagaCustomer();
-        $mc->setCustomerId($c->getId());
-        $mc->setDelFlg(Constant::DISABLED);
-        $mc->setMailmagaFlg('1');
-
-        $this->app['orm.em']->persist($mc);
-        $this->app['orm.em']->flush($mc);
+        $this->entityManager->persist($c);
+        $this->entityManager->flush($c);
 
         return $c;
     }
 
-    protected function createHistory(\Eccube\Entity\Customer $Customer)
+    /**
+     * Create send mail history
+     *
+     * @param Customer $Customer
+     *
+     * @return int
+     */
+    protected function createHistory(Customer $Customer)
     {
         return $this->mailMagazineService->createMailMagazineHistory([
             'subject' => 'subject',

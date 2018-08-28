@@ -22,7 +22,7 @@ use Eccube\Annotation as Eccube;
 trait CustomerTrait
 {
     /**
-     * @ORM\Column(name="plg_mailmagazine_flg", type="smallint", length=1, options={"default":0, "unsigned": true})
+     * @ORM\Column(name="plg_mailmagazine_flg", type="smallint", length=1, nullable=true, options={"default":0, "unsigned": true})
      *
      * @var int
      */

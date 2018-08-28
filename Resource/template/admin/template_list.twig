@@ -7,12 +7,12 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends '@admin/styleguide_frame.twig' %}
+{% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['customer', 'mailmagazine', 'mailmagazine_template'] %}
+{% set menus = ['mailmagazine', 'mailmagazine_template'] %}
 
-{% block title %}{{ 'plugin.mailmagazine.template.title'|trans }}{% endblock %}
-{% block sub_title %}{{ 'plugin.mailmagazine.title'|trans }}{% endblock %}
+{% block title %}{{ 'mailmagazine.template.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'mailmagazine.title'|trans }}{% endblock %}
 
 {% block javascript %}
     <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
@@ -31,7 +31,7 @@
                             <div class="col-8">
                                 <div class="d-inline-block" data-toggle="tooltip" data-placement="top" title="Tooltip">
                                     <span class="card-title">
-                                        {{ 'plugin.mailmagazine.template.card_title'|trans }}
+                                        {{ 'mailmagazine.template.card_title'|trans }}
                                     </span>
                                 </div>
                             </div>
@@ -43,11 +43,11 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_created_date'|trans }}</th>
-                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_subject'|trans }}</th>
-                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_edit'|trans }}</th>
-                                    <th class="border-top-0 pt-2 pb-2">{{ 'plugin.mailmagazine.template.th_del'|trans }}</th>
-                                    <th class="border-top-0 pt-2 pb-2">{{ 'プレビュー'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'mailmagazine.template.th_created_date'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'mailmagazine.template.th_subject'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'mailmagazine.template.th_edit'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'mailmagazine.template.th_del'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'mailmagazine.template.btn_review'|trans }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,14 +55,14 @@
                                 <tr>
                                     <td>{{ Template.create_date|date_day }}</td>
                                     <td>{{ Template.subject }}</td>
-                                    <td><a href="{{ url('plugin_mail_magazine_template_edit', { id: Template.id }) }}">{{ 'plugin.mailmagazine.template.btn_edit'|trans }}</a></td>
+                                    <td><a href="{{ url('plugin_mail_magazine_template_edit', { id: Template.id }) }}">{{ 'mailmagazine.template.btn_edit'|trans }}</a></td>
                                     <td>
-                                        <a href="#" data-toggle="modal" data-target="#deleteModal{{ Template.id }}">{{ 'plugin.mailmagazine.template.btn_del'|trans }}</a>
+                                        <a href="#" data-toggle="modal" data-target="#deleteModal{{ Template.id }}">{{ 'mailmagazine.template.btn_del'|trans }}</a>
                                         <div id="deleteModal{{ Template.id }}" class="modal" data-keyboard="false" data-backdrop="static">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title">{{ 'plugin.mailmagazine.template.modal_del_message'|trans }}</h4>
+                                                        <h4 class="modal-title">{{ 'mailmagazine.template.modal_del_message'|trans }}</h4>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-ec-regular" data-dismiss="modal">
@@ -80,7 +80,7 @@
                                     </td>
                                     <td>
                                         <a href="{{ url('plugin_mail_magazine_template_preview', { id: Template.id }) }}">
-                                            {{ 'plugin.mailmagazine.template.btn_review'|trans }}
+                                            {{ 'mailmagazine.template.btn_review'|trans }}
                                         </a>
                                     </td>
                                 </tr>
@@ -92,7 +92,7 @@
                 <div class="row justify-content-md-center mb-4 ">
                     <div class="col-auto">
                         <a class="btn btn-ec-regular btn-lg" href="{{ url('plugin_mail_magazine_template_regist') }}">
-                            {{ 'plugin.mailmagazine.template.btn_new'|trans }}
+                            {{ 'mailmagazine.template.btn_new'|trans }}
                         </a>
                     </div>
                 </div>
