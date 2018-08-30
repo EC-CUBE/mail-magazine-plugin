@@ -113,7 +113,7 @@ class MailMagazineHistoryController extends AbstractController
      * プレビュー
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/preview",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_history_preview"
      * )
      * @Template("@MailMagazine/admin/history_preview.twig")
@@ -134,7 +134,7 @@ class MailMagazineHistoryController extends AbstractController
      * 配信条件を表示する.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/condition",
-     *      requirements={"id":"\d+|"},
+     *      requirements={"id":"\d+"},
      *      name="plugin_mail_magazine_history_condition",
      * )
      * @Template("@MailMagazine/admin/history_condition.twig")
@@ -206,7 +206,7 @@ class MailMagazineHistoryController extends AbstractController
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/delete",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_history_delete",
      *     methods={"POST"}
      * )
@@ -237,7 +237,7 @@ class MailMagazineHistoryController extends AbstractController
 
     /**
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/retry",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_history_retry",
      *     methods={"POST"}
      * )
@@ -272,11 +272,11 @@ class MailMagazineHistoryController extends AbstractController
 
     /**
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_history_result"
      * )
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}/{page_no}",
-     *     requirements={"id":"\d+|", "page_no" = "\d+"},
+     *     requirements={"id":"\d+", "page_no" = "\d+"},
      *     name="plugin_mail_magazine_history_result_page"
      * )
      * @Template("@MailMagazine/admin/history_result.twig")

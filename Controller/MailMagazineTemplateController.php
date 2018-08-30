@@ -59,7 +59,7 @@ class MailMagazineTemplateController extends AbstractController
      * preview画面表示.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/preview",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_template_preview"
      * )
      * @Template("@MailMagazine/admin/preview.twig")
@@ -80,7 +80,7 @@ class MailMagazineTemplateController extends AbstractController
      * メルマガテンプレートを論理削除.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/delete",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_template_delete",
      *     methods={"POST"}
      * )
@@ -110,7 +110,7 @@ class MailMagazineTemplateController extends AbstractController
      * テンプレート編集画面表示.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/edit",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_template_edit"
      * )
      * @Template("@MailMagazine/admin/template_edit.twig")
@@ -136,7 +136,7 @@ class MailMagazineTemplateController extends AbstractController
      * テンプレート編集確定処理.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/commit/{id}",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_template_commit",
      *     methods={"POST"}
      * )

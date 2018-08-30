@@ -175,7 +175,7 @@ class MailMagazineController extends AbstractController
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/select/{id}",
-     *     requirements={"id":"\d+|"},
+     *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_select",
      *     methods={"POST"}
      * )
