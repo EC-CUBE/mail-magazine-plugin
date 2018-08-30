@@ -14,6 +14,7 @@
 namespace Plugin\MailMagazine\Form\Extension;
 
 use Eccube\Entity\Customer;
+use Eccube\Common\Constant;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,16 +28,16 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
         $mailmagaFlg = null;
 
         /** @var Customer $Customer */
-        $Customer = isset($options['data']) ? $options['data'] : null;
-        if ($Customer instanceof Customer) {
+        $Customer = $builder->getData();
+        if ($Customer instanceof Customer && $Customer->getId()) {
             $mailmagaFlg = $Customer->getMailmagaFlg();
         }
 
         $options = [
             'label' => 'admin.mailmagazine.customer.label_mailmagazine',
             'choices' => [
-                'admin.mailmagazine.customer.label_mailmagazine_yes' => '1',
-                'admin.mailmagazine.customer.label_mailmagazine_no' => '0',
+                'admin.mailmagazine.customer.label_mailmagazine_yes' => Constant::ENABLED,
+                'admin.mailmagazine.customer.label_mailmagazine_no' => Constant::DISABLED,
             ],
             'expanded' => true,
             'multiple' => false,
@@ -52,7 +53,7 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
         ];
 
         if (!is_null($mailmagaFlg)) {
-            $optiopns['data'] = $mailmagaFlg;
+            $options['data'] = $mailmagaFlg;
         }
 
         $builder->add('mailmaga_flg', ChoiceType::class, $options);

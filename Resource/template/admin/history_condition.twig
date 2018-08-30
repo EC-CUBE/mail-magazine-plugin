@@ -21,7 +21,7 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.multi'|trans }}</th>
+                            <th class="w-25">{{ 'admin.customer.multi_search_label'|trans }}</th>
                             <td>
                                 {% if search_data.multi is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -32,7 +32,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.status'|trans }}</th>
+                            <th class="w-25">{{ 'admin.customer.customer_status'|trans }}</th>
                             <td>
                                 {% if search_data.customer_status is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -42,7 +42,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchorder.label.sex'|trans }}</th>
+                            <th class="w-25">{{ 'admin.common.gender'|trans }}</th>
                             <td>
                                 {% if search_data.sex is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -52,7 +52,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.birth_month'|trans }}</th>
+                            <th class="w-25">{{ 'admin.customer.birth_month'|trans }}</th>
                             <td>
                                 {% if search_data.birth_month is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -62,7 +62,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.birth_date_start'|trans }} ～ {{ 'searchcustomer.label.birth_date_end'|trans }}</th>
+                            <th class="w-25">{{ 'admin.common.birth_day'|trans }}</th>
                             <td>
                                 {% if search_data.birth_start is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -78,7 +78,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.prefecture'|trans }}</th>
+                            <th class="w-25">{{ 'admin.common.pref'|trans }}</th>
                             <td>
                                 {% if search_data.pref is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -88,17 +88,17 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.tel'|trans }}</th>
+                            <th class="w-25">{{ 'admin.common.phone_number'|trans }}</th>
                             <td>
-                                {% if search_data.tel is null %}
+                                {% if search_data.phone_number is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
-                                    {{ search_data.tel }}
+                                    {{ search_data.phone_number }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.create_date_start'|trans }} ～ {{ 'searchcustomer.label.create_date_end'|trans }}</th>
+                            <th class="w-25">{{ 'admin.common.create_date'|trans }}</th>
                             <td>
                                 {% if search_data.create_date_start is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -114,7 +114,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.update_date_start'|trans }} ～ {{ 'searchcustomer.label.update_date_end'|trans }}</th>
+                            <th class="w-25">{{ 'admin.common.update_date'|trans }}</th>
                             <td>
                                 {% if search_data.update_date_start is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -130,7 +130,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.purchese_price_start'|trans }} ～ {{ 'searchcustomer.label.purchese_price_end'|trans }}</th>
+                            <th class="w-25">{{ 'admin.order.purchase_price'|trans }}</th>
                             <td>
                                 {% if search_data.buy_total_start is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -146,7 +146,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.number_of_purchases_start'|trans }} ～ {{ 'searchcustomer.label.number_of_purchases_end'|trans }}</th>
+                            <th class="w-25">{{ 'admin.order.purchase_count'|trans }}</th>
                             <td>
                                 {% if search_data.buy_times_start is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
@@ -162,17 +162,17 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.purchased_product_code'|trans }}</th>
+                            <th class="w-25">{{ 'admin.order.purchase_product'|trans }}</th>
                             <td>
-                                {% if search_data.buy_product_code is null %}
+                                {% if search_data.buy_product_name is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})
                                 {% else %}
-                                    {{ search_data.buy_product_code }}
+                                    {{ search_data.buy_product_name }}
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th class="w-25">{{ 'searchcustomer.label.last_purchase_start'|trans }} ～ {{ 'searchcustomer.label.last_purchase_end'|trans }}</th>
+                            <th class="w-25">{{ 'admin.order.last_buy_date'|trans }}</th>
                             <td>
                                 {% if search_data.last_buy_start is null %}
                                     ({{ 'mailmagazine.history.condition.label_null'|trans }})

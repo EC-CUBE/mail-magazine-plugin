@@ -46,7 +46,7 @@ class MailMagazineNav implements EccubeNav
                         'url' => 'plugin_mail_magazine_history',
                     ],
                 ],
-            ]
+            ],
         ];
     }
 }

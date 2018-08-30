@@ -26,6 +26,7 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
 
     /**
      * MailMagazineHistoryFilePaginationSubscriber constructor.
+     *
      * @param MailMagazineService $mailMagazineService
      */
     public function __construct(MailMagazineService $mailMagazineService)

@@ -15,12 +15,30 @@ namespace Plugin\MailMagazine\Tests\Web;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\MailMagazine\Entity\MailmagaCustomer;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
+use Eccube\Repository\Master\SexRepository;
+use Eccube\Repository\MailHistoryRepository;
 
 class MailMagazineCommon extends AbstractAdminWebTestCase
 {
+    /**
+     * @var SexRepository
+     */
+    protected $sexRepository;
+
+    /**
+     * @var MailHistoryRepository
+     */
+    protected $mailHistoryRepository;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->sexRepository = $this->container->get(SexRepository::class);
+        $this->mailHistoryRepository = $this->container->get(MailHistoryRepository::class);
+    }
+
     protected function createMagazineTemplate()
     {
         $fake = $this->getFaker();
@@ -28,10 +46,10 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
 
         $MailTemplate
             ->setSubject($fake->word)
-            ->setBody($fake->word);
-        $MailTemplate->setDelFlg(Constant::DISABLED);
-        $this->app['orm.em']->persist($MailTemplate);
-        $this->app['orm.em']->flush();
+            ->setBody($fake->word)
+            ->setHtmlBody($fake->word);
+        $this->entityManager->persist($MailTemplate);
+        $this->entityManager->flush();
 
         return $MailTemplate;
     }
@@ -41,32 +59,20 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $fake = $this->getFaker();
         $current_date = new \DateTime();
 
-        $Sex = $this->app['eccube.repository.master.sex']->find(1);
+        $Sex = $this->sexRepository->find(1);
 
         $Customer = $this->createCustomer();
         $Customer
             ->setSex($Sex)
             ->setBirth($current_date->modify('-20 years'))
-            ->setTel01($fake->randomNumber(3))
-            ->setTel02($fake->randomNumber(3))
-            ->setTel03($fake->randomNumber(3))
+            ->setPhoneNumber($fake->randomNumber(9))
             ->setCreateDate($current_date->modify('-20 days'))
             ->setUpdateDate($current_date->modify('-1 days'))
             ->setLastBuyDate($current_date->modify('-1 days'))
-        ;
-        $this->app['orm.em']->persist($Customer);
-        $this->app['orm.em']->flush();
+            ->setMailmagaFlg(Constant::ENABLED);
 
-        // create mail customer
-        $MailmagaCustomer = new MailmagaCustomer();
-        $MailmagaCustomer
-            ->setCustomerId($Customer->getId())
-            ->setMailmagaFlg(Constant::ENABLED)
-            ->setDelFlg(Constant::DISABLED)
-            ->setCreateDate($current_date)
-            ->setUpdateDate($current_date);
-        $this->app['orm.em']->persist($MailmagaCustomer);
-        $this->app['orm.em']->flush();
+        $this->entityManager->persist($Customer);
+        $this->entityManager->flush();
 
         return $Customer;
     }
@@ -75,7 +81,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
     {
         // create order
         $Order = $this->createOrder($MailCustomer);
-        $order_detail = $Order->getOrderDetails();
+        $order_detail = $Order->getItems();
         $old_date = new \DateTime('1980-01-01');
 
         return [
@@ -85,9 +91,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'sex' => [$MailCustomer->getSex()->getId()],
             'birth_start' => $old_date->format('Y-m-d'),
             'birth_end' => $MailCustomer->getBirth()->format('Y-m-d'),
-            'tel' => ['tel01' => $MailCustomer->getTel01(),
-                'tel02' => $MailCustomer->getTel02(),
-                'tel03' => $MailCustomer->getTel03(), ],
+            'phone_number' => $MailCustomer->getPhoneNumber(),
             'buy_total_start' => 0,
             'buy_total_end' => $MailCustomer->getBuyTotal(),
             'buy_times_start' => 0,
@@ -99,7 +103,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'last_buy_start' => $old_date->format('Y-m-d'),
             'last_buy_end' => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
             'customer_status' => [$MailCustomer->getStatus()->getId()],
-            'buy_product_code' => $order_detail[0]->getProductName(),
+            'buy_product_name' => $order_detail[0]->getProductName(),
             'birth_month' => $birth_month,
         ];
     }
@@ -111,8 +115,6 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $formData = $this->createSearchForm($MailCustomer);
         $formData['customer_status'] = $MailCustomer->getStatus();
         $formData['sex'] = $MailCustomer->getSex();
-        $formData = array_merge($formData, $formData['tel']);
-        unset($formData['tel']);
 
         // -----------------------------
         // plg_send_history
@@ -125,7 +127,6 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $SendHistory->setSendCount(1);
         $SendHistory->setCompleteCount(1);
         $SendHistory->setErrorCount(0);
-        $SendHistory->setDelFlg(Constant::DISABLED);
 
         $SendHistory->setEndDate(null);
         $SendHistory->setUpdateDate(null);
@@ -135,8 +136,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
 
         // serialize
         $SendHistory->setSearchData(base64_encode(serialize($formData)));
-
-        $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->createSendHistory($SendHistory);
+        $this->entityManager->persist($SendHistory);
+        $this->entityManager->flush();
 
         return $SendHistory;
     }

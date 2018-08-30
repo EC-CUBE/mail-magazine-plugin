@@ -169,6 +169,20 @@ class MailMagazineService
     }
 
     /**
+     * Set mailMagazineDir
+     *
+     * @param $mailMagazineDir
+     *
+     * @return $this
+     */
+    public function setMailMagazineDir($mailMagazineDir)
+    {
+        $this->mailMagazineDir = $mailMagazineDir;
+
+        return $this;
+    }
+
+    /**
      * メールを送信する.
      *
      * @param array $formData メルマガ情報

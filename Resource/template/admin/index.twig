@@ -384,16 +384,16 @@ function fnChangeActionSubmit(action) {
                 {% elseif has_errors %}
                     <div class="card rounded border-0">
                         <div class="card-body p-4">
-                            <div class="text-center text-muted mb-4 h5">{{ 'admin.customer.index.invalid_search_data'|trans }}</div>
-                            <div class="text-center text-muted">{{ 'admin.customer.index.text06'|trans }}</div>
+                            <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_invalid_condition'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
                         </div>
                     </div>
                 {% else %}
                     <div class="card rounded border-0">
                         <div class="card-body p-4">
-                            <div class="text-center text-muted mb-4 h5">{{ 'admin.customer.index.147'|trans }}</div>
-                            <div class="text-center text-muted">{{ 'admin.customer.index.text06'|trans }}</div>
-                            <div class="text-center text-muted">{{ 'admin.customer.index.text07'|trans }}</div>
+                            <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
                         </div>
                     </div>
                 {% endif %}

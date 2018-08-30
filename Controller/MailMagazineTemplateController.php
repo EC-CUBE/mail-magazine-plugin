@@ -166,6 +166,7 @@ class MailMagazineTemplateController extends AbstractController
         if ($form->isSubmitted()) {
             // 入力項目確認処理を行う.
             // エラーであれば元の画面を表示する
+
             if (!$form->isValid()) {
                 $this->addError('admin.flash.register_failed', 'admin');
 

@@ -15,13 +15,25 @@ namespace Plugin\MailMagazine\Tests\Web\Admin;
 
 use Eccube\Common\Constant;
 use Plugin\MailMagazine\Tests\Web\MailMagazineCommon;
+use Eccube\Repository\CustomerRepository;
 
 class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommon
 {
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->customerRepository = $this->container->get(CustomerRepository::class);
+    }
+
     protected function createFormData()
     {
         $faker = $this->getFaker();
-        $tel = explode('-', $faker->phoneNumber);
+        $tel = $faker->phoneNumber;
 
         $email = $faker->safeEmail;
         $password = $faker->lexify('????????');
@@ -37,38 +49,23 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
                 'kana02' => $faker->firstKanaName,
             ],
             'company_name' => $faker->company,
-            'zip' => [
-                'zip01' => $faker->postcode1(),
-                'zip02' => $faker->postcode2(),
-            ],
+            'postal_code' => $faker->postcode1().'-'.$faker->postcode2(),
             'address' => [
                 'pref' => '5',
                 'addr01' => $faker->city,
                 'addr02' => $faker->streetAddress,
             ],
-            'tel' => [
-                'tel01' => $tel[0],
-                'tel02' => $tel[1],
-                'tel03' => $tel[2],
-            ],
-            'fax' => [
-                'fax01' => $tel[0],
-                'fax02' => $tel[1],
-                'fax03' => $tel[2],
-            ],
+            'phone_number' => $tel,
             'email' => $email,
             'password' => [
                 'first' => $password,
                 'second' => $password,
             ],
-            'birth' => [
-                'year' => $birth->format('Y'),
-                'month' => $birth->format('n'),
-                'day' => $birth->format('j'),
-            ],
+            'birth' => $birth->format('Y-m-d'),
             'sex' => 1,
             'job' => 1,
             'status' => 1,
+            'point' => 0,
             '_token' => 'dummy',
         ];
 
@@ -80,7 +77,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $Customer = $this->createMailMagazineCustomer();
 
         $this->client->request('GET',
-            $this->app->url('admin_customer_new', ['id' => $Customer->getId()])
+            $this->generateUrl('admin_customer_new', ['id' => $Customer->getId()])
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -95,15 +92,14 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
             'mailmaga_flg' => $updateFlg,
         ]);
         $this->client->request('POST',
-            $this->app->url('admin_customer_edit', ['id' => $Customer->getId()]),
+            $this->generateUrl('admin_customer_edit', ['id' => $Customer->getId()]),
             [
                 'admin_customer' => $form,
             ]
         );
-
-        $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
-            ->findOneBy(['customer_id' => $Customer->getId()]);
-        $this->actual = $MailCustomer->getMailmagaFlg();
+        $this->entityManager->clear();
+        $Customer = $this->customerRepository->find($Customer->getId());
+        $this->actual = $Customer->getMailmagaFlg();
         $this->expected = $updateFlg;
         $this->verify();
     }
@@ -119,15 +115,14 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
             'mailmaga_flg' => $updateFlg,
         ]);
         $this->client->request('POST',
-            $this->app->url('admin_customer_edit', ['id' => $Customer->getId()]),
+            $this->generateUrl('admin_customer_edit', ['id' => $Customer->getId()]),
             [
                 'admin_customer' => $form,
             ]
         );
-
-        $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
-            ->findOneBy(['customer_id' => $Customer->getId()]);
-        $this->actual = $MailCustomer->getMailmagaFlg();
+        $this->entityManager->clear();
+        $Customer = $this->customerRepository->find($Customer->getId());
+        $this->actual = $Customer->getMailmagaFlg();
         $this->expected = $updateFlg;
         // 保存されない
         $this->assertNotEquals($this->actual, $this->expected);

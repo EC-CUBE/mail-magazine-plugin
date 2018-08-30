@@ -37,25 +37,13 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
                 'kana02' => $faker->firstKanaName,
             ],
             'company_name' => $faker->company,
-            'zip' => [
-                'zip01' => $faker->postcode1(),
-                'zip02' => $faker->postcode2(),
-            ],
+            'postal_code' => $faker->postcode1().$faker->postcode2(),
             'address' => [
                 'pref' => '5',
                 'addr01' => $faker->city,
                 'addr02' => $faker->streetAddress,
             ],
-            'tel' => [
-                'tel01' => $tel[0],
-                'tel02' => $tel[1],
-                'tel03' => $tel[2],
-            ],
-            'fax' => [
-                'fax01' => $tel[0],
-                'fax02' => $tel[1],
-                'fax03' => $tel[2],
-            ],
+            'phone_number' => $tel[0].$tel[1].$tel[2],
             'email' => [
                 'first' => $email,
                 'second' => $email,
@@ -80,12 +68,11 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
     public function testOnRenderEntry()
     {
         $crawler = $this->client->request('GET',
-            $this->app->url('entry')
+            $this->generateUrl('entry')
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $crawler->filter('#entry_mailmaga_flg')->html();
-        $this->assertTrue(true);
+        $this->assertEquals(1, $crawler->filter('#entry_mailmaga_flg')->count());
     }
 
     public function testOnRenderEntry_Post()
@@ -96,7 +83,7 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
         $formData['mailmaga_flg'] = $updateFlg;
 
         $this->client->request('POST',
-            $this->app->url('entry'),
+            $this->generateUrl('entry'),
             [
                 'entry' => $formData,
                 'mode' => 'confirm',
@@ -108,21 +95,18 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
 
     public function testOnRenderEntry_PostComplete()
     {
-        $this->initializeMailCatcher();
         $formData = $this->createFormData();
         $updateFlg = Constant::ENABLED;
 
         $formData['mailmaga_flg'] = $updateFlg;
 
         $this->client->request('POST',
-            $this->app->url('entry'),
+            $this->generateUrl('entry'),
             [
                 'entry' => $formData,
                 'mode' => 'complete',
             ]
         );
-        $this->assertTrue($this->client->getResponse()->isRedirect($this->app->url('entry_complete')));
-
-        $this->cleanUpMailCatcherMessages();
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 }

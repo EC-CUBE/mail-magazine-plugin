@@ -16,6 +16,7 @@ namespace Plugin\MailMagazine\Test\Util;
 use Knp\Component\Pager\Pagination\AbstractPagination;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Tests\AbstractMailMagazineTestCase;
+use Plugin\MailMagazine\Service\MailMagazineService;
 use Plugin\MailMagazine\Event\MailMagazineHistoryFilePaginationSubscriber;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
@@ -29,6 +30,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         if (!file_exists($this->rootDir)) {
             mkdir($this->rootDir);
         }
+        $this->container->get(MailMagazineService::class)->setMailMagazineDir($this->rootDir);
     }
 
     public function tearDown()
@@ -147,7 +149,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
     private function newPagination($file, $page, $limit, $total)
     {
         $paginator = new Paginator();
-        $paginator->subscribe(new MailMagazineHistoryFilePaginationSubscriber());
+        $paginator->subscribe($this->container->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }
