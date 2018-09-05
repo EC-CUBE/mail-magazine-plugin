@@ -17,8 +17,4 @@ use Eccube\Plugin\AbstractPluginManager;
 
 class PluginManager extends AbstractPluginManager
 {
-    public function uninstall($config, $app)
-    {
-        // TODO: Remove schema ?
-    }
 }
