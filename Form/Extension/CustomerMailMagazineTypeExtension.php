@@ -48,7 +48,7 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
             'mapped' => true,
             'eccube_form_options' => [
                 'auto_render' => true,
-                'form_theme' => '@MailMagazine/admin/mailmagazine.twig',
+                'form_theme' => '@MailMagazine4/admin/mailmagazine.twig',
             ],
         ];
 

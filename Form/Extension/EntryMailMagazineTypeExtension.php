@@ -71,7 +71,7 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
                 'data' => $mailmagaFlg,
                 'eccube_form_options' => [
                     'auto_render' => true,
-                    'form_theme' => '@MailMagazine/entry_add_mailmaga.twig',
+                    'form_theme' => '@MailMagazine4/entry_add_mailmaga.twig',
                 ],
             ])
             ;
