@@ -81,4 +81,4 @@ before_test:
   - php bin\console eccube:plugin:enable --code=%PLUGIN_CODE%
 
 test_script:
-  - php bin\phpunit app/Plugin/%PLUGIN_CODE%/Tests
+  - php bin\phpunit -c app/Plugin/%PLUGIN_CODE%/phpunit.xml.dist
