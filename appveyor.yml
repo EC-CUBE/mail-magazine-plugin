@@ -23,7 +23,7 @@ environment:
     PLUGIN_BASE_DIR: "%APPVEYOR_BUILD_FOLDER%"
     ECCUBE_VERSION: "4.0"
     BRANCH: "4.0"
-    PLUGIN_CODE: "MailMagazine"
+    PLUGIN_CODE: "MailMagazine4"
   matrix:
   - db: mysql
     provider: mysql
