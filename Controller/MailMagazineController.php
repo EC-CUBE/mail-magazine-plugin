@@ -11,24 +11,24 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Controller;
+namespace Plugin\MailMagazine4\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Eccube\Controller\AbstractController;
-use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine\Entity\MailMagazineTemplate;
-use Plugin\MailMagazine\Service\MailMagazineService;
+use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine4\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine4\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\FormUtil;
 use Eccube\Repository\CustomerRepository;
 use Knp\Component\Pager\Paginator;
-use Plugin\MailMagazine\Form\Type\MailMagazineType;
+use Plugin\MailMagazine4\Form\Type\MailMagazineType;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Common\Constant;
-use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
+use Plugin\MailMagazine4\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -82,7 +82,7 @@ class MailMagazineController extends AbstractController
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine", name="plugin_mail_magazine")
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_mail_magazine_page")
-     * @Template("@MailMagazine/admin/index.twig")
+     * @Template("@MailMagazine4/admin/index.twig")
      *
      * @param Request $request
      * @param Paginator $paginator
@@ -179,7 +179,7 @@ class MailMagazineController extends AbstractController
      *     name="plugin_mail_magazine_select",
      *     methods={"POST"}
      * )
-     * @Template("@MailMagazine/admin/template_select.twig")
+     * @Template("@MailMagazine4/admin/template_select.twig")
      *
      * @param Request     $request
      * @param string      $id
@@ -232,7 +232,7 @@ class MailMagazineController extends AbstractController
                 ->getForm();
             $form->handleRequest($request);
             if ($form->isValid()) {
-                return $this->render('@MailMagazine/admin/confirm.twig', [
+                return $this->render('@MailMagazine4/admin/confirm.twig', [
                     'form' => $form->createView(),
                     'subject_itm' => $form['subject']->getData(),
                     'body_itm' => $form['body']->getData(),

@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Tests\Web;
+namespace Plugin\MailMagazine4\Tests\Web;
 
 use Eccube\Common\Constant;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine4\Entity\MailMagazineTemplate;
 use Eccube\Repository\Master\SexRepository;
 use Eccube\Repository\MailHistoryRepository;
 

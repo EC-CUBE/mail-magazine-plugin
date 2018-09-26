@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Form\Extension;
+namespace Plugin\MailMagazine4\Form\Extension;
 
 use Eccube\Entity\Customer;
 use Eccube\Common\Constant;

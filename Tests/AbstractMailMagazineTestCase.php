@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Tests;
+namespace Plugin\MailMagazine4\Tests;
 
 use Eccube\Tests\Service\AbstractServiceTestCase;
-use Plugin\MailMagazine\Service\MailMagazineService;
-use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine4\Service\MailMagazineService;
+use Plugin\MailMagazine4\Repository\MailMagazineSendHistoryRepository;
 use Eccube\Entity\Customer;
 
 abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase

@@ -1,9 +1,9 @@
 {
-  "name": "MailMagazine",
+  "name": "MailMagazine4",
   "version": "1.0.1",
-  "description": "MailMagazine",
+  "description": "Mail Magazine Plugin for EC-CUBE4",
   "type": "eccube-plugin",
   "extra": {
-    "code": "MailMagazine"
+    "code": "MailMagazine4"
   }
 }

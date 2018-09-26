@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Entity;
+namespace Plugin\MailMagazine4\Entity;
 
 use Eccube\Entity\AbstractEntity;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  *
  * @ORM\Table(name="plg_mailmaga_template")
- * @ORM\Entity(repositoryClass="Plugin\MailMagazine\Repository\MailMagazineTemplateRepository")
+ * @ORM\Entity(repositoryClass="Plugin\MailMagazine4\Repository\MailMagazineTemplateRepository")
  */
 class MailMagazineTemplate extends AbstractEntity
 {

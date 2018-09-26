@@ -11,9 +11,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Tests\Web\Admin;
+namespace Plugin\MailMagazine4\Tests\Web\Admin;
 
-use Plugin\MailMagazine\Tests\Web\MailMagazineCommon;
+use Plugin\MailMagazine4\Tests\Web\MailMagazineCommon;
 
 class MailMagazineHistoryControllerTest extends MailMagazineCommon
 {

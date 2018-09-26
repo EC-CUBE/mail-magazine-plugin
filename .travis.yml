@@ -14,7 +14,7 @@ php:
 env:
   # plugin code
   global:
-    PLUGIN_CODE=MailMagazine
+    PLUGIN_CODE=MailMagazine4
     BRANCH=4.0
 
 before_install: &php_setup |

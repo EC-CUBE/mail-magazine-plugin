@@ -15,7 +15,7 @@
  * メルマガテンプレート選択コンボボックス用に作成
  */
 
-namespace Plugin\MailMagazine\Form\Type;
+namespace Plugin\MailMagazine4\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -30,7 +30,7 @@ class MailMagazineTemplateType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'class' => 'Plugin\MailMagazine\Entity\MailMagazineTemplate',
+            'class' => 'Plugin\MailMagazine4\Entity\MailMagazineTemplate',
             'property' => 'subject',
             'label' => false,
             'multiple' => false,

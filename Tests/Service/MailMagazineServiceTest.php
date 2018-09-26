@@ -11,10 +11,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Tests\Service;
+namespace Plugin\MailMagazine4\Tests\Service;
 
-use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine\Tests\AbstractMailMagazineTestCase;
+use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine4\Tests\AbstractMailMagazineTestCase;
 
 class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 {

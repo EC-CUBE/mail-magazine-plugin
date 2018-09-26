@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Tests\Web\Admin;
+namespace Plugin\MailMagazine4\Tests\Web\Admin;
 
-use Plugin\MailMagazine\Tests\Web\MailMagazineCommon;
+use Plugin\MailMagazine4\Tests\Web\MailMagazineCommon;
 use Eccube\Repository\MailTemplateRepository;
-use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
+use Plugin\MailMagazine4\Repository\MailMagazineTemplateRepository;
 
 class MailMagazineTemplateControllerTest extends MailMagazineCommon
 {
