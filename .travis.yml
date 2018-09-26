@@ -87,6 +87,6 @@ jobs:
         # mail catcher
         - mailcatcher
       script:
-        - phpdbg ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover
+        - phpdbg -qrr ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover
       after_success:
         - php vendor/bin/php-coveralls -v -x coverage.clover
