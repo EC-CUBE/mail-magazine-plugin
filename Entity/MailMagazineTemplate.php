@@ -36,7 +36,7 @@ class MailMagazineTemplate extends AbstractEntity
     /**
      * @ORM\Id()
      * @ORM\Column(name="template_id", type="integer", nullable=false, options={"unsigned": true})
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      *
      * @var int
      */
