@@ -1,92 +1,89 @@
 <?php
-/*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
 
-namespace Plugin\MailMagazine\Form\Extension;
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Plugin\MailMagazine4\Form\Extension;
 
 use Eccube\Entity\Customer;
-use Plugin\MailMagazine\Entity\MailmagaCustomer;
-use Plugin\MailMagazine\Util\Version;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Eccube\Form\Type\Front\EntryType;
 
 class EntryMailMagazineTypeExtension extends AbstractTypeExtension
 {
-    private $app;
+    /**
+     * @var TokenStorageInterface
+     */
+    protected $tokenStorage;
 
-    public function __construct(\Eccube\Application $app)
+    /**
+     * EntryMailMagazineTypeExtension constructor.
+     *
+     * @param TokenStorageInterface $tokenStorage
+     */
+    public function __construct(TokenStorageInterface $tokenStorage)
     {
-        $this->app = $app;
+        $this->tokenStorage = $tokenStorage;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $mailmagaFlg = null;
-        if ($this->app->isGranted('IS_AUTHENTICATED_FULLY')) {
-            /** @var Customer $Customer */
-            $Customer = $this->app->user();
-            $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
-            /** @var MailmagaCustomer $MailmagaCustomer */
-            $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
-            if (!is_null($MailmagaCustomer)) {
-                $mailmagaFlg = $MailmagaCustomer->getMailmagaFlg();
-            }
+        $token = $this->tokenStorage->getToken();
+        $Customer = $token ? $token->getUser() : null;
+
+        if ($Customer instanceof Customer && $Customer->getId()) {
+            $mailmagaFlg = $Customer->getMailmagaFlg();
         }
 
         $builder
-            ->add('mailmaga_flg', 'choice', array(
-                'label' => 'メールマガジン送付について',
-                'choices' => array(
-                    '1' => '受け取る',
-                    '0' => '受け取らない',
-                ),
+            ->add('mailmaga_flg', ChoiceType::class, [
+                'label' => 'admin.mailmagazine.customer.label_mailmagazine',
+                'choices' => [
+                    'admin.mailmagazine.customer.label_mailmagazine_yes' => '1',
+                    'admin.mailmagazine.customer.label_mailmagazine_no' => '0',
+                ],
                 'expanded' => true,
                 'multiple' => false,
                 'required' => true,
-                'constraints' => array(
+                'constraints' => [
                     new Assert\NotBlank(),
-                ),
-                'mapped' => false,
+                ],
+                'mapped' => true,
                 'data' => $mailmagaFlg,
-            ))
+                'eccube_form_options' => [
+                    'auto_render' => true,
+                    'form_theme' => '@MailMagazine4/entry_add_mailmaga.twig',
+                ],
+            ])
             ;
     }
 
-    /*
+    /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $freeze = $form->getConfig()->getAttribute('freeze');
-
-        if ($freeze) {
-            $value = $view->vars['form']->children['mailmaga_flg']->vars['data'];
-            $choices = $view->vars['form']->children['mailmaga_flg']->vars['choices'];
-            foreach ($choices as $choice) {
-                if ($choice->value == $value) {
-                    if (Version::isSupport('3.0.13', '<')) {
-                        $view->vars['form']->children['mailmaga_flg']->vars['data'] = array('name' => $choice->label, 'id' => $value);
-                    } else {
-                        $view->vars['form']->children['mailmaga_flg']->vars['data'] = $choice->value;
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
     public function getExtendedType()
     {
-        return 'entry';
+        return EntryType::class;
     }
 }

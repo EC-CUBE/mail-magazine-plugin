@@ -1,9 +1,9 @@
 # メルマガ管理プラグイン
 
-[![Build Status](https://travis-ci.org/EC-CUBE/mail-magazine-plugin.svg?branch=master)](https://travis-ci.org/EC-CUBE/mail-magazine-plugin)
+[![Build Status](https://travis-ci.org/EC-CUBE/mail-magazine-plugin.svg?branch=4.0)](https://travis-ci.org/EC-CUBE/mail-magazine-plugin)
 [![Build status](https://ci.appveyor.com/api/projects/status/3j9pol5x153eol6c?svg=true)](https://ci.appveyor.com/project/ECCUBE/mail-magazine-plugin)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/f4bd9bd6-56ca-4a8f-a274-1fc13ca9ef98/mini.png)](https://insight.sensiolabs.com/projects/f4bd9bd6-56ca-4a8f-a274-1fc13ca9ef98)
-[![Coverage Status](https://coveralls.io/repos/github/EC-CUBE/mail-magazine-plugin/badge.svg?branch=master)](https://coveralls.io/github/EC-CUBE/mail-magazine-plugin?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/EC-CUBE/mail-magazine-plugin/badge.svg?branch=4.0)](https://coveralls.io/github/EC-CUBE/mail-magazine-plugin?branch=master)
 
 ## 概要
 会員に向けメルマガの配信を行うためのプラグインです。  

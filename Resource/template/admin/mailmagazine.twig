@@ -20,12 +20,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #}
 {# メールマガジン #}
-<div class="form-group">
-    {{ form_label(form.mailmaga_flg) }}
-    <div class="col-sm-9 col-lg-10">
-        <div class="form-inline">
-            {{ form_widget(form.mailmaga_flg) }}
-            {{ form_errors(form.mailmaga_flg) }}
+{%- extends '@admin/Form/bootstrap_4_horizontal_layout.html.twig' -%}
+
+{%- block _admin_customer_mailmaga_flg_row -%}
+    <div class="row mb-2">
+        <div class="col-3">
+            <span>{{- form.vars.label|trans -}}</span>
+        </div>
+        <div class="col">
+            <div id="admin_customer_mailmaga_flg">
+                <div class="form-check">
+                    {{- form_widget(form) -}}
+                    {{- form_errors(form) -}}
+                </div>
+            </div>
         </div>
     </div>
-</div>
+{%- endblock _admin_customer_mailmaga_flg_row -%}

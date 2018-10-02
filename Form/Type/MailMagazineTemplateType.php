@@ -1,40 +1,36 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /*
  * メルマガテンプレート選択コンボボックス用に作成
  */
 
-namespace Plugin\MailMagazine\Form\Type;
+namespace Plugin\MailMagazine4\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class MailMagazineTemplateType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function configureOptions(OptionsResolver $resolver)
     {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'class' => 'Plugin\MailMagazine\Entity\MailMagazineTemplate',
+        $resolver->setDefaults([
+            'class' => 'Plugin\MailMagazine4\Entity\MailMagazineTemplate',
             'property' => 'subject',
             'label' => false,
             'multiple' => false,
@@ -45,7 +41,7 @@ class MailMagazineTemplateType extends AbstractType
                 return $er->createQueryBuilder('mt')
                     ->orderBy('mt.id', 'ASC');
             },
-        ));
+        ]);
     }
 
     /**
@@ -61,6 +57,6 @@ class MailMagazineTemplateType extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 }

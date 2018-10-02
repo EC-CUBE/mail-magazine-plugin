@@ -1,73 +1,67 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /*
  * メルマガテンプレート設定用
  */
 
-namespace Plugin\MailMagazine\Form\Type;
+namespace Plugin\MailMagazine4\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class MailMagazineTemplateEditType extends AbstractType
 {
-    public $app;
-
-    public function __construct(\Silex\Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $this->app;
-
         $builder
-            ->add('subject', 'text', array(
-                'label' => '件名',
+            ->add('subject', TextType::class, [
+                'label' => 'mailmagazine.select.label_subject',
                 'required' => true,
-                'constraints' => array(
+                'constraints' => [
                     new Assert\NotBlank(),
-                ),
-            ))
-            ->add('body', 'textarea', array(
-                'label' => '本文 (テキスト形式)',
+                ],
+            ])
+            ->add('body', TextareaType::class, [
+                'label' => 'mailmagazine.select.label_body',
                 'required' => true,
-                'constraints' => array(
+                'constraints' => [
                     new Assert\NotBlank(),
-                ),
-            ))
-            ->add('htmlBody', 'textarea', array(
-                'label' => '本文 (HTML形式)',
+                ],
+            ])
+            ->add('htmlBody', TextareaType::class, [
+                'label' => 'mailmagazine.select.label_body_html',
                 'required' => false,
-            ))
-            ->addEventListener(FormEvents::POST_SUBMIT, function ($event) use ($app) {
-            })
-            ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+            ]);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'Plugin\MailMagazine\Entity\MailMagazineTemplate',
-        ));
+        $resolver->setDefaults([
+            'data_class' => 'Plugin\MailMagazine4\Entity\MailMagazineTemplate',
+        ]);
     }
 
     /**

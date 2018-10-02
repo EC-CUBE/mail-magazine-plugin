@@ -1,74 +1,73 @@
 <?php
-/**
- * This file is part of EC-CUBE.
+
+/*
+ * This file is part of EC-CUBE
  *
- * Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
  * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine\Tests\Web\Admin;
+namespace Plugin\MailMagazine4\Tests\Web\Admin;
 
 use Eccube\Common\Constant;
-use Plugin\MailMagazine\Tests\Web\MailMagazineCommon;
+use Plugin\MailMagazine4\Tests\Web\MailMagazineCommon;
+use Eccube\Repository\CustomerRepository;
 
 class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommon
 {
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->customerRepository = $this->container->get(CustomerRepository::class);
+    }
+
     protected function createFormData()
     {
         $faker = $this->getFaker();
-        $tel = explode('-', $faker->phoneNumber);
+        $tel = $faker->phoneNumber;
 
         $email = $faker->safeEmail;
         $password = $faker->lexify('????????');
         $birth = $faker->dateTimeBetween;
 
-        $form = array(
-            'name' => array(
+        $form = [
+            'name' => [
                 'name01' => $faker->lastName,
                 'name02' => $faker->firstName,
-            ),
-            'kana' => array(
+            ],
+            'kana' => [
                 'kana01' => $faker->lastKanaName,
                 'kana02' => $faker->firstKanaName,
-            ),
+            ],
             'company_name' => $faker->company,
-            'zip' => array(
-                'zip01' => $faker->postcode1(),
-                'zip02' => $faker->postcode2(),
-            ),
-            'address' => array(
+            'postal_code' => $faker->postcode1().'-'.$faker->postcode2(),
+            'address' => [
                 'pref' => '5',
                 'addr01' => $faker->city,
                 'addr02' => $faker->streetAddress,
-            ),
-            'tel' => array(
-                'tel01' => $tel[0],
-                'tel02' => $tel[1],
-                'tel03' => $tel[2],
-            ),
-            'fax' => array(
-                'fax01' => $tel[0],
-                'fax02' => $tel[1],
-                'fax03' => $tel[2],
-            ),
+            ],
+            'phone_number' => $tel,
             'email' => $email,
-            'password' => array(
+            'password' => [
                 'first' => $password,
                 'second' => $password,
-            ),
-            'birth' => array(
-                'year' => $birth->format('Y'),
-                'month' => $birth->format('n'),
-                'day' => $birth->format('j'),
-            ),
+            ],
+            'birth' => $birth->format('Y-m-d'),
             'sex' => 1,
             'job' => 1,
             'status' => 1,
+            'point' => 0,
             '_token' => 'dummy',
-        );
+        ];
 
         return $form;
     }
@@ -78,7 +77,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $Customer = $this->createMailMagazineCustomer();
 
         $this->client->request('GET',
-            $this->app->url('admin_customer_new', array('id' => $Customer->getId()))
+            $this->generateUrl('admin_customer_new', ['id' => $Customer->getId()])
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -89,19 +88,18 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;
         $form = $this->createFormData();
-        $form = array_merge($form, array(
+        $form = array_merge($form, [
             'mailmaga_flg' => $updateFlg,
-        ));
+        ]);
         $this->client->request('POST',
-            $this->app->url('admin_customer_edit', array('id' => $Customer->getId())),
-            array(
+            $this->generateUrl('admin_customer_edit', ['id' => $Customer->getId()]),
+            [
                 'admin_customer' => $form,
-            )
+            ]
         );
-
-        $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
-            ->findOneBy(array('customer_id' => $Customer->getId()));
-        $this->actual = $MailCustomer->getMailmagaFlg();
+        $this->entityManager->clear();
+        $Customer = $this->customerRepository->find($Customer->getId());
+        $this->actual = $Customer->getMailmagaFlg();
         $this->expected = $updateFlg;
         $this->verify();
     }
@@ -111,21 +109,20 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;
         $form = $this->createFormData();
-        $form = array_merge($form, array(
+        $form = array_merge($form, [
             // バリデーションエラーになるケース
-            'kana' => array('kana01' => 'invalid'),
+            'kana' => ['kana01' => 'invalid'],
             'mailmaga_flg' => $updateFlg,
-        ));
+        ]);
         $this->client->request('POST',
-            $this->app->url('admin_customer_edit', array('id' => $Customer->getId())),
-            array(
+            $this->generateUrl('admin_customer_edit', ['id' => $Customer->getId()]),
+            [
                 'admin_customer' => $form,
-            )
+            ]
         );
-
-        $MailCustomer = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer']
-            ->findOneBy(array('customer_id' => $Customer->getId()));
-        $this->actual = $MailCustomer->getMailmagaFlg();
+        $this->entityManager->clear();
+        $Customer = $this->customerRepository->find($Customer->getId());
+        $this->actual = $Customer->getMailmagaFlg();
         $this->expected = $updateFlg;
         // 保存されない
         $this->assertNotEquals($this->actual, $this->expected);

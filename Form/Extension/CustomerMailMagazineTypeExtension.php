@@ -1,69 +1,71 @@
 <?php
-/*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
 
-namespace Plugin\MailMagazine\Form\Extension;
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Plugin\MailMagazine4\Form\Extension;
 
 use Eccube\Entity\Customer;
-use Plugin\MailMagazine\Entity\MailmagaCustomer;
+use Eccube\Common\Constant;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Eccube\Form\Type\Admin\CustomerType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
 {
-    private $app;
-
-    public function __construct(\Eccube\Application $app)
-    {
-        $this->app = $app;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $mailmagaFlg = null;
+
         /** @var Customer $Customer */
-        $Customer = isset($options['data']) ? $options['data'] : null;
-        if (!is_null($Customer)) {
-            $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
-            /** @var MailmagaCustomer $MailmagaCustomer */
-            $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
-            if (!is_null($MailmagaCustomer)) {
-                $mailmagaFlg = $MailmagaCustomer->getMailmagaFlg();
-            }
+        $Customer = $builder->getData();
+        if ($Customer instanceof Customer && $Customer->getId()) {
+            $mailmagaFlg = $Customer->getMailmagaFlg();
         }
 
-        $options = array(
-            'label' => 'メールマガジン送付について',
-            'choices' => array(
-                '1' => '受け取る',
-                '0' => '受け取らない',
-            ),
+        $options = [
+            'label' => 'admin.mailmagazine.customer.label_mailmagazine',
+            'choices' => [
+                'admin.mailmagazine.customer.label_mailmagazine_yes' => Constant::ENABLED,
+                'admin.mailmagazine.customer.label_mailmagazine_no' => Constant::DISABLED,
+            ],
             'expanded' => true,
             'multiple' => false,
             'required' => true,
-            'constraints' => array(
+            'constraints' => [
                 new Assert\NotBlank(),
-            ),
-            'mapped' => false,
-        );
+            ],
+            'mapped' => true,
+            'eccube_form_options' => [
+                'auto_render' => true,
+                'form_theme' => '@MailMagazine4/admin/mailmagazine.twig',
+            ],
+        ];
 
         if (!is_null($mailmagaFlg)) {
             $options['data'] = $mailmagaFlg;
         }
 
-        $builder->add('mailmaga_flg', 'choice', $options);
+        $builder->add('mailmaga_flg', ChoiceType::class, $options);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getExtendedType()
     {
-        return 'admin_customer';
+        return CustomerType::class;
     }
 }

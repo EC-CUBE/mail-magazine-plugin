@@ -11,10 +11,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4;
+$loader = require __DIR__.'/../../../../vendor/autoload.php';
 
-use Eccube\Plugin\AbstractPluginManager;
-
-class PluginManager extends AbstractPluginManager
-{
+$envFile = __DIR__.'/../../../../.env';
+if (file_exists($envFile)) {
+    (new \Symfony\Component\Dotenv\Dotenv())->load($envFile);
 }

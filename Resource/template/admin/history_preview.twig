@@ -7,46 +7,47 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-{% extends 'default_frame.twig' %}
+{% extends '@admin/default_frame.twig' %}
 
 {% set menus = ['mailmagazine', 'mailmagazine_history'] %}
 
-{% block title %}メルマガ管理{% endblock %}
-{% block sub_title %}配信履歴{% endblock %}
-
-{% block javascript %}
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.core.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.widget.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js"></script>
-    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js"></script>
-{% endblock %}
+{% block title %}{{ 'mailmagazine.history.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'mailmagazine.title'|trans }}{% endblock %}
 
 {% block main %}
-
-    <div class="table_list">
-        <div class="table-responsive with-border">
+<div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
             <table class="table table-striped">
                 <tbody>
-                    <tr>
-                        <th style="width: 20%;">Subject</th>
-                        <td>{{ history.subject }}</td>
-                    </tr>
-                    <tr>
-                        <th>本文 (テキスト形式)</th>
-                        <td><xmp>{{ history.body }}</xmp></td>
-                    </tr>
-                    <tr>
-                        <th>本文 (HTML形式)</th>
-                        <td><xmp>{{ history.htmlBody|raw }}</xmp></td>
-                    </tr>
+                <tr>
+                    <th class="w-25">{{ 'mailmagazine.select.label_subject'|trans }}</th>
+                    <td>{{ history.subject }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'mailmagazine.select.label_body'|trans }}</th>
+                    <td><xmp>{{ history.body }}</xmp></td>
+                </tr>
+                <tr>
+                    <th>{{ 'mailmagazine.select.label_body_html'|trans }}</th>
+                    <td><xmp>{{ history.htmlBody|raw }}</xmp></td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </div>
-        <div class="row">
-            <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
-                <p><a href="{{ url('plugin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
+</div>
+<div class="c-conversionArea">
+    <div class="c-conversionArea__container">
+        <div class="row justify-content-between align-items-center">
+            <div class="col-6">
+                <div class="c-conversionArea__leftBlockItem">
+                    <a class="c-baseLink" href="{{ url('plugin_mail_magazine_history') }}">
+                        <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'mailmagazine.history.preview.btn_back'|trans }}</span>
+                    </a>
+                </div>
             </div>
         </div>
-
+    </div>
+</div>
 {% endblock %}

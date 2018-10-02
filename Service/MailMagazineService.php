@@ -1,20 +1,30 @@
 <?php
+
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-namespace Plugin\MailMagazine\Service;
+namespace Plugin\MailMagazine4\Service;
 
-use Eccube\Application;
 use Eccube\Common\Constant;
-use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
+use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
+use Eccube\Repository\BaseInfoRepository;
+use Eccube\Entity\BaseInfo;
+use Eccube\Common\EccubeConfig;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Eccube\Repository\CustomerRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+use Plugin\MailMagazine4\Repository\MailMagazineSendHistoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * メルマガ配信処理のサービスクラス。
@@ -44,22 +54,20 @@ class MailMagazineService
     // ====================================
     // 定数宣言
     // ====================================
-    const REPOSITORY_SEND_HISTORY = 'eccube.plugin.mail_magazine.repository.mail_magazine_history';
 
     // send_flagの定数
     /** メール未送信 */
     const SEND_FLAG_NONE = 0;
+
     /** メール送信成功 */
     const SEND_FLAG_SUCCESS = 1;
+
     /** メール送信失敗 */
     const SEND_FLAG_FAILURE = 2;
 
     // ====================================
     // 変数宣言
     // ====================================
-    /** @var \Eccube\Application */
-    public $app;
-
     /**
      * 最後の送信者に送信したメールの本文(テキスト形式).
      *
@@ -74,23 +82,104 @@ class MailMagazineService
      */
     private $lastSendMailHtmlBody = '';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $mailMagazineDir;
 
-    /** @var \Eccube\Entity\BaseInfo */
+    /**
+     * @var BaseInfo
+     */
     public $BaseInfo;
 
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-        $this->BaseInfo = $app['eccube.repository.base_info']->get();
-        $this->mailMagazineDir = str_replace(
-            '${ROOT_DIR}',
-            $app['config']['root_dir'],
-            $this->app['config']['MailMagazine']['const']['mail_magazine_dir']);
+    /**
+     * @var EccubeConfig
+     */
+    protected $eccubeConfig;
+
+    /**
+     * @var \Swift_Mailer
+     */
+    protected $mailer;
+
+    /**
+     * @var SessionInterface
+     */
+    protected $session;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
+     * @var MailMagazineSendHistoryRepository
+     */
+    protected $mailMagazineSendHistoryRepository;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
+     * MailMagazineService constructor.
+     *
+     * @param \Swift_Mailer $mailer
+     * @param BaseInfoRepository $baseInfoRepository
+     * @param EccubeConfig $eccubeConfig
+     * @param SessionInterface $session
+     * @param CustomerRepository $customerRepository
+     * @param MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
+     * @param EntityManagerInterface $entityManager
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function __construct(
+        \Swift_Mailer $mailer,
+        BaseInfoRepository $baseInfoRepository,
+        EccubeConfig $eccubeConfig,
+        SessionInterface $session,
+        CustomerRepository $customerRepository,
+        MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->mailer = $mailer;
+        $this->BaseInfo = $baseInfoRepository->get();
+        $this->eccubeConfig = $eccubeConfig;
+        $this->session = $session;
+        $this->customerRepository = $customerRepository;
+        $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
+        $this->entityManager = $entityManager;
+        $this->mailMagazineDir = $this->eccubeConfig['mail_magazine_dir'];
         if (!file_exists($this->mailMagazineDir)) {
             mkdir($this->mailMagazineDir);
         }
+    }
+
+    /**
+     * Get mailMagazineDir
+     *
+     * @return string
+     */
+    public function getMailMagazineDir()
+    {
+        return $this->mailMagazineDir;
+    }
+
+    /**
+     * Set mailMagazineDir
+     *
+     * @param $mailMagazineDir
+     *
+     * @return $this
+     */
+    public function setMailMagazineDir($mailMagazineDir)
+    {
+        $this->mailMagazineDir = $mailMagazineDir;
+
+        return $this;
     }
 
     /**
@@ -100,16 +189,17 @@ class MailMagazineService
      *                  email: 送信先メールアドレス
      *                  subject: 件名
      *                  body：本文
+     *
+     * @return int
      */
     public function sendMail($formData)
     {
         // メール送信
         /** @var \Swift_Message $message */
-        $message = \Swift_Message::newInstance()
+        $message = (new \Swift_Message())
             ->setSubject($formData['subject'])
-            ->setFrom(array($this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()))
-            ->setTo(array($formData['email']))
-            //             ->setBcc($this->BaseInfo->getEmail01())
+            ->setFrom([$this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()])
+            ->setTo([$formData['email']])
             ->setReplyTo($this->BaseInfo->getEmail03())
             ->setReturnPath($this->BaseInfo->getEmail04())
             ->setBody($formData['body']);
@@ -118,7 +208,7 @@ class MailMagazineService
             $message->addPart($formData['htmlBody'], 'text/html');
         }
 
-        return $this->app->mail($message);
+        return $this->mailer->send($message);
     }
 
     /**
@@ -133,11 +223,10 @@ class MailMagazineService
      */
     public function createMailMagazineHistory($formData)
     {
-        // メール配信先リストの取得
-        /** @var MailMagazineCustomerRepository $mailMagazineCustomerRepository */
-        $mailMagazineCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_customer'];
-        $mailMagazineCustomerRepository->setApplication($this->app);
-        $customerList = $mailMagazineCustomerRepository->getCustomerBySearchData($formData);
+        /* @var $qb QueryBuilder */
+        $formData['plg_mailmagazine_flg'] = Constant::ENABLED;
+        $qb = $this->customerRepository->getQueryBuilderBySearchData($formData);
+        $customerList = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
 
         $currentDatetime = new \DateTime();
 
@@ -155,7 +244,6 @@ class MailMagazineService
         $sendHistory->setSendCount(count($customerList));
         $sendHistory->setCompleteCount(0);
         $sendHistory->setErrorCount(0);
-        $sendHistory->setDelFlg(Constant::DISABLED);
 
         $sendHistory->setEndDate(null);
         $sendHistory->setUpdateDate(null);
@@ -171,20 +259,29 @@ class MailMagazineService
         unset($formData['subject']);
         unset($formData['body']);
 
-        // serializeのみだとDB登録時にデータが欠損するのでBase64にする
-        $sendHistory->setSearchData(base64_encode(serialize($formData)));
-
-        $status = $this->app[self::REPOSITORY_SEND_HISTORY]->createSendHistory($sendHistory);
-        if (!$status) {
-            return null;
+        if (isset($formData['sex']) && $formData['sex'] instanceof ArrayCollection) {
+            $formData['sex'] = $formData['sex']->toArray();
+        }
+        if (isset($formData['customer_status']) && $formData['customer_status'] instanceof ArrayCollection) {
+            $formData['customer_status'] = $formData['customer_status']->toArray();
         }
 
-        $sendId = $sendHistory->getId();
-        $fp = fopen($this->getHistoryFileName($sendId), 'w');
-        foreach ($customerList as $customer) {
-            fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'].' '.$customer['name02'].PHP_EOL);
+        $sendId = null;
+        try {
+            // serializeのみだとDB登録時にデータが欠損するのでBase64にする
+            $sendHistory->setSearchData(base64_encode(serialize($formData)));
+            $this->mailMagazineSendHistoryRepository->save($sendHistory);
+            $this->entityManager->flush();
+
+            $sendId = $sendHistory->getId();
+            $fp = fopen($this->getHistoryFileName($sendId), 'w');
+            foreach ($customerList as $customer) {
+                fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'].' '.$customer['name02'].PHP_EOL);
+            }
+            fclose($fp);
+        } catch (\Exception $e) {
+            log_error(__METHOD__, [$e]);
         }
-        fclose($fp);
 
         return $sendId;
     }
@@ -227,6 +324,11 @@ class MailMagazineService
         fclose($fout);
     }
 
+    /**
+     * Mark history to retry send
+     *
+     * @param $sendId
+     */
     public function markRetry($sendId)
     {
         // 再送時の前処理
@@ -250,17 +352,17 @@ class MailMagazineService
      * Send mailmagazine.
      * メールマガジンを送信する.
      *
-     * @param int $sendId 履歴ID
-     * @param int $offset 開始位置
-     * @param int $max    最大数
+     * @param $sendId
+     * @param int $offset
+     * @param int $max
      *
-     * @return MailMagazineSendHistory 送信履歴
+     * @return bool|MailMagazineSendHistory
      */
     public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
     {
         // send_historyを取得する
         /** @var MailMagazineSendHistory $sendHistory */
-        $sendHistory = $this->app[self::REPOSITORY_SEND_HISTORY]->find($sendId);
+        $sendHistory = $this->mailMagazineSendHistoryRepository->find($sendId);
 
         if (is_null($sendHistory)) {
             // 削除されている場合は終了する
@@ -303,12 +405,12 @@ class MailMagazineService
                 continue;
             }
 
-            $mailData = array(
+            $mailData = [
                 'email' => $email,
                 'subject' => $sendHistory->getSubject(),
                 'body' => $sendHistory->getBody(),
                 'htmlBody' => $sendHistory->getHtmlBody(),
-            );
+            ];
             $this->replaceMailVars($mailData, $name);
 
             // 送信した本文を保持する
@@ -355,7 +457,8 @@ class MailMagazineService
         $sendHistory->setEndDate(new \DateTime());
         $sendHistory->setCompleteCount($offset > 0 ? $sendHistory->getCompleteCount() + $processCount : $processCount);
         $sendHistory->setErrorCount($errorCount);
-        $this->app[self::REPOSITORY_SEND_HISTORY]->updateSendHistory($sendHistory);
+        $this->mailMagazineSendHistoryRepository->save($sendHistory);
+        $this->entityManager->flush();
 
         return $sendHistory;
     }
@@ -369,12 +472,12 @@ class MailMagazineService
     {
         $subject = date('Y年m月d日H時i分').'　下記メールの配信が完了しました。';
 
-        $mailData = array(
+        $mailData = [
                 'email' => $this->getAdminEmail(),
                 'subject' => $subject,
                 'body' => $this->lastSendMailBody,
                 'htmlBody' => $this->lastSendMailHtmlBody,
-        );
+        ];
 
         try {
             return $this->sendMail($mailData);
@@ -390,14 +493,27 @@ class MailMagazineService
         return $this->BaseInfo->getEmail03();
     }
 
+    /**
+     * Get history file name
+     *
+     * @param $historyId
+     * @param bool $input
+     *
+     * @return string
+     */
     public function getHistoryFileName($historyId, $input = true)
     {
         return $this->mailMagazineDir.'/mail_magazine_'.($input ? 'in' : 'out').'_'.$historyId.'.txt';
     }
 
+    /**
+     * Delete history files
+     *
+     * @param $historyId
+     */
     public function unlinkHistoryFiles($historyId)
     {
-        foreach (array($this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)) as $f) {
+        foreach ([$this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)] as $f) {
             if (file_exists($f)) {
                 unlink($f);
             }
@@ -421,7 +537,7 @@ class MailMagazineService
      */
     public function replaceMailVars(&$mailData, $name)
     {
-        foreach (array('subject', 'body', 'htmlBody') as $key) {
+        foreach (['subject', 'body', 'htmlBody'] as $key) {
             $mailData[$key] = preg_replace('/{name}/', $name, $mailData[$key]);
         }
     }
