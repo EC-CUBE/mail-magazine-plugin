@@ -29,7 +29,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * @ORM\Column(name="send_id", type="integer", options={"unsigned": true})
      * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      *
      * @var int
      */
