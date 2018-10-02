@@ -211,7 +211,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         //pagination
         $crawler = $this->client->request(
             'GET',
-            $this->generateUrl('plugin_mail_magazine', ['page_no' => '2'])
+            $this->generateUrl('plugin_mail_magazine_page', ['page_no' => '2'])
         );
 
         //check result
