@@ -90,7 +90,7 @@ class MailMagazineController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      */
-    public function index(Request $request, Paginator $paginator, $page_no = 1, \Swift_Mailer $mailer)
+    public function index(Request $request, Paginator $paginator, $page_no = null, \Swift_Mailer $mailer)
     {
         $session = $request->getSession();
         $pageNo = $page_no;
@@ -130,7 +130,7 @@ class MailMagazineController extends AbstractController
                     'searchForm' => $searchForm->createView(),
                     'pagination' => [],
                     'pageMaxis' => $pageMaxis,
-                    'page_no' => $pageNo,
+                    'page_no' => $pageNo ? $pageNo : 1,
                     'page_count' => $pageCount,
                     'has_errors' => true,
                 ];
