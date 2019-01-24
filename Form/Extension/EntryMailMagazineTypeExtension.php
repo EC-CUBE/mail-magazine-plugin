@@ -57,6 +57,9 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
         $builder
             ->add('mailmaga_flg', ChoiceType::class, [
                 'label' => 'admin.mailmagazine.customer.label_mailmagazine',
+                'label_attr' => [
+                    'class' => 'ec-label',
+                ],
                 'choices' => [
                     'admin.mailmagazine.customer.label_mailmagazine_yes' => '1',
                     'admin.mailmagazine.customer.label_mailmagazine_no' => '0',
