@@ -174,10 +174,6 @@ class MailMagazineType extends AbstractType
                     new Assert\Length(array('max' => $config['stext_len'])),
                 ),
             ))
-            ->add('buy_category', 'category', array(
-                'label' => '商品カテゴリ',
-                'required' => false,
-            ))
           // TODO DBから取得するのが正しいので修正
 //             ->add('customer_status', 'choice', array(
 //                 'label' => '会員ステータス',
