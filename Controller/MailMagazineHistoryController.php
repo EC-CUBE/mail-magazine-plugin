@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\Pref;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
@@ -20,6 +21,7 @@ use Plugin\MailMagazine\Service\MailMagazineService;
 use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class MailMagazineHistoryController
 {
@@ -119,9 +121,19 @@ class MailMagazineHistoryController
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
-        // 検索条件をアンシリアライズする
-        // base64,serializeされているので注意すること
-        $searchData = unserialize(base64_decode($sendHistory->getSearchData()));
+        $searchData = $searchDataArray = json_decode($sendHistory->getSearchData(), true);
+
+        $searchData['pref'] = $app['eccube.repository.master.pref']->find($searchDataArray['pref']['id']);
+
+        $searchData['sex'] = new ArrayCollection();
+        $searchData['customer_status'] = new ArrayCollection();
+
+        foreach ($searchDataArray['sex'] as $value) {
+            $searchData['sex']->add($app['eccube.repository.master.sex']->find($value['id']));
+        }
+        foreach ($searchDataArray['customer_status'] as $value) {
+            $searchData['customer_status']->add($app['eccube.repository.customer_status']->find($value['id']));
+        }
 
         // 区分値を文字列に変更する
         // 必要な項目のみ

@@ -171,8 +171,21 @@ class MailMagazineService
         unset($formData['subject']);
         unset($formData['body']);
 
+        $formDataArray = $formData;
+
+        $formDataArray['pref'] = ($formData['pref'] != null) ? $formData['pref']->toArray() : null;
+        $formDataArray['sex'] = array();
+        foreach ($formData['sex'] as $value) {
+            $formDataArray['sex'][] = $value->toArray();
+        }
+
+        $formDataArray['customer_status'] = array();
+        foreach ($formData['customer_status'] as $value) {
+            $formDataArray['customer_status'][] = $value->toArray();
+        }
+
         // serializeのみだとDB登録時にデータが欠損するのでBase64にする
-        $sendHistory->setSearchData(base64_encode(serialize($formData)));
+        $sendHistory->setSearchData(json_encode($formDataArray));
 
         $status = $this->app[self::REPOSITORY_SEND_HISTORY]->createSendHistory($sendHistory);
         if (!$status) {
