@@ -2,6 +2,8 @@
 
 namespace Plugin\MailMagazine\Tests\Service;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Eccube\Entity\Master\Pref;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Tests\AbstractMailMagazineTestCase;
 
@@ -40,6 +42,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
 
         $expectedId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',
@@ -61,6 +66,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $c3 = $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
 
         $actualId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',
@@ -73,6 +81,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $expected = '0,'.$c1->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL.
                     '0,'.$c2->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
                     '0,'.$c3->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL;
+
         self::assertEquals($expected, file_get_contents($fileName));
     }
 
@@ -194,6 +203,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $c3 = $this->createMailmagaCustomer('3_create_mail_magazine_history@example.com', 'name01_3', 'name02_3');
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',
@@ -238,6 +250,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         );
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',
@@ -283,6 +298,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         );
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',
@@ -359,6 +377,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         );
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',
@@ -469,6 +490,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $this->createMailmagaCustomer('e_create_mail_magazine_history@example.com', 'name01_e', 'name02_e');
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',
@@ -533,6 +557,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $this->createMailmagaCustomer('e_create_mail_magazine_history@example.com', 'name01_e', 'name02_e');
 
         $historyId = $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => 'create_mail_magazine_history@example.com',

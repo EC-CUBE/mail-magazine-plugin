@@ -102,7 +102,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         );
     }
 
-    protected function createSendHistoy(\Eccube\Entity\Customer $MailCustomer)
+    protected function createSendHistory(\Eccube\Entity\Customer $MailCustomer)
     {
         $currentDatetime = new \DateTime();
         $MailTemplate = $this->createMagazineTemplate();

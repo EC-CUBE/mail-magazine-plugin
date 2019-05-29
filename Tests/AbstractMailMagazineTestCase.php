@@ -2,7 +2,9 @@
 
 namespace Plugin\MailMagazine\Tests;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\Pref;
 use Eccube\Tests\Service\AbstractServiceTestCase;
 use Plugin\MailMagazine\Entity\MailmagaCustomer;
 use Plugin\MailMagazine\Service\MailMagazineService;
@@ -59,6 +61,9 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
     protected function createHistory(\Eccube\Entity\Customer $Customer)
     {
         return $this->mailMagazineService->createMailMagazineHistory(array(
+            'pref' => null,
+            'sex' => new ArrayCollection(),
+            'customer_status' => new ArrayCollection(),
             'subject' => 'subject',
             'body' => 'body',
             'multi' => $Customer->getEmail(),
