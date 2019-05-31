@@ -123,7 +123,11 @@ class MailMagazineHistoryController
 
         $searchData = $searchDataArray = json_decode($sendHistory->getSearchData(), true);
 
-        $searchData['pref'] = $app['eccube.repository.master.pref']->find($searchDataArray['pref']['id']);
+        if ($searchDataArray['pref'] != null) {
+            $searchData['pref'] = $app['eccube.repository.master.pref']->find($searchDataArray['pref']['id']);
+        } else {
+            $searchData['pref'] = null;
+        }
 
         $searchData['sex'] = new ArrayCollection();
         $searchData['customer_status'] = new ArrayCollection();
