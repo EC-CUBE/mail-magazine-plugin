@@ -79,8 +79,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         return array(
             '_token' => 'dummy',
             'multi' => $MailCustomer->getId(),
-            'pref' => $MailCustomer->getPref(),
-            'sex' => array($MailCustomer->getSex()),
+            'pref' => $MailCustomer->getPref()->getId(),
+            'sex' => array($MailCustomer->getSex()->getId()),
             'birth_start' => $old_date->format('Y-m-d'),
             'birth_end' => $MailCustomer->getBirth()->format('Y-m-d'),
             'tel' => array('tel01' => $MailCustomer->getTel01(),
@@ -96,7 +96,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'update_date_end' => $MailCustomer->getUpdateDate()->format('Y-m-d'),
             'last_buy_start' => $old_date->format('Y-m-d'),
             'last_buy_end' => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
-            'customer_status' => array($MailCustomer->getStatus()),
+            'customer_status' => array($MailCustomer->getStatus()->getId()),
             'buy_product_code' => $order_detail[0]->getProductName(),
             'birth_month' => $birth_month,
         );
@@ -108,6 +108,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $MailTemplate = $this->createMagazineTemplate();
         $formData = $this->createSearchForm($MailCustomer);
         $formData['customer_status'] = array($MailCustomer->getStatus());
+        $formData['pref'] = $this->app['eccube.repository.master.pref']->find($formData['pref']);
         $formData['sex'] = array($MailCustomer->getSex());
         $formData = array_merge($formData, $formData['tel']);
         unset($formData['tel']);
