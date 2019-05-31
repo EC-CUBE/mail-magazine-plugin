@@ -79,8 +79,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         return array(
             '_token' => 'dummy',
             'multi' => $MailCustomer->getId(),
-            'pref' => $MailCustomer->getPref()->getId(),
-            'sex' => array($MailCustomer->getSex()->getId()),
+            'pref' => $MailCustomer->getPref(),
+            'sex' => array($MailCustomer->getSex()),
             'birth_start' => $old_date->format('Y-m-d'),
             'birth_end' => $MailCustomer->getBirth()->format('Y-m-d'),
             'tel' => array('tel01' => $MailCustomer->getTel01(),
@@ -96,7 +96,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'update_date_end' => $MailCustomer->getUpdateDate()->format('Y-m-d'),
             'last_buy_start' => $old_date->format('Y-m-d'),
             'last_buy_end' => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
-            'customer_status' => array($MailCustomer->getStatus()->getId()),
+            'customer_status' => array($MailCustomer->getStatus()),
             'buy_product_code' => $order_detail[0]->getProductName(),
             'birth_month' => $birth_month,
         );
@@ -107,8 +107,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $currentDatetime = new \DateTime();
         $MailTemplate = $this->createMagazineTemplate();
         $formData = $this->createSearchForm($MailCustomer);
-        $formData['customer_status'] = $MailCustomer->getStatus();
-        $formData['sex'] = $MailCustomer->getSex();
+        $formData['customer_status'] = array($MailCustomer->getStatus());
+        $formData['sex'] = array($MailCustomer->getSex());
         $formData = array_merge($formData, $formData['tel']);
         unset($formData['tel']);
 
@@ -131,8 +131,18 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $SendHistory->setCreateDate($currentDatetime);
         $SendHistory->setStartDate($currentDatetime);
 
-        // serialize
-        $SendHistory->setSearchData(base64_encode(serialize($formData)));
+        // json形式で検索条件を保存
+        $formData['sex'] = array();
+        foreach ($formData['sex'] as $value) {
+            $formData['sex'] = $value->toArray();
+        }
+
+        $formData['customer_status'] = array();
+        foreach ($formData['customer_status'] as $value) {
+            $formData['customer_status'] = $value->toArray();
+        }
+
+        $SendHistory->setSearchData(json_encode($formData));
 
         $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->createSendHistory($SendHistory);
 
