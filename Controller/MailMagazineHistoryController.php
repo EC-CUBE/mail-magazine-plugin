@@ -132,11 +132,15 @@ class MailMagazineHistoryController
         $searchData['sex'] = new ArrayCollection();
         $searchData['customer_status'] = new ArrayCollection();
 
-        foreach ($searchDataArray['sex'] as $value) {
-            $searchData['sex']->add($app['eccube.repository.master.sex']->find($value['id']));
+        if ($searchDataArray['sex'] != null) {
+            foreach ($searchDataArray['sex'] as $value) {
+                $searchData['sex']->add($app['eccube.repository.master.sex']->find($value['id']));
+            }
         }
-        foreach ($searchDataArray['customer_status'] as $value) {
-            $searchData['customer_status']->add($app['eccube.repository.customer_status']->find($value['id']));
+        if ($searchDataArray['customer_status'] != null) {
+            foreach ($searchDataArray['customer_status'] as $value) {
+                $searchData['customer_status']->add($app['eccube.repository.customer_status']->find($value['id']));
+            }
         }
 
         // 区分値を文字列に変更する
