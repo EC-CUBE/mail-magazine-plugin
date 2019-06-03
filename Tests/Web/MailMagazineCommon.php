@@ -102,13 +102,14 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         );
     }
 
-    protected function createSendHistoy(\Eccube\Entity\Customer $MailCustomer)
+    protected function createSendHistory(\Eccube\Entity\Customer $MailCustomer)
     {
         $currentDatetime = new \DateTime();
         $MailTemplate = $this->createMagazineTemplate();
         $formData = $this->createSearchForm($MailCustomer);
-        $formData['customer_status'] = $MailCustomer->getStatus();
-        $formData['sex'] = $MailCustomer->getSex();
+        $formData['customer_status'] = array($MailCustomer->getStatus());
+        $formData['pref'] = $this->app['eccube.repository.master.pref']->find($formData['pref']);
+        $formData['sex'] = array($MailCustomer->getSex());
         $formData = array_merge($formData, $formData['tel']);
         unset($formData['tel']);
 
@@ -131,8 +132,18 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $SendHistory->setCreateDate($currentDatetime);
         $SendHistory->setStartDate($currentDatetime);
 
-        // serialize
-        $SendHistory->setSearchData(base64_encode(serialize($formData)));
+        // json形式で検索条件を保存
+        $formData['sex'] = array();
+        foreach ($formData['sex'] as $value) {
+            $formData['sex'] = $value->toArray();
+        }
+
+        $formData['customer_status'] = array();
+        foreach ($formData['customer_status'] as $value) {
+            $formData['customer_status'] = $value->toArray();
+        }
+
+        $SendHistory->setSearchData(json_encode($formData));
 
         $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->createSendHistory($SendHistory);
 
