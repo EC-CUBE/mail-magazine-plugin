@@ -84,13 +84,13 @@
                             {% if search_data.birth_start is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.birth_start|date("Y/m/d") }}
+                                {{ search_data.birth_start.date|date("Y/m/d") }}
                             {% endif %}
                             ～
                             {% if search_data.birth_end is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.birth_end|date("Y/m/d") }}
+                                {{ search_data.birth_end.date|date("Y/m/d") }}
                             {% endif %}
                         </td>
                     </tr>
@@ -132,13 +132,13 @@
                             {% if search_data.create_date_start is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.create_date_start|date("Y/m/d") }}
+                                {{ search_data.create_date_start.date|date("Y/m/d") }}
                             {% endif %}
                             ～
                             {% if search_data.create_date_end is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.create_date_end|date("Y/m/d") }}
+                                {{ search_data.create_date_end.date|date("Y/m/d") }}
                             {% endif %}
                         </td>
                     </tr>
@@ -148,13 +148,13 @@
                             {% if search_data.update_date_start is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.update_date_start|date("Y/m/d") }}
+                                {{ search_data.update_date_start.date|date("Y/m/d") }}
                             {% endif %}
                             ～
                             {% if search_data.update_date_end is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.update_date_end|date("Y/m/d") }}
+                                {{ search_data.update_date_end.date|date("Y/m/d") }}
                             {% endif %}
                         </td>
                     </tr>
@@ -206,13 +206,13 @@
                             {% if search_data.last_buy_start is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.last_buy_start|date("Y/m/d") }}
+                                {{ search_data.last_buy_start.date|date("Y/m/d") }}
                             {% endif %}
                             ～
                             {% if search_data.last_buy_end is null %}
                                 (未指定)
                             {% else %}
-                                {{ search_data.last_buy_end|date("Y/m/d") }}
+                                {{ search_data.last_buy_end.date|date("Y/m/d") }}
                             {% endif %}
                         </td>
                     </tr>
