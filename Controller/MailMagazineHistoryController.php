@@ -122,6 +122,7 @@ class MailMagazineHistoryController
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
+        // DBからjsonで取得したデータをオブジェクトで再生成する
         $searchData = $searchDataArray = json_decode($sendHistory->getSearchData(), true);
 
         if ($searchDataArray['pref'] != null) {

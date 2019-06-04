@@ -171,6 +171,7 @@ class MailMagazineService
         unset($formData['subject']);
         unset($formData['body']);
 
+        // jsonエンコード用にオブジェクトを配列化してDBに保存する
         $formDataArray = $formData;
 
         $formDataArray['pref'] = ($formData['pref'] != null) ? $formData['pref']->toArray() : null;
@@ -184,9 +185,9 @@ class MailMagazineService
             $formDataArray['customer_status'][] = $value->toArray();
         }
 
-        // serializeのみだとDB登録時にデータが欠損するのでBase64にする
         $sendHistory->setSearchData(json_encode($formDataArray));
 
+        // 履歴ファイルの書出し
         $status = $this->app[self::REPOSITORY_SEND_HISTORY]->createSendHistory($sendHistory);
         if (!$status) {
             return null;
