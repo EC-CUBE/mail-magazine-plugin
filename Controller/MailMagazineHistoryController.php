@@ -11,6 +11,7 @@
 
 namespace Plugin\MailMagazine\Controller;
 
+use DateTime;
 use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Master\Pref;
@@ -141,6 +142,12 @@ class MailMagazineHistoryController
             foreach ($searchDataArray['customer_status'] as $value) {
                 $searchData['customer_status']->add($app['eccube.repository.customer_status']->find($value['id']));
             }
+        }
+        foreach ($searchDataArray as $key => $value) {
+            if ( ! is_array($value) || ! array_key_exists('date', $value)) {
+                continue;
+            }
+            $searchData[$key] = new DateTime($value['date']);
         }
 
         // 区分値を文字列に変更する
