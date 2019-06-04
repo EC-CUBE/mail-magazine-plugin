@@ -10,19 +10,14 @@ class Version201906031100 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-
         $app = Application::getInstance();
-        $repository = $app['orm.em']->getRepository("\Plugin\MailMagazine\Entity\MailMagazineSendHistory");
-
-        $entities = $repository->createQueryBuilder('sh')
-            ->select('sh.id, sh.search_data')
-            ->orderBy('sh.id', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
-
-        foreach ($entities as $entity) {
-            $formData = unserialize(base64_decode($entity['search_data']));
-
+        $entityManager = $app['orm.em'];
+        // Retrieve PDO instance
+        $pdo = $entityManager->getConnection()->getWrappedConnection();
+        $stmt = $pdo->prepare("SELECT send_id, search_data FROM plg_send_history;");
+        $stmt->execute();
+        foreach ($stmt as $row) {
+            $formData = unserialize(base64_decode($row['search_data']));
             // unserializeしたデータからJSONに変換
             $formDataArray = $formData;
             $formDataArray['pref'] = ($formData['pref'] != null) ? $formData['pref']->toArray() : null;
@@ -39,14 +34,8 @@ class Version201906031100 extends AbstractMigration
             $json = json_encode($formDataArray);
 
             // search_dataをUPDATEする
-
-            $qb = $repository->createQueryBuilder('sh');
-            $qb->update("\Plugin\MailMagazine\Entity\MailMagazineSendHistory", 'sh')
-                ->set('sh.search_data', $qb->expr()->literal($json))
-                ->where('sh.id = :id')
-                ->setParameter('id', $entity['id'])
-                ->getQuery()
-                ->execute();
+            $stmt = $pdo->prepare("UPDATE plg_send_history SET search_data = :search_data WHERE send_id = :send_id;");
+            $stmt->execute(array(':search_data' => $json, ':send_id' => $row['send_id']));
         }
     }
 
