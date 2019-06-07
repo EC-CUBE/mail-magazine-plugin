@@ -5,20 +5,26 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Eccube\Application;
+use Eccube\Common\Constant;
+use Symfony\Component\Yaml\Yaml;
 
 class Version201906031100 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-        $app = Application::getInstance();
-        $entityManager = $app['orm.em'];
-        // Retrieve PDO instance
-        $pdo = $entityManager->getConnection()->getWrappedConnection();
-        $stmt = $pdo->prepare("SELECT send_id, search_data FROM plg_send_history;");
+        if (version_compare(Constant::VERSION, '3.0.9', '>=')) {
+            $app = Application::getInstance();
+            $entityManager = $app['orm.em'];
+            // Retrieve PDO instance
+            $pdo = $entityManager->getConnection()->getWrappedConnection();
+        } else {
+            $pdo = $this->getPDO();
+        }
+
+        $stmt = $pdo->prepare('SELECT send_id, search_data FROM plg_send_history;');
         $stmt->execute();
         foreach ($stmt as $row) {
-            $serializedData = str_replace('DoctrineProxy\__CG__\Eccube\Entity\Member', 'DoctrineProxy\__CG__\Eccube\Entity\Xxxxxx', base64_decode($row['search_data']));
-            $formData = unserialize($serializedData);
+            $formData = $this->unserializeWrapper($row, 'search_data');
             // unserializeしたデータからJSONに変換
             $formDataArray = $formData;
             $formDataArray['pref'] = ($formData['pref'] != null) ? $formData['pref']->toArray() : null;
@@ -43,4 +49,29 @@ class Version201906031100 extends AbstractMigration
     public function down(Schema $schema)
     {
     }
+
+    private function unserializeWrapper($dataArray, $key) {
+        $serializedData = base64_decode($dataArray[$key]);
+        $serializedData = str_replace('DoctrineProxy\__CG__\Eccube\Entity\Member', '__Workaround_\__CG__\Eccube\Entity\Member', $serializedData);
+        $serializedData = str_replace('DoctrineProxy\__CG__\Eccube\Entity\Customer', '__Workaround_\__CG__\Eccube\Entity\Customer', $serializedData);
+        return unserialize($serializedData);
+    }
+
+    private function getPDO()
+    {
+        $config_file = __DIR__ . '/../../../../../../app/config/eccube/database.yml';
+        $config = Yaml::parse(file_get_contents($config_file));
+
+        $pdo = null;
+        try {
+            $pdo = \Doctrine\DBAL\DriverManager::getConnection($config['database'], new \Doctrine\DBAL\Configuration());
+            $pdo->connect();
+        } catch (\Exception $e) {
+            $pdo->close();
+            return null;
+        }
+
+        return $pdo;
+    }
+
 }
