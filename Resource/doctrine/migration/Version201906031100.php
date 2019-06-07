@@ -23,8 +23,13 @@ class Version201906031100 extends AbstractMigration
         }
 
         // search_dataをserializeされたデータからjson形式に変換する
-        $stmt = $pdo->prepare('SELECT send_id, search_data FROM plg_send_history;');
-        $stmt->execute();
+        try {
+            $stmt = $pdo->prepare('SELECT send_id, search_data FROM plg_send_history;');
+            $stmt->execute();
+        } catch (\Exception $e) {
+            return;
+        }
+
         foreach ($stmt as $row) {
             $formData = $this->unserializeWrapper(base64_decode($row['search_data']));
 
