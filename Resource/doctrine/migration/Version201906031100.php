@@ -17,7 +17,8 @@ class Version201906031100 extends AbstractMigration
         $stmt = $pdo->prepare("SELECT send_id, search_data FROM plg_send_history;");
         $stmt->execute();
         foreach ($stmt as $row) {
-            $formData = unserialize(base64_decode($row['search_data']));
+            $serializedData = str_replace('DoctrineProxy\__CG__\Eccube\Entity\Member', 'DoctrineProxy\__CG__\Eccube\Entity\Xxxxxx', base64_decode($row['search_data']));
+            $formData = unserialize($serializedData);
             // unserializeしたデータからJSONに変換
             $formDataArray = $formData;
             $formDataArray['pref'] = ($formData['pref'] != null) ? $formData['pref']->toArray() : null;
