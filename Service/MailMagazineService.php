@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Service;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\Pref;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
 
@@ -174,7 +175,7 @@ class MailMagazineService
         // jsonエンコード用にオブジェクトを配列化してDBに保存する
         $formDataArray = $formData;
 
-        $formDataArray['pref'] = ($formData['pref'] != null) ? $formData['pref']->toArray() : null;
+        $formDataArray['pref'] = ($formData['pref'] instanceof Pref) ? $formData['pref']->toArray() : null;
         $formDataArray['sex'] = array();
         foreach ($formData['sex'] as $value) {
             $formDataArray['sex'][] = $value->toArray();

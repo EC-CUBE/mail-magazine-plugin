@@ -6,6 +6,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\Pref;
 use Symfony\Component\Yaml\Yaml;
 
 class Version201906031100 extends AbstractMigration
@@ -35,7 +36,7 @@ class Version201906031100 extends AbstractMigration
 
             // unserializeしたデータからJSONに変換
             $formDataArray = $formData;
-            $formDataArray['pref'] = ($formData['pref'] != null) ? $formData['pref']->toArray() : null;
+            $formDataArray['pref'] = ($formData['pref'] instanceof Pref) ? $formData['pref']->toArray() : null;
             $formDataArray['sex'] = array();
             foreach ($formData['sex'] as $value) {
                 $formDataArray['sex'][] = $value->toArray();
