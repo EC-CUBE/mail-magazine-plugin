@@ -133,21 +133,43 @@ class MailMagazineHistoryController
         $searchData['sex'] = new ArrayCollection();
         $searchData['customer_status'] = new ArrayCollection();
 
-        if ($searchDataArray['sex'] != null) {
-            foreach ($searchDataArray['sex'] as $value) {
-                $searchData['sex']->add($app['eccube.repository.master.sex']->find($value['id']));
-            }
+        if (array_key_exists('sex', $searchDataArray) && is_array($searchDataArray['sex'])) {
+            $searchData['sex'] = $app['eccube.repository.master.sex']->findBy(
+                array(
+                    'id' => array_filter(
+                        array_map(function ($value) {
+                            if (array_key_exists('id', $value)) {
+                                return $value['id'];
+                            }
+                            return false;
+                        }, $searchDataArray['sex']
+                        )
+                    )
+                )
+            );
         }
-        if ($searchDataArray['customer_status'] != null) {
-            foreach ($searchDataArray['customer_status'] as $value) {
-                $searchData['customer_status']->add($app['eccube.repository.customer_status']->find($value['id']));
-            }
+
+        if (array_key_exists('customer_status', $searchDataArray) && is_array($searchDataArray['customer_status'])) {
+            $searchData['customer_status'] = $app['eccube.repository.customer_status']->findBy(
+                array(
+                    'id' => array_filter(
+                        array_map(function ($value) {
+                            if (array_key_exists('id', $value)) {
+                                return $value['id'];
+                            }
+                            return false;
+                        }, $searchDataArray['customer_status']
+                        )
+                    )
+                )
+            );
         }
+
         foreach ($searchDataArray as $key => $value) {
             if ( ! is_array($value) || ! array_key_exists('date', $value)) {
                 continue;
             }
-            $searchData[$key] = new DateTime($value['date']);
+            $searchData[$key] = new \DateTime($value['date']);
         }
 
         // 区分値を文字列に変更する
