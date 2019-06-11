@@ -15,23 +15,11 @@ class Version201906031100 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-        // 3.0.8以前はgetInstance関数が無いことを考慮する
-        if (version_compare(Constant::VERSION, '3.0.9', '>=')) {
-            $app = Application::getInstance();
-            $entityManager = $app['orm.em'];
-            $pdo = $entityManager->getConnection()->getWrappedConnection();
-        } else {
-            // 直接DBに接続してPDOを生成
-            $pdo = $this->getPDO();
-        }
+        $pdo = $this->connection->getWrappedConnection();
 
         // search_dataをserializeされたデータからjson形式に変換する
-        try {
-            $stmt = $pdo->prepare('SELECT send_id, search_data FROM plg_send_history;');
-            $stmt->execute();
-        } catch (\Exception $e) {
-            return;
-        }
+        $stmt = $pdo->prepare('SELECT send_id, search_data FROM plg_send_history;');
+        $stmt->execute();
 
         foreach ($stmt as $row) {
             $formData = $this->unserializeWrapper(base64_decode($row['search_data']));
