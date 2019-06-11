@@ -163,7 +163,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
 //        $Messages = $this->getMailCatcherMessages();
 //        $Message = $this->getMailCatcherMessage($Messages[0]->id);
-//
+
 //        $this->expected = $searchForm['subject'];
 //        $this->actual = $Message->subject;
 //        $this->verify();

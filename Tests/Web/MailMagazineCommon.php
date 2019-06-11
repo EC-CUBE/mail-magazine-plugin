@@ -12,6 +12,8 @@
 namespace Plugin\MailMagazine\Tests\Web;
 
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\CustomerStatus;
+use Eccube\Entity\Master\Sex;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\MailMagazine\Entity\MailmagaCustomer;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
@@ -102,13 +104,14 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         );
     }
 
-    protected function createSendHistoy(\Eccube\Entity\Customer $MailCustomer)
+    protected function createSendHistory(\Eccube\Entity\Customer $MailCustomer)
     {
         $currentDatetime = new \DateTime();
         $MailTemplate = $this->createMagazineTemplate();
         $formData = $this->createSearchForm($MailCustomer);
-        $formData['customer_status'] = $MailCustomer->getStatus();
-        $formData['sex'] = $MailCustomer->getSex();
+        $formData['customer_status'] = array($MailCustomer->getStatus());
+        $formData['pref'] = $this->app['eccube.repository.master.pref']->find($formData['pref']);
+        $formData['sex'] = array($MailCustomer->getSex());
         $formData = array_merge($formData, $formData['tel']);
         unset($formData['tel']);
 
@@ -131,8 +134,24 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $SendHistory->setCreateDate($currentDatetime);
         $SendHistory->setStartDate($currentDatetime);
 
-        // serialize
-        $SendHistory->setSearchData(base64_encode(serialize($formData)));
+        // json形式で検索条件を保存
+        $formData['sex'] = array_filter(array_map(function ($entity) {
+            if ($entity instanceof Sex) {
+                return $entity->toArray();
+            } else {
+                return false;
+            }
+        }, $formData['sex']));
+
+        $formData['customer_status'] = array_filter(array_map(function ($entity) {
+            if ($entity instanceof CustomerStatus) {
+                return $entity->toArray();
+            } else {
+                return false;
+            }
+        }, $formData['customer_status']));
+
+        $SendHistory->setSearchData(json_encode($formData));
 
         $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_history']->createSendHistory($SendHistory);
 

@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Service;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\Pref;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineCustomerRepository;
 
@@ -97,9 +98,9 @@ class MailMagazineService
      * メールを送信する.
      *
      * @param array $formData メルマガ情報
-     *                  email: 送信先メールアドレス
-     *                  subject: 件名
-     *                  body：本文
+     *                        email: 送信先メールアドレス
+     *                        subject: 件名
+     *                        body：本文
      */
     public function sendMail($formData)
     {
@@ -171,9 +172,23 @@ class MailMagazineService
         unset($formData['subject']);
         unset($formData['body']);
 
-        // serializeのみだとDB登録時にデータが欠損するのでBase64にする
-        $sendHistory->setSearchData(base64_encode(serialize($formData)));
+        // jsonエンコード用にオブジェクトを配列化してDBに保存する
+        $formDataArray = $formData;
 
+        $formDataArray['pref'] = ($formData['pref'] instanceof Pref) ? $formData['pref']->toArray() : null;
+        $formDataArray['sex'] = array();
+        foreach ($formData['sex'] as $value) {
+            $formDataArray['sex'][] = $value->toArray();
+        }
+
+        $formDataArray['customer_status'] = array();
+        foreach ($formData['customer_status'] as $value) {
+            $formDataArray['customer_status'][] = $value->toArray();
+        }
+
+        $sendHistory->setSearchData(json_encode($formDataArray));
+
+        // 履歴ファイルの書出し
         $status = $this->app[self::REPOSITORY_SEND_HISTORY]->createSendHistory($sendHistory);
         if (!$status) {
             return null;

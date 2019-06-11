@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\Pref;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine\Repository\MailMagazineSendHistoryRepository;
@@ -20,6 +21,7 @@ use Plugin\MailMagazine\Service\MailMagazineService;
 use Plugin\MailMagazine\Util\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class MailMagazineHistoryController
 {
@@ -119,9 +121,58 @@ class MailMagazineHistoryController
             return $app->redirect($app->url('plugin_mail_magazine_history'));
         }
 
-        // 検索条件をアンシリアライズする
-        // base64,serializeされているので注意すること
-        $searchData = unserialize(base64_decode($sendHistory->getSearchData()));
+        // DBからjsonで取得したデータをオブジェクトで再生成する
+        $searchData = $searchDataArray = json_decode($sendHistory->getSearchData(), true);
+
+        if (array_key_exists('pref', $searchDataArray) && array_key_exists('id', $searchDataArray['pref']) && is_numeric($searchDataArray['pref']['id'])) {
+            $searchData['pref'] = $app['eccube.repository.master.pref']->find($searchDataArray['pref']['id']);
+        } else {
+            $searchData['pref'] = null;
+        }
+
+        $searchData['sex'] = new ArrayCollection();
+        $searchData['customer_status'] = new ArrayCollection();
+
+        if (array_key_exists('sex', $searchDataArray) && is_array($searchDataArray['sex'])) {
+            $searchData['sex'] = $app['eccube.repository.master.sex']->findBy(
+                array(
+                    'id' => array_filter(
+                        array_map(function ($value) {
+                            if (array_key_exists('id', $value)) {
+                                return $value['id'];
+                            }
+
+                            return false;
+                        }, $searchDataArray['sex']
+                        )
+                    ),
+                )
+            );
+        }
+
+        if (array_key_exists('customer_status', $searchDataArray) && is_array($searchDataArray['customer_status'])) {
+            $searchData['customer_status'] = $app['eccube.repository.customer_status']->findBy(
+                array(
+                    'id' => array_filter(
+                        array_map(function ($value) {
+                            if (array_key_exists('id', $value)) {
+                                return $value['id'];
+                            }
+
+                            return false;
+                        }, $searchDataArray['customer_status']
+                        )
+                    ),
+                )
+            );
+        }
+
+        foreach ($searchDataArray as $key => $value) {
+            if (!is_array($value) || !array_key_exists('date', $value)) {
+                continue;
+            }
+            $searchData[$key] = new \DateTime($value['date']);
+        }
 
         // 区分値を文字列に変更する
         // 必要な項目のみ
@@ -144,8 +195,8 @@ class MailMagazineHistoryController
         // 会員種別
         $val = null;
         if (!is_null($searchData['customer_status'])) {
-            if (count($searchData['customer_status']->toArray()) > 0) {
-                $val = implode(' ', $searchData['customer_status']->toArray());
+            if (count($searchData['customer_status']) > 0) {
+                $val = implode(' ', $searchData['customer_status']);
             }
         }
         $data['customer_status'] = $val;
@@ -153,8 +204,8 @@ class MailMagazineHistoryController
         // 性別
         $val = null;
         if (!is_null($searchData['sex'])) {
-            if (count($searchData['sex']->toArray()) > 0) {
-                $val = implode(' ', $searchData['sex']->toArray());
+            if (count($searchData['sex']) > 0) {
+                $val = implode(' ', $searchData['sex']);
             }
         }
         $data['sex'] = $val;

@@ -26,7 +26,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
     public function testPreview()
     {
         $MailCustomer = $this->createMailMagazineCustomer();
-        $SendHistory = $this->createSendHistoy($MailCustomer);
+        $SendHistory = $this->createSendHistory($MailCustomer);
 
         $this->client->request('GET',
             $this->app->url('plugin_mail_magazine_history_preview', array('id' => $SendHistory->getId()))
@@ -55,7 +55,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
     public function testCondition()
     {
         $MailCustomer = $this->createMailMagazineCustomer();
-        $SendHistory = $this->createSendHistoy($MailCustomer);
+        $SendHistory = $this->createSendHistory($MailCustomer);
 
         $this->client->request('GET',
             $this->app->url('plugin_mail_magazine_history_condition', array('id' => $SendHistory->getId()))
@@ -84,7 +84,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
     public function testDelete()
     {
         $MailCustomer = $this->createMailMagazineCustomer();
-        $SendHistory = $this->createSendHistoy($MailCustomer);
+        $SendHistory = $this->createSendHistory($MailCustomer);
 
         $this->client->request('POST',
             $this->app->url('plugin_mail_magazine_history_delete', array('id' => $SendHistory->getId()))

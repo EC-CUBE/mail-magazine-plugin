@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * Class MailMagazineController
+ * Class MailMagazineController.
  */
 class MailMagazineController
 {
