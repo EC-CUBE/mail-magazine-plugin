@@ -98,9 +98,9 @@ class MailMagazineService
      * メールを送信する.
      *
      * @param array $formData メルマガ情報
-     *                  email: 送信先メールアドレス
-     *                  subject: 件名
-     *                  body：本文
+     *                        email: 送信先メールアドレス
+     *                        subject: 件名
+     *                        body：本文
      */
     public function sendMail($formData)
     {

@@ -51,7 +51,6 @@ class Version
         return version_compare(Constant::VERSION, $version, $operation);
     }
 
-
     /**
      * Check version to support new session function.
      *

@@ -141,10 +141,11 @@ class MailMagazineHistoryController
                             if (array_key_exists('id', $value)) {
                                 return $value['id'];
                             }
+
                             return false;
                         }, $searchDataArray['sex']
                         )
-                    )
+                    ),
                 )
             );
         }
@@ -157,16 +158,17 @@ class MailMagazineHistoryController
                             if (array_key_exists('id', $value)) {
                                 return $value['id'];
                             }
+
                             return false;
                         }, $searchDataArray['customer_status']
                         )
-                    )
+                    ),
                 )
             );
         }
 
         foreach ($searchDataArray as $key => $value) {
-            if ( ! is_array($value) || ! array_key_exists('date', $value)) {
+            if (!is_array($value) || !array_key_exists('date', $value)) {
                 continue;
             }
             $searchData[$key] = new \DateTime($value['date']);

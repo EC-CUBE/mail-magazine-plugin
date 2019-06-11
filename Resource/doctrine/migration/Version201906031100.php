@@ -58,7 +58,7 @@ class Version201906031100 extends AbstractMigration
             $json = json_encode($formDataArray);
 
             // search_dataをUPDATEする
-            $stmt = $pdo->prepare("UPDATE plg_send_history SET search_data = :search_data WHERE send_id = :send_id;");
+            $stmt = $pdo->prepare('UPDATE plg_send_history SET search_data = :search_data WHERE send_id = :send_id;');
             $stmt->execute(array(':search_data' => $json, ':send_id' => $row['send_id']));
         }
     }
@@ -69,20 +69,23 @@ class Version201906031100 extends AbstractMigration
 
     /**
      * 互換性のないEntityを取り除いた状態でUnserialiseを実行する
-     * Member,Customerは "__php_incomplete_class"となる
+     * Member,Customerは "__php_incomplete_class"となる.
      *
      * @param array $serializedData Base64でエンコードされたシリアライズデータ
+     *
      * @return mixed unserializeしたデータ
      */
-    private function unserializeWrapper($serializedData) {
+    private function unserializeWrapper($serializedData)
+    {
         $serializedData = str_replace('DoctrineProxy\__CG__\Eccube\Entity\Member', '__Workaround_\__CG__\Eccube\Entity\Member', $serializedData);
         $serializedData = str_replace('DoctrineProxy\__CG__\Eccube\Entity\Customer', '__Workaround_\__CG__\Eccube\Entity\Customer', $serializedData);
+
         return unserialize($serializedData);
     }
 
     private function getPDO()
     {
-        $config_file = __DIR__ . '/../../../../../../app/config/eccube/database.yml';
+        $config_file = __DIR__.'/../../../../../../app/config/eccube/database.yml';
         $config = Yaml::parse(file_get_contents($config_file));
 
         $pdo = null;
@@ -91,10 +94,10 @@ class Version201906031100 extends AbstractMigration
             $pdo->connect();
         } catch (\Exception $e) {
             $pdo->close();
+
             return null;
         }
 
         return $pdo;
     }
-
 }

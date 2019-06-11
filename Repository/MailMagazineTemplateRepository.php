@@ -60,6 +60,7 @@ class MailMagazineTemplateRepository extends EntityRepository
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
             throw $e;
+
             return false;
         }
 
@@ -85,6 +86,7 @@ class MailMagazineTemplateRepository extends EntityRepository
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
             throw $e;
+
             return false;
         }
 
@@ -109,6 +111,7 @@ class MailMagazineTemplateRepository extends EntityRepository
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
             throw $e;
+
             return false;
         }
 
