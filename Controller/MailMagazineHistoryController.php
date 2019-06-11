@@ -11,7 +11,6 @@
 
 namespace Plugin\MailMagazine\Controller;
 
-use DateTime;
 use Eccube\Application;
 use Eccube\Common\Constant;
 use Eccube\Entity\Master\Pref;
