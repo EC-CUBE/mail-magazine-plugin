@@ -6,7 +6,9 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\CustomerStatus;
 use Eccube\Entity\Master\Pref;
+use Eccube\Entity\Master\Sex;
 use Symfony\Component\Yaml\Yaml;
 
 class Version201906031100 extends AbstractMigration
@@ -37,14 +39,20 @@ class Version201906031100 extends AbstractMigration
             // unserializeしたデータからJSONに変換
             $formDataArray = $formData;
             $formDataArray['pref'] = ($formData['pref'] instanceof Pref) ? $formData['pref']->toArray() : null;
-            $formDataArray['sex'] = array();
-            foreach ($formData['sex'] as $value) {
-                $formDataArray['sex'][] = $value->toArray();
-            }
-            $formDataArray['customer_status'] = array();
-            foreach ($formData['customer_status'] as $value) {
-                $formDataArray['customer_status'][] = $value->toArray();
-            }
+            $formDataArray['sex'] = array_filter(array_map(function ($entity) {
+                if ($entity instanceof Sex) {
+                    return $entity->toArray();
+                } else {
+                    return false;
+                }
+            }, $formData['sex']));
+            $formDataArray['customer_status'] = array_filter(array_map(function ($entity) {
+                if ($entity instanceof CustomerStatus) {
+                    return $entity->toArray();
+                } else {
+                    return false;
+                }
+            }, $formData['customer_status']));
             unset($formDataArray['buy_category']);
 
             $json = json_encode($formDataArray);
