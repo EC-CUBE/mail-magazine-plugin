@@ -45,14 +45,14 @@ class Version201906031100 extends AbstractMigration
                 } else {
                     return false;
                 }
-            }, $formData['sex']));
+            }, $formData['sex']->toArray()));
             $formDataArray['customer_status'] = array_filter(array_map(function ($entity) {
                 if ($entity instanceof CustomerStatus) {
                     return $entity->toArray();
                 } else {
                     return false;
                 }
-            }, $formData['customer_status']));
+            }, $formData['customer_status']->toArray()));
             unset($formDataArray['buy_category']);
 
             $json = json_encode($formDataArray);

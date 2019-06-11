@@ -195,8 +195,8 @@ class MailMagazineHistoryController
         // 会員種別
         $val = null;
         if (!is_null($searchData['customer_status'])) {
-            if (count($searchData['customer_status']->toArray()) > 0) {
-                $val = implode(' ', $searchData['customer_status']->toArray());
+            if (count($searchData['customer_status']) > 0) {
+                $val = implode(' ', $searchData['customer_status']);
             }
         }
         $data['customer_status'] = $val;
@@ -204,8 +204,8 @@ class MailMagazineHistoryController
         // 性別
         $val = null;
         if (!is_null($searchData['sex'])) {
-            if (count($searchData['sex']->toArray()) > 0) {
-                $val = implode(' ', $searchData['sex']->toArray());
+            if (count($searchData['sex']) > 0) {
+                $val = implode(' ', $searchData['sex']);
             }
         }
         $data['sex'] = $val;
