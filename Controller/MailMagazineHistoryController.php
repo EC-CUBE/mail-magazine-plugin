@@ -124,7 +124,7 @@ class MailMagazineHistoryController
         // DBからjsonで取得したデータをオブジェクトで再生成する
         $searchData = $searchDataArray = json_decode($sendHistory->getSearchData(), true);
 
-        if ($searchDataArray['pref'] != null) {
+        if (array_key_exists('pref', $searchDataArray) && array_key_exists('id', $searchDataArray['pref']) && is_numeric($searchDataArray['pref']['id'])) {
             $searchData['pref'] = $app['eccube.repository.master.pref']->find($searchDataArray['pref']['id']);
         } else {
             $searchData['pref'] = null;
