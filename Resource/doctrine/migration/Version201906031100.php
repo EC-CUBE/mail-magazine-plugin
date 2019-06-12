@@ -70,22 +70,4 @@ class Version201906031100 extends AbstractMigration
 
         return unserialize($serializedData);
     }
-
-    private function getPDO()
-    {
-        $config_file = __DIR__.'/../../../../../../app/config/eccube/database.yml';
-        $config = Yaml::parse(file_get_contents($config_file));
-
-        $pdo = null;
-        try {
-            $pdo = \Doctrine\DBAL\DriverManager::getConnection($config['database'], new \Doctrine\DBAL\Configuration());
-            $pdo->connect();
-        } catch (\Exception $e) {
-            $pdo->close();
-
-            return null;
-        }
-
-        return $pdo;
-    }
 }
