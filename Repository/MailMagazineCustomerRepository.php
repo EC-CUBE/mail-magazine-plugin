@@ -105,7 +105,7 @@ class MailMagazineCustomerRepository extends EntityRepository
                 ->setParameter('sexs', $sexs);
         }
         // birth_month
-        if (!empty($searchData['birth_month']) && is_int($searchData['birth_month'])) {
+        if (isset($searchData['birth_month']) && is_int($searchData['birth_month'])) {
             //Birth month start from 0 so we need plus 1.
             ++$searchData['birth_month'];
             $birthMonth = $searchData['birth_month'];
