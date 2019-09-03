@@ -56,7 +56,10 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
                 'addr02' => $faker->streetAddress,
             ],
             'phone_number' => $tel[0].$tel[1].$tel[2],
-            'email' => $email,
+            'email' => [
+                'first' => $email,
+                'second' => $email,
+            ],
             'password' => [
                 'first' => $password,
                 'second' => $password,
