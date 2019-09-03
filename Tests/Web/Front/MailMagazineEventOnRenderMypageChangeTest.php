@@ -5,7 +5,7 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * https://www.ec-cube.co.jp/
+ * http://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -56,7 +56,10 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
                 'addr02' => $faker->streetAddress,
             ],
             'phone_number' => $tel[0].$tel[1].$tel[2],
-            'email' => $email,
+            'email' => [
+                'first' => $email,
+                'second' => $email,
+            ],
             'password' => [
                 'first' => $password,
                 'second' => $password,
