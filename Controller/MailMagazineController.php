@@ -165,7 +165,7 @@ class MailMagazineController extends AbstractController
             'searchForm' => $searchForm->createView(),
             'pagination' => $pagination,
             'pageMaxis' => $pageMaxis,
-            'page_count' => $pageMax,
+            'page_count' => $pageCount,
             'has_errors' => false,
         ];
     }
