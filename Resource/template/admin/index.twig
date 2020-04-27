@@ -331,7 +331,7 @@ function fnChangeActionSubmit(action) {
                                 <select class="custom-select" onchange="location = this.value;">
                                     {% for pageMax in pageMaxis %}
                                         <option {% if pageMax.name == page_count %} selected {% endif %}
-                                                value="{{ path('admin_customer_page', {'page_no': 1, 'page_count': pageMax.name }) }}">
+                                                value="{{ path('plugin_mail_magazine_page', {'page_no': 1, 'page_count': pageMax.name }) }}">
                                             {{ 'admin.common.count'|trans({ '%count%': pageMax.name }) }}</option>
                                     {% endfor %}
                                 </select>
@@ -365,7 +365,7 @@ function fnChangeActionSubmit(action) {
                             </table>
                             <div class="row justify-content-md-center mb-4">
                                 {% if pagination.totalItemCount > 0 %}
-                                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_customer_page' } %}
+                                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine_page' } %}
                                 {% endif %}
                             </div>
                             <div class="row justify-content-md-center mb-4 ">
