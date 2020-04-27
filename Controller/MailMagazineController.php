@@ -13,6 +13,7 @@
 
 namespace Plugin\MailMagazine4\Controller;
 
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Eccube\Controller\AbstractController;
@@ -198,10 +199,8 @@ class MailMagazineController extends AbstractController
                 ->createBuilder(MailMagazineType::class)
                 ->getForm();
             $form->handleRequest($request);
-            $newTemplate = $form->get('template')->getData();
-            $data = $form->getData();
+            $data = FormUtil::getViewData($form);
             $form = $this->formFactory->createBuilder(MailMagazineType::class, null)->getForm();
-            $form->setData($data);
 
             if ($id) {
                 // テンプレート「無し」が選択された場合は、選択されたテンプレートのデータを取得する
@@ -216,16 +215,18 @@ class MailMagazineController extends AbstractController
                 $newBody = $Template->getBody();
                 $newHtmlBody = $Template->getHtmlBody();
 
-                $form->get('template')->setData($newTemplate);
-                $form->get('subject')->setData($newSubject);
-                $form->get('body')->setData($newBody);
-                $form->get('htmlBody')->setData($newHtmlBody);
+                $data['template'] = $Template->getId();
+                $data['subject'] = $newSubject;
+                $data['body'] = $newBody;
+                $data['htmlBody'] = $newHtmlBody;
             } else {
                 // テンプレート「無し」が選択された場合は、フォームをクリアする
-                $form->get('subject')->setData('');
-                $form->get('body')->setData('');
-                $form->get('htmlBody')->setData('');
+                $data['subject'] = '';
+                $data['body'] = '';
+                $data['htmlBody'] = '';
             }
+
+            $form->submit($data);
         } elseif ($request->get('mode') == 'confirm') {
             $form = $this->formFactory
                 ->createBuilder(MailMagazineType::class)
