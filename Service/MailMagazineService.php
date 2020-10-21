@@ -226,7 +226,7 @@ class MailMagazineService
         /* @var $qb QueryBuilder */
         $formData['plg_mailmagazine_flg'] = Constant::ENABLED;
         $qb = $this->customerRepository->getQueryBuilderBySearchData($formData);
-        $customerList = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $customerList = $qb->getQuery()->getResult();
 
         $currentDatetime = new \DateTime();
 
@@ -276,7 +276,7 @@ class MailMagazineService
             $sendId = $sendHistory->getId();
             $fp = fopen($this->getHistoryFileName($sendId), 'w');
             foreach ($customerList as $customer) {
-                fwrite($fp, self::SEND_FLAG_NONE.','.$customer['id'].','.$customer['email'].','.$customer['name01'].' '.$customer['name02'].PHP_EOL);
+                fwrite($fp, self::SEND_FLAG_NONE.','.$customer->getId().','.$customer->getEmail().','.$customer->getName01().' '.$customer->getName02().PHP_EOL);
             }
             fclose($fp);
         } catch (\Exception $e) {
