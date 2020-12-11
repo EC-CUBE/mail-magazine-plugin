@@ -64,14 +64,14 @@ class MailMagazineTemplate extends AbstractEntity
     private $html_body;
 
     /**
-     * @ORM\Column(name="create_date", type="datetime", nullable=false)
+     * @ORM\Column(name="create_date", type="datetimetz")
      *
      * @var \DateTime
      */
     private $create_date;
 
     /**
-     * @ORM\Column(name="update_date", type="datetime", nullable=false)
+     * @ORM\Column(name="update_date", type="datetimetz")
      *
      * @var \DateTime
      */
