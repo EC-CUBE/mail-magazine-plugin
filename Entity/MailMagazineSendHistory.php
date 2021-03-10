@@ -85,16 +85,16 @@ class MailMagazineSendHistory extends AbstractEntity
     private $error_count;
 
     /**
-     * @ORM\Column(name="start_date", type="datetime", nullable=true, options={"unsigned": true})
+     * @ORM\Column(name="start_date", type="datetimetz", nullable=true)
      *
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $start_date;
 
     /**
-     * @ORM\Column(name="end_date", type="datetime", nullable=true, options={"unsigned": true})
+     * @ORM\Column(name="end_date", type="datetimetz", nullable=true)
      *
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $end_date;
 
@@ -106,14 +106,14 @@ class MailMagazineSendHistory extends AbstractEntity
     private $search_data;
 
     /**
-     * @ORM\Column(name="create_date", type="datetime", nullable=false)
+     * @ORM\Column(name="create_date", type="datetimetz")
      *
      * @var \DateTime
      */
     private $create_date;
 
     /**
-     * @ORM\Column(name="update_date", type="datetime", nullable=false)
+     * @ORM\Column(name="update_date", type="datetimetz")
      *
      * @var \DateTime
      */
