@@ -159,9 +159,6 @@ class MailMagazineLegacy extends CommonEvent
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        $crawler = new Crawler($response->getContent());
-        $html = $this->getHtml($crawler);
-
         $form = $this->app['form.factory']->createBuilder('admin_customer')->getForm();
 
         if ('POST' === $request->getMethod() && $response->headers->has('location')) {
@@ -213,20 +210,24 @@ class MailMagazineLegacy extends CommonEvent
 
             $form->handleRequest($request);
 
+            $document = \DOMDocument::loadHTML($response->getContent());
+            $xpath = new \DOMXPath($document);
+            $table = $xpath->query('//div[@class="form-horizontal"]', $document)->item(0);
+
+            if (!$table) {
+                return $response->getContent();
+            }
+
             $parts = $this->app->renderView('MailMagazine/Resource/template/admin/mailmagazine.twig', array(
                 'form' => $form->createView(),
             ));
 
-            try {
-                $oldHtml = $this->decodeHtml($crawler->filter('.form-horizontal .form-group')->last()->parents()->html());
+            $dom = \DOMDocument::loadHtml('<?xml encoding="utf-8" ?>'.$parts);
+            $newNode = $dom->getElementsByTagName('div')->item(0);
+            $table->appendChild($document->importNode($newNode, true));
 
-                $newHtml = $oldHtml.$parts;
-                $html = str_replace($oldHtml, $newHtml, $html);
-            } catch (\InvalidArgumentException $e) {
-            }
-
-            $response->setContent($html);
-
+            $crawler = new Crawler($document);
+            $response->setContent($crawler->html());
             $event->setResponse($response);
         }
     }
@@ -247,51 +248,47 @@ class MailMagazineLegacy extends CommonEvent
     {
         $app = &$this->app;
 
-        $crawler = new Crawler($response->getContent());
-        $html = $this->getHtml($crawler);
+        // 今が登録確認画面か確認する
+        $confirmFlg = $this->isEntryConfirm($request);
 
-        try {
-            // 今が登録確認画面か確認する
-            $confirmFlg = $this->isEntryConfirm($request);
-
-            // POSTの場合はメールマガジン送付を入力不可にする
-            $twigName = 'entry_add_mailmaga.twig';
-            if ('POST' === $this->app['request']->getMethod() && $confirmFlg) {
-                $twigName = 'entry_confirm_add_mailmaga.twig';
-            }
-
-            // Formの取得
-            $builder = $app['form.factory']->createBuilder('entry');
-            $form = $builder->getForm();
-
-            $form->handleRequest($request);
-
-            if ($confirmFlg) {
-                $builder->setAttribute('freeze', true);
-                $form = $builder->getForm();
-                $form->handleRequest($request);
-            }
-
-            // 追加先のノードを取得
-            $nodeHtml = $crawler->filter('.dl_table.not_required')->last()->html();
-
-            // 追加する情報のHTMLを取得する.
-            try {
-                $parts = $this->app['twig']->render(
-                    'MailMagazine/Resource/template/'.$twigName,
-                    array('form' => $form->createView())
-                );
-            } catch (Exception $exception) {
-                log_error($exception->getMessage());
-            }
-            $newNodeHtml = $nodeHtml.$parts;
-
-            $html = str_replace($nodeHtml, $newNodeHtml, $html);
-        } catch (\InvalidArgumentException $e) {
-            // no-op
+        // POSTの場合はメールマガジン送付を入力不可にする
+        $twigName = 'entry_add_mailmaga.twig';
+        if ('POST' === $this->app['request']->getMethod() && $confirmFlg) {
+            $twigName = 'entry_confirm_add_mailmaga.twig';
         }
 
-        return $html;
+        // Formの取得
+        $builder = $app['form.factory']->createBuilder('entry');
+        $form = $builder->getForm();
+
+        $form->handleRequest($request);
+
+        if ($confirmFlg) {
+            $builder->setAttribute('freeze', true);
+            $form = $builder->getForm();
+            $form->handleRequest($request);
+        }
+
+        $document = \DOMDocument::loadHTML($response->getContent());
+        $xpath = new \DOMXPath($document);
+        $table = $xpath->query('//div[@class="dl_table not_required"]', $document)->item(0);
+
+        if (!$table) {
+            return $response->getContent();
+        }
+
+        $parts = $this->app['twig']->render(
+            'MailMagazine/Resource/template/' . $twigName,
+            array('form' => $form->createView())
+        );
+
+        $dom = \DOMDocument::loadHtml('<?xml encoding="utf-8" ?>'.$parts);
+        $newNode = $dom->getElementsByTagName('dl')->item(0);
+        $table->appendChild($document->importNode($newNode, true));
+
+        $crawler = new Crawler($document);
+
+        return $crawler->html();
     }
 
     /**
@@ -306,51 +303,49 @@ class MailMagazineLegacy extends CommonEvent
     {
         $app = &$this->app;
 
-        $crawler = new Crawler($response->getContent());
-        $html = $this->getHtml($crawler);
-
-        try {
-            // カスタマIDの取得
-            $Customer = $app->user();
-            if (is_null($Customer)) {
-                return $html;
-            }
-
-            // Formの取得
-            $builder = $app['form.factory']->createBuilder('entry');
-            $form = $builder->getForm();
-
-            if ('POST' === $this->app['request']->getMethod()) {
-                $form->handleRequest($request);
-            } else {
-                // DBからメルマガ送付情報を取得する
-                $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
-                $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
-
-                if (!is_null($MailmagaCustomer)) {
-                    $form->get('mailmaga_flg')->setData($MailmagaCustomer->getMailmagaFlg());
-                }
-            }
-
-            // 追加先のノードを取得
-            if (!count($crawler->filter('.dl_table.not_required')->last())) {
-                return $html;
-            }
-            $nodeHtml = $crawler->filter('.dl_table.not_required')->last()->html();
-
-            // 追加する情報のHTMLを取得する.
-            $parts = $this->app['twig']->render(
-                'MailMagazine/Resource/template/entry_add_mailmaga.twig',
-                array('form' => $form->createView())
-            );
-            $newNodeHtml = $nodeHtml.$parts;
-
-            $html = str_replace($nodeHtml, $newNodeHtml, $html);
-        } catch (\InvalidArgumentException $e) {
-            // no-op
+        // カスタマIDの取得
+        $Customer = $app->user();
+        if (is_null($Customer)) {
+            return $response->getContent();
         }
 
-        return $html;
+        // Formの取得
+        $builder = $app['form.factory']->createBuilder('entry');
+        $form = $builder->getForm();
+
+        if ('POST' === $this->app['request']->getMethod()) {
+            $form->handleRequest($request);
+        } else {
+            // DBからメルマガ送付情報を取得する
+            $MailmagaCustomerRepository = $this->app['eccube.plugin.mail_magazine.repository.mail_magazine_mailmaga_customer'];
+            $MailmagaCustomer = $MailmagaCustomerRepository->findOneBy(array('customer_id' => $Customer->getId()));
+
+            if (!is_null($MailmagaCustomer)) {
+                $form->get('mailmaga_flg')->setData($MailmagaCustomer->getMailmagaFlg());
+            }
+        }
+
+        $document = \DOMDocument::loadHTML($response->getContent());
+        $xpath = new \DOMXPath($document);
+        $table = $xpath->query('//div[@class="dl_table not_required"]', $document)->item(0);
+
+        if (!$table) {
+            return $response->getContent();
+        }
+
+        // 追加する情報のHTMLを取得する.
+        $parts = $this->app['twig']->render(
+            'MailMagazine/Resource/template/entry_add_mailmaga.twig',
+            array('form' => $form->createView())
+        );
+
+        $dom = \DOMDocument::loadHtml('<?xml encoding="utf-8" ?>'.$parts);
+        $newNode = $dom->getElementsByTagName('dl')->item(0);
+        $table->appendChild($document->importNode($newNode, true));
+
+        $crawler = new Crawler($document);
+
+        return $crawler->html();
     }
 
     /**
@@ -374,28 +369,5 @@ class MailMagazineLegacy extends CommonEvent
         }
 
         return false;
-    }
-
-    /**
-     * 解析用HTMLを取得.
-     *
-     * @param Crawler $crawler
-     *
-     * @return string
-     */
-    private function getHtml(Crawler $crawler)
-    {
-        $html = '';
-        foreach ($crawler as $domElement) {
-            $domElement->ownerDocument->formatOutput = true;
-            $html .= $domElement->ownerDocument->saveHTML();
-        }
-
-        return $this->decodeHtml($html);
-    }
-
-    private function decodeHtml($html)
-    {
-        return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
 }
