@@ -39,7 +39,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
     public function testGetHistoryFileName()
     {
-        $dir = $this->container->getParameter('kernel.project_dir').'/app/mail_magazine/';
+        $dir = self::$container->getParameter('kernel.project_dir').'/app/mail_magazine/';
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1));
         self::assertEquals($dir.'mail_magazine_in_2.txt', $this->mailMagazineService->getHistoryFileName(2));
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1, true));

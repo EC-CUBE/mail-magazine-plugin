@@ -16,7 +16,7 @@ namespace Plugin\MailMagazine4\Controller;
 use Eccube\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine4\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine4\Service\MailMagazineService;
@@ -70,12 +70,12 @@ class MailMagazineHistoryController extends AbstractController
      * @Template("@MailMagazine4/admin/history_list.twig")
      *
      * @param Request $request
-     * @param Paginator $paginator
+     * @param PaginatorInterface $paginator
      * @param int $page_no
      *
      * @return array
      */
-    public function index(Request $request, Paginator $paginator, $page_no = 1)
+    public function index(Request $request, PaginatorInterface $paginator, $page_no = 1)
     {
         $pageNo = $page_no;
         $pageMaxis = $this->pageMaxRepository->findAll();
@@ -276,12 +276,12 @@ class MailMagazineHistoryController extends AbstractController
      *
      * @param Request $request
      * @param MailMagazineSendHistory $mailMagazineSendHistory
-     * @param Paginator $paginator
+     * @param PaginatorInterface $paginator
      * @param int $page_no
      *
      * @return mixed
      */
-    public function result(Request $request, MailMagazineSendHistory $mailMagazineSendHistory, Paginator $paginator, $page_no = 1)
+    public function result(Request $request, MailMagazineSendHistory $mailMagazineSendHistory, PaginatorInterface $paginator, $page_no = 1)
     {
         $resultFile = $this->mailMagazineService->getHistoryFileName($mailMagazineSendHistory->getId(), false);
         $pageMaxis = $this->pageMaxRepository->findAll();

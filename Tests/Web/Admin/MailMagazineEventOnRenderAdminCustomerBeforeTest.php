@@ -14,6 +14,7 @@
 namespace Plugin\MailMagazine4\Tests\Web\Admin;
 
 use Eccube\Common\Constant;
+use Eccube\Entity\Customer;
 use Plugin\MailMagazine4\Tests\Web\MailMagazineCommon;
 use Eccube\Repository\CustomerRepository;
 
@@ -27,7 +28,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
     public function setUp()
     {
         parent::setUp();
-        $this->customerRepository = $this->container->get(CustomerRepository::class);
+        $this->customerRepository = $this->entityManager->getRepository(Customer::class);
     }
 
     protected function createFormData()

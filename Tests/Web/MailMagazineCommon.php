@@ -14,6 +14,8 @@
 namespace Plugin\MailMagazine4\Tests\Web;
 
 use Eccube\Common\Constant;
+use Eccube\Entity\MailHistory;
+use Eccube\Entity\Master\Sex;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine4\Entity\MailMagazineTemplate;
@@ -35,8 +37,8 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->sexRepository = $this->container->get(SexRepository::class);
-        $this->mailHistoryRepository = $this->container->get(MailHistoryRepository::class);
+        $this->sexRepository = $this->entityManager->getRepository(Sex::class);
+        $this->mailHistoryRepository = $this->entityManager->getRepository(MailHistory::class);
     }
 
     protected function createMagazineTemplate()

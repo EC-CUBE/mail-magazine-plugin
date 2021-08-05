@@ -30,7 +30,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         if (!file_exists($this->rootDir)) {
             mkdir($this->rootDir);
         }
-        $this->container->get(MailMagazineService::class)->setMailMagazineDir($this->rootDir);
+        self::$container->get(MailMagazineService::class)->setMailMagazineDir($this->rootDir);
     }
 
     public function tearDown()
@@ -149,7 +149,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
     private function newPagination($file, $page, $limit, $total)
     {
         $paginator = new Paginator();
-        $paginator->subscribe($this->container->get(MailMagazineHistoryFilePaginationSubscriber::class));
+        $paginator->subscribe(self::$container->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }

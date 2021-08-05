@@ -14,6 +14,7 @@
 namespace Plugin\MailMagazine4\Tests;
 
 use Eccube\Tests\Service\AbstractServiceTestCase;
+use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine4\Service\MailMagazineService;
 use Plugin\MailMagazine4\Repository\MailMagazineSendHistoryRepository;
 use Eccube\Entity\Customer;
@@ -33,8 +34,8 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->mailMagazineService = $this->container->get(MailMagazineService::class);
-        $this->mailMagazineSendHistoryRepository = $this->container->get(MailMagazineSendHistoryRepository::class);
+        $this->mailMagazineService = self::$container->get(MailMagazineService::class);
+        $this->mailMagazineSendHistoryRepository = $this->entityManager->getRepository(MailMagazineSendHistory::class);
     }
 
     /**
