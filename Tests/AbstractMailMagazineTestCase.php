@@ -34,7 +34,6 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->mailMagazineService = self::$container->get(MailMagazineService::class);
         $this->mailMagazineSendHistoryRepository = $this->entityManager->getRepository(MailMagazineSendHistory::class);
     }
 
@@ -62,21 +61,5 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
         $this->entityManager->flush($c);
 
         return $c;
-    }
-
-    /**
-     * Create send mail history
-     *
-     * @param Customer $Customer
-     *
-     * @return int
-     */
-    protected function createHistory(Customer $Customer)
-    {
-        return $this->mailMagazineService->createMailMagazineHistory([
-            'subject' => 'subject',
-            'body' => 'body',
-            'multi' => $Customer->getEmail(),
-        ]);
     }
 }
