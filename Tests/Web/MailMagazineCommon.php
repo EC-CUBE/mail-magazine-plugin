@@ -15,6 +15,7 @@ namespace Plugin\MailMagazine4\Tests\Web;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\MailHistory;
+use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Master\Sex;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
@@ -83,6 +84,10 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
     {
         // create order
         $Order = $this->createOrder($MailCustomer);
+        $OrderStatus = $this->entityManager->find(OrderStatus::class, OrderStatus::NEW);
+        $Order->setOrderStatus($OrderStatus);
+        $this->entityManager->flush();
+
         $order_detail = $Order->getItems();
         $old_date = new \DateTime('1980-01-01');
 
