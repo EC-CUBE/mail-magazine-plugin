@@ -95,7 +95,7 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
      *
      * @return string[]
      */
-    public function getExtendedTypes()
+    public static function getExtendedTypes()
     {
         yield EntryType::class;
     }
