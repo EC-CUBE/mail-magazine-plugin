@@ -32,6 +32,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
     {
         $this->markTestSkipped('Skipped due to still not assign mock Swift_Mailler to service container');
         parent::setUp();
+        $this->mailMagazineService = self::$container->get(MailMagazineService::class);
         $this->client->enableProfiler();
 //        $this->mailer = $this->getMockBuilder('\Swift_Mailer')->disableOriginalConstructor()->getMock();
         $this->sentAddresses = [];
@@ -39,7 +40,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
     public function testGetHistoryFileName()
     {
-        $dir = $this->container->getParameter('kernel.project_dir').'/app/mail_magazine/';
+        $dir = self::$container->getParameter('kernel.project_dir').'/app/mail_magazine/';
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1));
         self::assertEquals($dir.'mail_magazine_in_2.txt', $this->mailMagazineService->getHistoryFileName(2));
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1, true));
@@ -596,5 +597,21 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
                 return true;
             })
         )->will(new \PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls($arrayOfReturn));
+    }
+
+    /**
+     * Create send mail history
+     *
+     * @param Customer $Customer
+     *
+     * @return int
+     */
+    protected function createHistory(Customer $Customer)
+    {
+        return $this->mailMagazineService->createMailMagazineHistory([
+            'subject' => 'subject',
+            'body' => 'body',
+            'multi' => $Customer->getEmail(),
+        ]);
     }
 }

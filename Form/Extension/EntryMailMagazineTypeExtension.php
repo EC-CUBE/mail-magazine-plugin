@@ -89,4 +89,14 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
     {
         return EntryType::class;
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string[]
+     */
+    public function getExtendedTypes()
+    {
+        yield EntryType::class;
+    }
 }

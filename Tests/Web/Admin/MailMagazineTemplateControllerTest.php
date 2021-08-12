@@ -13,6 +13,7 @@
 
 namespace Plugin\MailMagazine4\Tests\Web\Admin;
 
+use Plugin\MailMagazine4\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine4\Tests\Web\MailMagazineCommon;
 use Eccube\Repository\MailTemplateRepository;
 use Plugin\MailMagazine4\Repository\MailMagazineTemplateRepository;
@@ -20,14 +21,14 @@ use Plugin\MailMagazine4\Repository\MailMagazineTemplateRepository;
 class MailMagazineTemplateControllerTest extends MailMagazineCommon
 {
     /**
-     * @var MailTemplateRepository
+     * @var MailMagazineTemplate
      */
     protected $mailMagaTemplateRepository;
 
     public function setUp()
     {
         parent::setUp();
-        $this->mailMagaTemplateRepository = $this->container->get(MailMagazineTemplateRepository::class);
+        $this->mailMagaTemplateRepository = $this->entityManager->getRepository(MailMagazineTemplate::class);
     }
 
     protected function createFormData()

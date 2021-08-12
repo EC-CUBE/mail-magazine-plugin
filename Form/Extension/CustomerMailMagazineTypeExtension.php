@@ -68,4 +68,14 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
     {
         return CustomerType::class;
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string[]
+     */
+    public function getExtendedTypes()
+    {
+        yield CustomerType::class;
+    }
 }

@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\FormUtil;
 use Eccube\Repository\CustomerRepository;
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Plugin\MailMagazine4\Form\Type\MailMagazineType;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Common\Constant;
@@ -86,12 +86,12 @@ class MailMagazineController extends AbstractController
      * @Template("@MailMagazine4/admin/index.twig")
      *
      * @param Request $request
-     * @param Paginator $paginator
+     * @param PaginatorInterface $paginator
      * @param integer $page_no
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      */
-    public function index(Request $request, Paginator $paginator, $page_no = null, \Swift_Mailer $mailer)
+    public function index(Request $request, PaginatorInterface $paginator, $page_no = null, \Swift_Mailer $mailer)
     {
         $session = $request->getSession();
         $pageNo = $page_no;
