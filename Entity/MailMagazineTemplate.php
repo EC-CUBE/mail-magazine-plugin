@@ -57,7 +57,7 @@ class MailMagazineTemplate extends AbstractEntity
     private $body;
 
     /**
-     * @ORM\Column(name="html_body", type="text", nullable=false)
+     * @ORM\Column(name="html_body", type="text", nullable=true)
      *
      * @var string
      */
