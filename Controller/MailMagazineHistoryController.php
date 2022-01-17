@@ -13,6 +13,7 @@ namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
 use Eccube\Common\Constant;
+use Eccube\Controller\AbstractController;
 use Eccube\Entity\Master\Pref;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine\Entity\MailMagazineSendHistory;
@@ -23,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class MailMagazineHistoryController
+class MailMagazineHistoryController extends AbstractController
 {
     public function __construct()
     {
@@ -234,6 +235,7 @@ class MailMagazineHistoryController
      */
     public function delete(Application $app, Request $request, $id)
     {
+        $this->isTokenValid($app);
         // POSTかどうか判定
         if ('POST' !== $request->getMethod()) {
             throw new BadRequestHttpException();

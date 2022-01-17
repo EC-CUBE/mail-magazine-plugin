@@ -12,12 +12,13 @@
 namespace Plugin\MailMagazine\Controller;
 
 use Eccube\Application;
+use Eccube\Controller\AbstractController;
 use Plugin\MailMagazine\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class MailMagazineTemplateController
+class MailMagazineTemplateController extends AbstractController
 {
     public function __construct()
     {
@@ -85,6 +86,7 @@ class MailMagazineTemplateController
         // POSTかどうか判定
         // パラメータ$idにマッチするデータが存在するか判定
         // POSTかつ$idに対応するdtb_mailmagazine_templateのレコードがあれば、del_flg = 1に設定して更新
+        $this->isTokenValid($app);
         if ('POST' === $request->getMethod()) {
             // idがからの場合はメルマガテンプレート一覧へリダイレクト
             if (is_null($id) || strlen($id) == 0) {

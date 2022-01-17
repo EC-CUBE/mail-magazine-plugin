@@ -46,6 +46,7 @@ function changeAction(action) {
                 </div><!-- /.box-header -->
                 <div class="box-body">
                     <form name="form1" id="form1" method="post" action="">
+                        <input type="hidden" name="{{ constant('Eccube\\Common\\Constant::TOKEN_NAME') }}" value="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
                         <div class="table_list">
                             <div class="table-responsive with-border">
                                 <table class="table table-striped">
