@@ -213,6 +213,7 @@ class MailMagazineHistoryController extends AbstractController
     public function delete(MailMagazineSendHistory $mailMagazineSendHistory)
     {
         try {
+            $this->isTokenValid();
             $id = $mailMagazineSendHistory->getId();
             $this->mailMagazineSendHistoryRepository->delete($mailMagazineSendHistory);
             $this->entityManager->flush();
