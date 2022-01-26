@@ -221,7 +221,7 @@ class MailMagazineHistoryController extends AbstractController
 
             $this->addSuccess('admin.mailmagazine.history.delete.sucesss', 'admin');
         } catch (\Exception $e) {
-            $this->addError('admin.flash.register_failed', 'admin');
+            $this->addError('admin.mailmagazine.history.delete.failure', 'admin');
         }
 
         // メルマガテンプレート一覧へリダイレクト

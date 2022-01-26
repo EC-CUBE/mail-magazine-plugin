@@ -97,9 +97,9 @@ class MailMagazineTemplateController extends AbstractController
         try {
             $this->mailMagazineTemplateRepository->delete($mailMagazineTemplate);
             $this->entityManager->flush();
-            $this->addSuccess('admin.delete.complete', 'admin');
+            $this->addSuccess('admin.mailmagazine.template.delete.complete', 'admin');
         } catch (\Exception $e) {
-            $this->addError('admin.delete.failed', 'admin');
+            $this->addError('admin.mailmagazine.template.delete.failure', 'admin');
         }
 
         // メルマガテンプレート一覧へリダイレクト

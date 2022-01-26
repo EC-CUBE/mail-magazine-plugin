@@ -56,11 +56,14 @@ mailmagazine.history.result.status_sent: 送信済み
 mailmagazine.history.result.status_fail: 送信失敗
 admin.mailmagazine.template.save.complete: メールテンプレート情報を保存しました。
 admin.mailmagazine.template.save.failure: メールテンプレート情報の保存に失敗しました。
+admin.mailmagazine.template.delete.complete: メールテンプレート情報を削除しました。
+admin.mailmagazine.template.delete.failure: メールテンプレート情報の削除に失敗しました。
 admin.mailmagazine.template.data.notfound: メールテンプレートが存在しません。
 admin.mailmagazine.template.data.illegalaccess: 正常なアクセスではありません。
 admin.mailmagazine.send.register.failure: 配信履歴の登録に失敗しました。
 admin.mailmagazine.history.datanotfound: 配信履歴が存在しません。
 admin.mailmagazine.history.delete.sucesss: 配信履歴を削除しました。
+admin.mailmagazine.history.delete.failure: 配信履歴の削除に失敗しました。
 admin.mailmagazine.history.search_count: 検索結果：%count%件が該当しました
 admin.mailmagazine.history.th_send_start_time: 配信開始時刻
 admin.mailmagazine.history.th_send_end_time: 配信終了時刻
