@@ -43,6 +43,11 @@ jobs:
             dbpass: 'password'
             dbname: 'myapp_test'
             dbversion: 9.5
+        exclude:
+          - eccube_version: '4.1'
+            php: '7.1'
+          - eccube_version: '4.1'
+            php: '7.2'
     services:
       mysql:
         image: mysql:5.7
