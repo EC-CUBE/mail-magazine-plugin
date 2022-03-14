@@ -69,6 +69,7 @@
                                                             {{ 'common.cancel'|trans }}
                                                         </button>
                                                         <form action="{{ url('plugin_mail_magazine_template_delete', { id: Template.id }) }}" method="post" enctype="application/x-www-form-urlencoded">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
                                                             <button type="submit" class="btn btn-ec-delete">
                                                                 {{ 'common.delete'|trans }}
                                                             </button>

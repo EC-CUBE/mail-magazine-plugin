@@ -95,6 +95,7 @@ class MailMagazineTemplateController extends AbstractController
         // パラメータ$idにマッチするデータが存在するか判定
         // POSTかつ$idに対応するdtb_mailmagazine_templateのレコードがあれば、del_flg = 1に設定して更新
         try {
+            $this->isTokenValid();
             $this->mailMagazineTemplateRepository->delete($mailMagazineTemplate);
             $this->entityManager->flush();
             $this->addSuccess('admin.mailmagazine.template.delete.complete', 'admin');
