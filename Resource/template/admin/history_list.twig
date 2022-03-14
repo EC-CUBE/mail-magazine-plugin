@@ -84,6 +84,7 @@ $(function () {
 {% block main %}
 <form name="form1" id="form1" method="post" action="">
 
+<input type="hidden" name="{{ constant('Eccube\\Common\\Constant::TOKEN_NAME') }}" value="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
 {% if pagination %}
     <div class="row">
         <div class="col-md-12">
