@@ -50,29 +50,29 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
             return;
         }
 
-        $event->count = $event->options['total'];
-
         $skip = $event->getOffset();
         $fp = fopen($file, 'r');
         $count = $event->getLimit();
+        $total = 0;
 
         $event->items = [];
         while ($line = fgets($fp)) {
+            $total++;
             if ($skip-- > 0) {
                 continue;
             }
-            if ($count == 0) {
-                break;
+            if ($count > 0) {
+                list($status, $customerId, $email, $name) = explode(',', str_replace(PHP_EOL, '', $line), 4);
+                $event->items[] = [
+                    'status' => $status,
+                    'customerId' => $customerId,
+                    'email' => $email,
+                    'name' => $name,
+                ];
             }
-            list($status, $customerId, $email, $name) = explode(',', str_replace(PHP_EOL, '', $line), 4);
-            $event->items[] = [
-                'status' => $status,
-                'customerId' => $customerId,
-                'email' => $email,
-                'name' => $name,
-            ];
             --$count;
         }
+        $event->count = $total;
     }
 
     public static function getSubscribedEvents()

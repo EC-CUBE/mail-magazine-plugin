@@ -289,11 +289,9 @@ class MailMagazineHistoryController extends AbstractController
         $pageCount = $request->get('page_count');
         $pageCount = $pageCount ? $pageCount : $this->eccubeConfig['eccube_default_page_count'];
 
-        $pageNo = $page_no;
         $pagination = $paginator->paginate($resultFile,
-            empty($pageNo) ? 1 : $pageNo,
-            $pageCount,
-            ['total' => 1]
+            $page_no,
+            $pageCount
         );
 
         return [
