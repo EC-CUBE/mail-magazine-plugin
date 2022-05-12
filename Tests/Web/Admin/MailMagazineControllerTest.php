@@ -206,7 +206,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         );
 
         $pageNumber = $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->html();
-        $this->assertRegexp('/件/', $pageNumber);
+        $this->assertMatchesRegularExpression('/件/', $pageNumber);
 
         //pagination
         $crawler = $this->client->request(
@@ -216,7 +216,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         //check result
         $pageNumber = $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->html();
-        $this->assertRegexp('/件/', $pageNumber);
+        $this->assertMatchesRegularExpression('/件/', $pageNumber);
 
         //check search condition
         $sexCheckbox = $crawler->filter('#mail_magazine_sex_1:checked')->count();
