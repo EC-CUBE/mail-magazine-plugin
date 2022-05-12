@@ -13,8 +13,8 @@
 
 namespace Plugin\MailMagazine4\Repository;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
 use Eccube\Doctrine\Query\Queries;
 
