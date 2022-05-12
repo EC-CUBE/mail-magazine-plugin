@@ -42,7 +42,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->generateUrl('plugin_mail_magazine'),
             ['mail_magazine' => $searchForm]
         );
-        $this->assertContains('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
+        $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
     public function testMailMagazineSearchWithBirthmonthHightOctorber()
@@ -60,7 +60,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->generateUrl('plugin_mail_magazine'),
             ['mail_magazine' => $searchForm]
         );
-        $this->assertContains('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
+        $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
     public function testMailMagazineSearchWithBirthmonthNull()
@@ -72,7 +72,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
             $this->generateUrl('plugin_mail_magazine'),
             ['mail_magazine' => $searchForm]
         );
-        $this->assertContains('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
+        $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
     public function testSelect()
