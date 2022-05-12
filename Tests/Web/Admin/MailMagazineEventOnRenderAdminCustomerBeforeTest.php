@@ -25,7 +25,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
      */
     protected $customerRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->customerRepository = $this->entityManager->getRepository(Customer::class);

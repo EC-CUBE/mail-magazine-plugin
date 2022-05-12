@@ -35,7 +35,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
      */
     protected $mailHistoryRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->sexRepository = $this->entityManager->getRepository(Sex::class);

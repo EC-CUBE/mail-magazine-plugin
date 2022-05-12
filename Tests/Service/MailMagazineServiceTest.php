@@ -28,7 +28,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
      */
     private $sentAddresses;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->markTestSkipped('Skipped due to still not assign mock Swift_Mailler to service container');
         parent::setUp();

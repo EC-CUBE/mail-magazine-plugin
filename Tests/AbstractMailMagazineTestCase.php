@@ -31,7 +31,7 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
      */
     protected $mailMagazineSendHistoryRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->mailMagazineSendHistoryRepository = $this->entityManager->getRepository(MailMagazineSendHistory::class);

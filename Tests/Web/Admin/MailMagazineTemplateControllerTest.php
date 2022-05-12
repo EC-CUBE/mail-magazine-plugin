@@ -25,7 +25,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
      */
     protected $mailMagaTemplateRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->mailMagaTemplateRepository = $this->entityManager->getRepository(MailMagazineTemplate::class);

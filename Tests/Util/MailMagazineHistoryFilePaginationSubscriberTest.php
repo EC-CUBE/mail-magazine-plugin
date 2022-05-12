@@ -23,7 +23,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
 {
     private $rootDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->rootDir = sys_get_temp_dir().'/MailMagazineHistoryFilePaginationSubscriberTest';
@@ -33,7 +33,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         self::$container->get(MailMagazineService::class)->setMailMagazineDir($this->rootDir);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         foreach (glob($this->rootDir.'/*') as $file) {
             if (is_file($file)) {
