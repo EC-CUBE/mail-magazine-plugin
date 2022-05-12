@@ -108,6 +108,9 @@ jobs:
 
     - name: Setup Plugin
       env:
+        APP_ENV: 'test'
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         PLUGIN_CODE: ${{ matrix.plugin_code }}
       working-directory: 'ec-cube'
       run: |
@@ -116,6 +119,9 @@ jobs:
 
     - name: Run PHPUnit
       env:
+        APP_ENV: 'test'
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         PLUGIN_CODE: ${{ matrix.plugin_code }}
       working-directory: 'ec-cube'
       run: bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist app/Plugin/${PLUGIN_CODE}/Tests
@@ -123,11 +129,17 @@ jobs:
     - name: Disable Plugin
       working-directory: 'ec-cube'
       env:
+        APP_ENV: 'test'
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         PLUGIN_CODE: ${{ matrix.plugin_code }}
       run: bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
 
     - name: Uninstall Plugin
       env:
+        APP_ENV: 'test'
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         PLUGIN_CODE: ${{ matrix.plugin_code }}
       working-directory: 'ec-cube'
       run: bin/console eccube:plugin:uninstall --code=${PLUGIN_CODE}
