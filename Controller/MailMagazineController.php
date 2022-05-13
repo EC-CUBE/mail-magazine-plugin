@@ -91,7 +91,7 @@ class MailMagazineController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      */
-    public function index(Request $request, PaginatorInterface $paginator, $page_no = null, \Swift_Mailer $mailer)
+    public function index(Request $request, PaginatorInterface $paginator, $page_no = null)
     {
         $session = $request->getSession();
         $pageNo = $page_no;

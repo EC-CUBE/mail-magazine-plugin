@@ -25,6 +25,9 @@ use Doctrine\ORM\QueryBuilder;
 use Plugin\MailMagazine4\Repository\MailMagazineSendHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 
 /**
  * メルマガ配信処理のサービスクラス。
@@ -98,7 +101,7 @@ class MailMagazineService
     protected $eccubeConfig;
 
     /**
-     * @var \Swift_Mailer
+     * @var MailerInterface
      */
     protected $mailer;
 
@@ -125,7 +128,7 @@ class MailMagazineService
     /**
      * MailMagazineService constructor.
      *
-     * @param \Swift_Mailer $mailer
+     * @param MailerInterface $mailer
      * @param BaseInfoRepository $baseInfoRepository
      * @param EccubeConfig $eccubeConfig
      * @param SessionInterface $session
@@ -137,7 +140,7 @@ class MailMagazineService
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function __construct(
-        \Swift_Mailer $mailer,
+        MailerInterface $mailer,
         BaseInfoRepository $baseInfoRepository,
         EccubeConfig $eccubeConfig,
         SessionInterface $session,
@@ -195,17 +198,16 @@ class MailMagazineService
     public function sendMail($formData)
     {
         // メール送信
-        /** @var \Swift_Message $message */
-        $message = (new \Swift_Message())
-            ->setSubject($formData['subject'])
-            ->setFrom([$this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()])
-            ->setTo([$formData['email']])
-            ->setReplyTo($this->BaseInfo->getEmail03())
-            ->setReturnPath($this->BaseInfo->getEmail04())
-            ->setBody($formData['body']);
+        $message = (new Email())
+            ->subject($formData['subject'])
+            ->from(new Address($this->BaseInfo->getEmail01(), $this->BaseInfo->getShopName()))
+            ->to($formData['email'])
+            ->replyTo($this->BaseInfo->getEmail03())
+            ->returnPath($this->BaseInfo->getEmail04())
+            ->text($formData['body']);
 
         if ($formData['htmlBody']) {
-            $message->addPart($formData['htmlBody'], 'text/html');
+            $message->html($formData['htmlBody'], 'text/html');
         }
 
         return $this->mailer->send($message);
