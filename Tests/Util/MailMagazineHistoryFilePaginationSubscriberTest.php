@@ -18,6 +18,9 @@ use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine4\Tests\AbstractMailMagazineTestCase;
 use Plugin\MailMagazine4\Service\MailMagazineService;
 use Plugin\MailMagazine4\Event\MailMagazineHistoryFilePaginationSubscriber;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber;
+use Knp\Component\Pager\Event\Subscriber\Sortable\SortableSubscriber;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
 {
@@ -148,8 +151,12 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
      */
     private function newPagination($file, $page, $limit, $total)
     {
-        $paginator = new Paginator();
-        $paginator->subscribe(self::$container->get(MailMagazineHistoryFilePaginationSubscriber::class));
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->addSubscriber(new PaginationSubscriber);
+        $eventDispatcher->addSubscriber(new SortableSubscriber);
+        $eventDispatcher->addSubscriber(self::$container->get(MailMagazineHistoryFilePaginationSubscriber::class));
+
+        $paginator = new Paginator($eventDispatcher);
 
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }
