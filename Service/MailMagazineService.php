@@ -419,8 +419,9 @@ class MailMagazineService
             $this->lastSendMailBody = $mailData['body'];
             $this->lastSendMailHtmlBody = $mailData['htmlBody'];
 
+            $sendResult = true;
             try {
-                $sendResult = $this->sendMail($mailData);
+                $this->sendMail($mailData);
             } catch (\Exception $e) {
                 log_error($e->getMessage());
                 $sendResult = false;
