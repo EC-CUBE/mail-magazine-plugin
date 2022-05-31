@@ -58,7 +58,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
             ],
             'phone_number' => $tel,
             'email' => $email,
-            'password' => [
+            'plain_password' => [
                 'first' => $password,
                 'second' => $password,
             ],
