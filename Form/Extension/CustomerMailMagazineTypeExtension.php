@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Form\Extension;
+namespace Plugin\MailMagazine42\Form\Extension;
 
 use Eccube\Entity\Customer;
 use Eccube\Common\Constant;
@@ -48,7 +48,7 @@ class CustomerMailMagazineTypeExtension extends AbstractTypeExtension
             'mapped' => true,
             'eccube_form_options' => [
                 'auto_render' => true,
-                'form_theme' => '@MailMagazine4/admin/mailmagazine.twig',
+                'form_theme' => '@MailMagazine42/admin/mailmagazine.twig',
             ],
         ];
 

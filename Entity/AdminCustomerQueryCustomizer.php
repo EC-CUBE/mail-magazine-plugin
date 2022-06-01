@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Entity;
+namespace Plugin\MailMagazine42\Entity;
 
 use Eccube\Doctrine\Query\WhereClause;
 use Eccube\Doctrine\Query\WhereCustomizer;

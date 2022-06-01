@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Repository;
+namespace Plugin\MailMagazine42\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
-use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
 use Eccube\Doctrine\Query\Queries;
 
 /**

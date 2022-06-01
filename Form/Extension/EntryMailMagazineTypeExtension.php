@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Form\Extension;
+namespace Plugin\MailMagazine42\Form\Extension;
 
 use Eccube\Entity\Customer;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -74,7 +74,7 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
                 'data' => $mailmagaFlg,
                 'eccube_form_options' => [
                     'auto_render' => true,
-                    'form_theme' => '@MailMagazine4/entry_add_mailmaga.twig',
+                    'form_theme' => '@MailMagazine42/entry_add_mailmaga.twig',
                 ],
             ])
             ;

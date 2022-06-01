@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Event;
+namespace Plugin\MailMagazine42\Event;
 
 use Knp\Component\Pager\Event\ItemsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Plugin\MailMagazine4\Service\MailMagazineService;
+use Plugin\MailMagazine42\Service\MailMagazineService;
 
 class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInterface
 {

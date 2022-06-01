@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Controller;
+namespace Plugin\MailMagazine42\Controller;
 
 use Eccube\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
-use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine4\Repository\MailMagazineSendHistoryRepository;
-use Plugin\MailMagazine4\Service\MailMagazineService;
+use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine42\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine42\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;
@@ -67,7 +67,7 @@ class MailMagazineHistoryController extends AbstractController
      *     requirements={"page_no" = "\d+"},
      *     name="plugin_mail_magazine_history_page"
      * )
-     * @Template("@MailMagazine4/admin/history_list.twig")
+     * @Template("@MailMagazine42/admin/history_list.twig")
      *
      * @param Request $request
      * @param PaginatorInterface $paginator
@@ -116,7 +116,7 @@ class MailMagazineHistoryController extends AbstractController
      *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_history_preview"
      * )
-     * @Template("@MailMagazine4/admin/history_preview.twig")
+     * @Template("@MailMagazine42/admin/history_preview.twig")
      *
      * @param MailMagazineSendHistory $mailMagazineSendHistory
      *
@@ -137,7 +137,7 @@ class MailMagazineHistoryController extends AbstractController
      *      requirements={"id":"\d+"},
      *      name="plugin_mail_magazine_history_condition",
      * )
-     * @Template("@MailMagazine4/admin/history_condition.twig")
+     * @Template("@MailMagazine42/admin/history_condition.twig")
      *
      * @param MailMagazineSendHistory $mailMagazineSendHistory
      *
@@ -273,7 +273,7 @@ class MailMagazineHistoryController extends AbstractController
      *     requirements={"id":"\d+", "page_no" = "\d+"},
      *     name="plugin_mail_magazine_history_result_page"
      * )
-     * @Template("@MailMagazine4/admin/history_result.twig")
+     * @Template("@MailMagazine42/admin/history_result.twig")
      *
      * @param Request $request
      * @param MailMagazineSendHistory $mailMagazineSendHistory

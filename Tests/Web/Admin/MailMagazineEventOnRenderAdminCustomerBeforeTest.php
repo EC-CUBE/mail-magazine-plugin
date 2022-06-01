@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Tests\Web\Admin;
+namespace Plugin\MailMagazine42\Tests\Web\Admin;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
-use Plugin\MailMagazine4\Tests\Web\MailMagazineCommon;
+use Plugin\MailMagazine42\Tests\Web\MailMagazineCommon;
 use Eccube\Repository\CustomerRepository;
 
 class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommon

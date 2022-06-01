@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Entity;
+namespace Plugin\MailMagazine42\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Annotation as Eccube;

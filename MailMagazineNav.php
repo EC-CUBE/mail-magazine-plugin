@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4;
+namespace Plugin\MailMagazine42;
 
 use Eccube\Common\EccubeNav;
 

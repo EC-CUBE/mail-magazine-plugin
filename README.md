@@ -1,6 +1,6 @@
 # メルマガ管理プラグイン
 
-[![CI for MailMagazine4](https://github.com/EC-CUBE/mail-magazine-plugin/actions/workflows/main.yml/badge.svg)](https://github.com/EC-CUBE/mail-magazine-plugin/actions/workflows/main.yml)
+[![CI for MailMagazine42](https://github.com/EC-CUBE/mail-magazine-plugin/actions/workflows/main.yml/badge.svg)](https://github.com/EC-CUBE/mail-magazine-plugin/actions/workflows/main.yml)
 
 ## 概要
 会員に向けメルマガの配信を行うためのプラグインです。  

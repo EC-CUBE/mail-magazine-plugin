@@ -11,9 +11,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Tests\Web\Admin;
+namespace Plugin\MailMagazine42\Tests\Web\Admin;
 
-use Plugin\MailMagazine4\Tests\Web\MailMagazineCommon;
+use Plugin\MailMagazine42\Tests\Web\MailMagazineCommon;
 
 class MailMagazineControllerTest extends MailMagazineCommon
 {

@@ -4,5 +4,5 @@ services:
     autoconfigure: true
     public: true
 
-  Plugin\MailMagazine4\Service\MailMagazineService:
-  Plugin\MailMagazine4\Event\MailMagazineHistoryFilePaginationSubscriber:
+  Plugin\MailMagazine42\Service\MailMagazineService:
+  Plugin\MailMagazine42\Event\MailMagazineHistoryFilePaginationSubscriber:

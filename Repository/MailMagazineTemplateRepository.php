@@ -11,12 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Repository;
+namespace Plugin\MailMagazine42\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
 use Doctrine\ORM\Query;
-use Plugin\MailMagazine4\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine42\Entity\MailMagazineTemplate;
 
 /**
  * MailMagazine.
@@ -46,7 +46,7 @@ class MailMagazineTemplateRepository extends AbstractRepository
     {
         $query = $this
             ->getEntityManager()
-            ->createQuery('SELECT m FROM Plugin\MailMagazine4\Entity\MailMagazineTemplate m ORDER BY m.id DESC');
+            ->createQuery('SELECT m FROM Plugin\MailMagazine42\Entity\MailMagazineTemplate m ORDER BY m.id DESC');
         $result = $query
             ->getResult(Query::HYDRATE_ARRAY);
 

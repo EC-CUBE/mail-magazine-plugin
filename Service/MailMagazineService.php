@@ -11,10 +11,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Service;
+namespace Plugin\MailMagazine42\Service;
 
 use Eccube\Common\Constant;
-use Plugin\MailMagazine4\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
 use Eccube\Repository\BaseInfoRepository;
 use Eccube\Entity\BaseInfo;
 use Eccube\Common\EccubeConfig;
@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Eccube\Repository\CustomerRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Plugin\MailMagazine4\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine42\Repository\MailMagazineSendHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Mailer\MailerInterface;

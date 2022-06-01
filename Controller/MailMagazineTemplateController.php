@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine4\Controller;
+namespace Plugin\MailMagazine42\Controller;
 
 use Eccube\Controller\AbstractController;
-use Plugin\MailMagazine4\Entity\MailMagazineTemplate;
-use Plugin\MailMagazine4\Repository\MailMagazineTemplateRepository;
+use Plugin\MailMagazine42\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine42\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
-use Plugin\MailMagazine4\Form\Type\MailMagazineTemplateEditType;
+use Plugin\MailMagazine42\Form\Type\MailMagazineTemplateEditType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class MailMagazineTemplateController extends AbstractController
@@ -44,7 +44,7 @@ class MailMagazineTemplateController extends AbstractController
      * 一覧表示.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template", name="plugin_mail_magazine_template")
-     * @Template("@MailMagazine4/admin/template_list.twig")
+     * @Template("@MailMagazine42/admin/template_list.twig")
      */
     public function index()
     {
@@ -62,7 +62,7 @@ class MailMagazineTemplateController extends AbstractController
      *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_template_preview"
      * )
-     * @Template("@MailMagazine4/admin/preview.twig")
+     * @Template("@MailMagazine42/admin/preview.twig")
      *
      * @param MailMagazineTemplate $mailMagazineTemplate
      *
@@ -114,7 +114,7 @@ class MailMagazineTemplateController extends AbstractController
      *     requirements={"id":"\d+"},
      *     name="plugin_mail_magazine_template_edit"
      * )
-     * @Template("@MailMagazine4/admin/template_edit.twig")
+     * @Template("@MailMagazine42/admin/template_edit.twig")
      *
      * @param MailMagazineTemplate $mailMagazineTemplate
      *
@@ -141,7 +141,7 @@ class MailMagazineTemplateController extends AbstractController
      *     name="plugin_mail_magazine_template_commit",
      *     methods={"POST"}
      * )
-     * @Template("@MailMagazine4/admin/template_edit.twig")
+     * @Template("@MailMagazine42/admin/template_edit.twig")
      *
      * @param Request $request
      * @param int $id
@@ -200,7 +200,7 @@ class MailMagazineTemplateController extends AbstractController
      * メルマガテンプレート登録画面を表示する.
      *
      * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/regist", name="plugin_mail_magazine_template_regist")
-     * @Template("@MailMagazine4/admin/template_edit.twig")
+     * @Template("@MailMagazine42/admin/template_edit.twig")
      *
      * @return array
      */

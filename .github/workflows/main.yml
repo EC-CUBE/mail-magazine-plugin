@@ -1,4 +1,4 @@
-name: CI for MailMagazine4
+name: CI for MailMagazine42
 on:
   push:
     branches:
@@ -25,7 +25,7 @@ jobs:
         php: [ '7.4', '8.0', '8.1' ]
         db: [ 'mysql', 'pgsql' ]
         eccube_version: [ improve/symfony5 ]
-        plugin_code: [ 'MailMagazine4' ]
+        plugin_code: [ 'MailMagazine42' ]
         include:
           - db: mysql
             database_url: mysql://root:password@127.0.0.1:3306/eccube_db

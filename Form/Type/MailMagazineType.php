@@ -15,7 +15,7 @@
  * [メルマガ配信]-[配信内容設定]用Form
  */
 
-namespace Plugin\MailMagazine4\Form\Type;
+namespace Plugin\MailMagazine42\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
