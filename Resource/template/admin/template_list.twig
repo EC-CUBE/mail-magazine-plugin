@@ -55,15 +55,15 @@
                                     <td>{{ Template.subject }}</td>
                                     <td><a href="{{ url('plugin_mail_magazine_template_edit', { id: Template.id }) }}">{{ 'mailmagazine.template.btn_edit'|trans }}</a></td>
                                     <td>
-                                        <a href="#" data-toggle="modal" data-target="#deleteModal{{ Template.id }}">{{ 'mailmagazine.template.btn_del'|trans }}</a>
-                                        <div id="deleteModal{{ Template.id }}" class="modal" data-keyboard="false" data-backdrop="static">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ Template.id }}">{{ 'mailmagazine.template.btn_del'|trans }}</a>
+                                        <div id="deleteModal{{ Template.id }}" class="modal" data-bs-keyboard="false" data-bs-backdrop="static">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h4 class="modal-title">{{ 'mailmagazine.template.modal_del_message'|trans }}</h4>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-ec-regular" data-dismiss="modal">
+                                                        <button type="button" class="btn btn-ec-regular" data-bs-dismiss="modal">
                                                             {{ 'common.cancel'|trans }}
                                                         </button>
                                                         <form action="{{ url('plugin_mail_magazine_template_delete', { id: Template.id }) }}" method="post" enctype="application/x-www-form-urlencoded">
