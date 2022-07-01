@@ -152,17 +152,17 @@ $(function () {
                                                     </a>
                                                 </div>
                                                 <div class="col-auto text-center">
-                                                    <a href="#" data-toggle="modal" data-target="#deleteModal{{ SendHistory.id }}">
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ SendHistory.id }}">
                                                         {{ 'mailmagazine.history.btn_delete'|trans }}
                                                     </a>
-                                                    <div id="deleteModal{{ SendHistory.id }}" class="modal" data-keyboard="false" data-backdrop="static">
+                                                    <div id="deleteModal{{ SendHistory.id }}" class="modal" data-bs-keyboard="false" data-bs-backdrop="static">
                                                         <div class="modal-dialog" role="document">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h4 class="modal-title">{{ 'mailmagazine.history.modal_del_message'|trans }}</h4>
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-ec-regular" data-dismiss="modal">
+                                                                    <button type="button" class="btn btn-ec-regular" data-bs-dismiss="modal">
                                                                         {{ 'common.cancel'|trans }}
                                                                     </button>
                                                                     <button type="submit" class="btn btn-ec-delete" onclick="document.form1.action = '{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'">
