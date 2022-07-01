@@ -125,7 +125,7 @@
                     <div class="col-6">
                         <div class="row align-items-center justify-content-end">
                             <div class="col-auto">
-                                <a class="btn btn-primary btn-block btn-lg active" role="button" data-toggle="modal" data-target="#testSendModal">
+                                <a class="btn btn-primary btn-block btn-lg active" role="button" data-bs-toggle="modal" data-bs-target="#testSendModal">
                                     {{ 'mailmagazine.confirm.btn_send_test'|trans }}
                                 </a>
                             </div>
@@ -140,7 +140,7 @@
             </div>
         </div>
     </form>
-    <div id="testSendModal" class="modal" data-keyboard="false" data-backdrop="static">
+    <div id="testSendModal" class="modal" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -166,7 +166,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" id="sendTestMail">{{ 'mailmagazine.confirm.modal.btn_send'|trans }}</button>
-                    <button class="btn btn-default" data-dismiss="modal">{{ 'mailmagazine.confirm.modal.btn_cancel'|trans }}</button>
+                    <button class="btn btn-default" data-bs-dismiss="modal">{{ 'mailmagazine.confirm.modal.btn_cancel'|trans }}</button>
                 </div>
             </div>
         </div>
