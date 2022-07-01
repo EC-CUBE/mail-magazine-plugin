@@ -26,11 +26,9 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-8">
-                                <div class="d-inline-block" data-toggle="tooltip" data-placement="top" title="Tooltip">
-                                    <span class="card-title">
-                                        {{ 'テンプレート編集'|trans }}
-                                    </span>
-                                </div>
+                                <span class="card-title">
+                                    {{ 'テンプレート編集'|trans }}
+                                </span>
                             </div>
                             <div class="col-4 text-right">
                             </div>
@@ -39,10 +37,7 @@
                     <div class="card-body mb-lg-5">
                         <div class="row">
                             <div class="col-3">
-                                <div class="d-inline-block" data-toggle="tooltip" data-placement="top" title="Tooltip">
-                                    <span>{{ form.subject.vars.label|trans }}</span>
-                                    <i class="fa fa-question-circle fa-lg ml-1"></i>
-                                </div>
+                                <span>{{ form.subject.vars.label|trans }}</span>
                             </div>
                             <div class="col mb-2">
                                 {{ form_widget(form.subject) }}
@@ -51,10 +46,7 @@
                         </div>
                         <div class="row">
                             <div class="col-3">
-                                <div class="d-inline-block" data-toggle="tooltip" data-placement="top" title="Tooltip">
-                                    <span>{{ form.body.vars.label|trans }}</span>
-                                    <i class="fa fa-question-circle fa-lg ml-1"></i>
-                                </div>
+                                <span>{{ form.body.vars.label|trans }}</span>
                             </div>
                             <div class="col mb-2">
                                 {{ form_widget(form.body, {'attr' : { 'rows' : 20 }}) }}
@@ -63,10 +55,7 @@
                         </div>
                         <div class="row">
                             <div class="col-3">
-                                <div class="d-inline-block" data-toggle="tooltip" data-placement="top" title="Tooltip">
-                                    <span>{{ form.htmlBody.vars.label|trans }}</span>
-                                    <i class="fa fa-question-circle fa-lg ml-1"></i>
-                                </div>
+                                <span>{{ form.htmlBody.vars.label|trans }}</span>
                             </div>
                             <div class="col mb-2">
                                 {{ form_widget(form.htmlBody, {'attr' : { 'rows' : 20 }}) }}
