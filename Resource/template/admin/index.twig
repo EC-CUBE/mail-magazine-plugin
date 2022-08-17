@@ -115,11 +115,11 @@ function fnChangeActionSubmit(action) {
             <div class="row justify-content-start">
                 <div class="col-6">
                     <div class="mb-2">
-                        <label class="col-form-label">{{ 'admin.customer.multi_search_label'|trans }}</label>
+                        <label class="col-form-label">>{{ 'admin.customer.multi_search_label'|trans }}</label>
                         {{ form_widget(searchForm.multi) }}
                         {{ form_errors(searchForm.multi) }}
                     </div>
-                    <div class="d-inline-block mb-3 collapsed" data-bs-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail"><a><i class="fa font-weight-bold mr-1 fa-plus-square-o"></i><span class="font-weight-bold">{{ 'admin.common.search_detail'|trans }}</span></a></div>
+                    <div class="d-inline-block mb-3 collapsed" data-bs-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail"><a><i class="fa fw-bold mr-1 fa-plus-square-o"></i><span class="fw-bold">{{ 'admin.common.search_detail'|trans }}</span></a></div>
                 </div>
             </div>
         </div>
@@ -312,7 +312,7 @@ function fnChangeActionSubmit(action) {
     <div class="c-outsideBlock__contents mb-5">
         <button type="submit" class="btn btn-ec-conversion px-5">{{ 'admin.common.search'|trans }}</button>
         {% if pagination %}
-            <span class="font-weight-bold ml-2">{{ 'admin.common.search_result'|trans({'%count%':pagination.totalItemCount}) }}</span>
+            <span class="fw-bold ml-2">{{ 'admin.common.search_result'|trans({'%count%':pagination.totalItemCount}) }}</span>
         {% endif %}
     </div>
     <div class="c-outsideBlock__contents mb-5">
@@ -325,10 +325,10 @@ function fnChangeActionSubmit(action) {
                     <div class="row justify-content-between mb-2">
                         <div class="col-6"></div>
 
-                        <div class="col-5 text-right">
+                        <div class="col-5 text-end">
                             {#Dropdown page count#}
-                            <div class="d-inline-block mr-2">
-                                <select class="custom-select" onchange="location = this.value;">
+                            <div class="d-inline-block mr-2 align-bottom">
+                                <select class="form-select" onchange="location = this.value;">
                                     {% for pageMax in pageMaxis %}
                                         <option {% if pageMax.name == page_count %} selected {% endif %}
                                                 value="{{ path('plugin_mail_magazine_page', {'page_no': 1, 'page_count': pageMax.name }) }}">
