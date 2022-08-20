@@ -117,7 +117,7 @@ $(function () {
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_send_complete'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_send_fail'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.mailmagazine.history.th_unsend'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2 text-center pr-3">&nbsp;</th>
+                                        <th class="border-top-0 pe-2 pb-2 text-center pe-3">&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -134,7 +134,7 @@ $(function () {
                                         <td>{{ SendHistory.complete_count }}</td>
                                         <td>{{ SendHistory.error_count }}</td>
                                         <td>{{ SendHistory.send_count - SendHistory.complete_count }}</td>
-                                        <td class="icon_edit align-middle pr-3 text-center">
+                                        <td class="icon_edit align-middle pe-3 text-center">
                                             <div class="row justify-content-end">
                                                 <div class="col-auto text-center">
                                                     <a href="{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}" >
@@ -217,7 +217,7 @@ $(function () {
                 <div id="send-status-message"></div>
             </div>
             <div class="modal-footer" style="display: none;">
-                <button type="button" class="btn btn-default" data-bs-dismiss="modal">{{ 'mailmagazine.confirm.modal.btn_cancel'|trans }}</button>
+                <button type="button" class="btn btn-ec-sub" data-bs-dismiss="modal">{{ 'mailmagazine.confirm.modal.btn_cancel'|trans }}</button>
             </div>
         </div>
     </div>
