@@ -126,7 +126,7 @@ function fnChangeActionSubmit(action) {
         <div class="c-subContents ec-collapse collapse{{ has_errors ? ' show' }}" id="searchDetail">
             <div class="row mb-2">
                 <div class="col">
-                    <div class="form-row">
+                    <div class="row">
                         <div class="col-12">
                             <p class="col-form-label">{{ 'admin.customer.customer_status'|trans }}</p>
                             {{ form_widget(searchForm.customer_status, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
@@ -144,7 +144,7 @@ function fnChangeActionSubmit(action) {
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <div class="form-row">
+                    <div class="row">
                         <div class="col-12">
                             <p class="col-form-label">{{ 'admin.common.gender'|trans }}</p>
                             {{ form_widget(searchForm.sex, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
@@ -154,8 +154,8 @@ function fnChangeActionSubmit(action) {
                 </div>
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.order.purchase_price'|trans }}</label>
-                        <div class="form-row align-items-center">
+                        <label class="col-form-label">{{ 'admin.order.purchase_price'|trans }}</label>
+                        <div class="row align-items-center">
                             <div class="col">
                                 {{ form_widget(searchForm.buy_total_start) }}
                                 {{ form_errors(searchForm.buy_total_start) }}
@@ -172,7 +172,7 @@ function fnChangeActionSubmit(action) {
             <div class="row mb-2">
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.customer.birth_month'|trans }}</label>
+                        <label class="col-form-label">{{ 'admin.customer.birth_month'|trans }}</label>
                         <div class="row">
                             <div class="col-5">
                                 {{ form_widget(searchForm.birth_month) }}
@@ -184,8 +184,8 @@ function fnChangeActionSubmit(action) {
                 </div>
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.order.purchase_count'|trans }}</label>
-                        <div class="form-row align-items-center">
+                        <label class="col-form-label">{{ 'admin.order.purchase_count'|trans }}</label>
+                        <div class="row align-items-center">
                             <div class="col">
                                 {{ form_widget(searchForm.buy_times_start) }}
                                 {{ form_errors(searchForm.buy_times_start) }}
@@ -202,8 +202,8 @@ function fnChangeActionSubmit(action) {
             <div class="row mb-2">
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.common.birth_day'|trans }}</label>
-                        <div class="form-row align-items-center">
+                        <label class="col-form-label">{{ 'admin.common.birth_day'|trans }}</label>
+                        <div class="row align-items-center">
                             <div class="col">
                                 {{ form_widget(searchForm.birth_start) }}
                                 {{ form_errors(searchForm.birth_start) }}
@@ -218,8 +218,8 @@ function fnChangeActionSubmit(action) {
                 </div>
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.common.create_date'|trans }}</label>
-                        <div class="form-row align-items-center">
+                        <label class="col-form-label">{{ 'admin.common.create_date'|trans }}</label>
+                        <div class="row align-items-center">
                             <div class="col">
                                 {{ form_widget(searchForm.create_date_start) }}
                                 {{ form_errors(searchForm.create_date_start) }}
@@ -236,7 +236,7 @@ function fnChangeActionSubmit(action) {
             <div class="row mb-2">
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.common.pref'|trans }}</label>
+                        <label class="col-form-label">{{ 'admin.common.pref'|trans }}</label>
                         <div class="row">
                             <div class="col-5">
                                 {{ form_widget(searchForm.pref) }}
@@ -248,8 +248,8 @@ function fnChangeActionSubmit(action) {
                 </div>
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.common.update_date'|trans }}</label>
-                        <div class="form-row align-items-center">
+                        <label class="col-form-label">{{ 'admin.common.update_date'|trans }}</label>
+                        <div class="row align-items-center">
                             <div class="col">
                                 {{ form_widget(searchForm.update_date_start) }}
                                 {{ form_errors(searchForm.update_date_start) }}
@@ -266,15 +266,15 @@ function fnChangeActionSubmit(action) {
             <div class="row mb-2">
                 <div class="col">
                     <div class="mb-3">
-                        <label>{{ 'admin.common.phone_number'|trans }}</label>
+                        <label class="col-form-label">{{ 'admin.common.phone_number'|trans }}</label>
                         {{ form_widget(searchForm.phone_number) }}
                         {{ form_errors(searchForm.phone_number) }}
                     </div>
                 </div>
                 <div class="col">
                     <div>
-                        <label>{{ 'admin.order.last_buy_date'|trans }}</label>
-                        <div class="form-row align-items-center">
+                        <label class="col-form-label">{{ 'admin.order.last_buy_date'|trans }}</label>
+                        <div class="row align-items-center">
                             <div class="col">
                                 {{ form_widget(searchForm.last_buy_start) }}
                                 {{ form_errors(searchForm.last_buy_start) }}
@@ -299,7 +299,7 @@ function fnChangeActionSubmit(action) {
                     {% else %}
                         <div class="col">
                             <div class="mb-3">
-                                <label>{{ f.vars.label|trans }}</label>
+                                <label class="col-form-label">{{ f.vars.label|trans }}</label>
                                 {{ form_widget(f) }}
                                 {{ form_errors(f) }}
                             </div>
