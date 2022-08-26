@@ -37,7 +37,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $tel = explode('-', $faker->phoneNumber);
 
         $email = $faker->safeEmail;
-        $password = $faker->lexify('????????');
+        $password = 'password1234';
         $birth = $faker->dateTimeBetween;
 
         $form = [
