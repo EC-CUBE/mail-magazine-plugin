@@ -100,7 +100,7 @@
                                     </tr>
                                     <tr>
                                         <th>{{ 'mailmagazine.select.label_body_html'|trans }}</th>
-                                        <td><pre>{{ htmlBody_itm|raw }}</pre></td>
+                                        <td><pre>{{ htmlBody_itm|raw|purify }}</pre></td>
                                     </tr>
                                 </tbody>
                             </table>
