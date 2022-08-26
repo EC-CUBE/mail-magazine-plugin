@@ -32,7 +32,7 @@
                             </tr>
                             <tr>
                                 <th class="w-25">{{ 'mailmagazine.select.label_body_html'|trans }}</th>
-                                <td><pre>{{ Template.htmlBody|raw }}</pre></td>
+                                <td><pre>{{ Template.htmlBody|raw|purify }}</pre></td>
                             </tr>
                             </tbody>
                         </table>
