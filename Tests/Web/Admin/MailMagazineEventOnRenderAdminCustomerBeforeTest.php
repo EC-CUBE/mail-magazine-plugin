@@ -37,7 +37,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $tel = $faker->phoneNumber;
 
         $email = $faker->safeEmail;
-        $password = $faker->lexify('????????');
+        $password = 'password1234';
         $birth = $faker->dateTimeBetween;
 
         $form = [
