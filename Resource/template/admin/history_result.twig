@@ -27,17 +27,17 @@
                                         {{ 'mailmagazine.history.result.number_record'|trans }} <strong>{{ pagination.totalItemCount }}</strong>
                                     </span>
                                 </div>
-                                <div class="col-4 text-right">
+                                <div class="col-4 text-end">
                                 </div>
                             </div>
                         </div>
                         <div class="row justify-content-between mb-2">
                             <div class="col-6"></div>
 
-                            <div class="col-5 text-right">
+                            <div class="col-5 text-end">
                                 {#Dropdown page count#}
                                 <div class="d-inline-block mr-2">
-                                    <select class="custom-select" onchange="location = this.value;">
+                                    <select class="form-select" onchange="location = this.value;">
                                         {% for pageMax in pageMaxis %}
                                             <option {% if pageMax.name == page_count %} selected {% endif %}
                                                     value="{{ path('plugin_mail_magazine_history_result_page', {'id': historyId, 'page_no': 1, 'page_count': pageMax.name }) }}">
@@ -63,7 +63,7 @@
                                 <tbody>
                                 {% for result in pagination %}
                                     <tr>
-                                        <td class="align-middle text-left">
+                                        <td class="align-middle text-start">
                                             {% if result.status == '0' %}
                                                 <span class="badge badge-ec-blue">
                                                     {{ 'mailmagazine.history.result.status_unsend'|trans }}
@@ -80,9 +80,9 @@
                                                 {{ result.status }}
                                             {% endif %}
                                         </td>
-                                        <td class="align-middle text-left">{{ result.customerId }}</td>
-                                        <td class="align-middle text-left">{{ result.email }}</td>
-                                        <td class="align-middle text-left">{{ result.name }}</td>
+                                        <td class="align-middle text-start">{{ result.customerId }}</td>
+                                        <td class="align-middle text-start">{{ result.email }}</td>
+                                        <td class="align-middle text-start">{{ result.name }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
