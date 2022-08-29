@@ -368,13 +368,13 @@ function fnChangeActionSubmit(action) {
                                     {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine_page' } %}
                                 {% endif %}
                             </div>
-                            <div class="row justify-content-md-center mb-4 ">
-                                <div class="col-auto">
-                                    <button class="btn btn-ec-regular btn-lg" onclick="fnChangeActionSubmit('{{ url('plugin_mail_magazine_select') }}'); return false;">
-                                        {{ 'mailmagazine.index.btn_select_template'|trans }}
-                                    </button>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-md-center mb-4 ">
+                        <div class="col-auto">
+                            <button class="btn btn-ec-regular ps-4 pe-4" onclick="fnChangeActionSubmit('{{ url('plugin_mail_magazine_select') }}'); return false;">
+                                {{ 'mailmagazine.index.btn_select_template'|trans }}
+                            </button>
                         </div>
                     </div>
                 {% elseif has_errors %}
