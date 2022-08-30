@@ -15,11 +15,6 @@
 {% block sub_title %}{{ 'mailmagazine.title'|trans }}{% endblock %}
 
 {% block javascript %}
-    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
-    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.widget.min.js', 'admin') }}"></script>
-    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js', 'admin') }}"></script>
-    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js', 'admin') }}"></script>
-
 <script>
 function fnDelete(action) {
     if (confirm('この履歴を削除してもよろしいですか？')) {

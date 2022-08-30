@@ -20,15 +20,7 @@
 
 {% form_theme searchForm '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
-{% block stylesheet %}
-<link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css', 'admin') }}">
-{% endblock stylesheet %}
-
 {% block javascript %}
-<script src="{{ asset('assets/js/vendor/moment.min.js', 'admin') }}"></script>
-<script src="{{ asset('assets/js/vendor/moment-ja.js', 'admin') }}"></script>
-<script src="{{ asset('assets/js/vendor/bootstrap-datetimepicker.min.js', 'admin') }}"></script>
-
 <script>
 $(function() {
 
