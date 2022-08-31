@@ -25,15 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 {%- block _admin_customer_mailmaga_flg_row -%}
     <div class="row mb-2">
         <div class="col-3">
-            <span>{{- form.vars.label|trans -}}</span>
+            <span>{{- form.vars.label|trans -}}</span><span class="badge bg-primary ms-1">{{ 'admin.common.required'|trans }}</span>
         </div>
         <div class="col">
-            <div id="admin_customer_mailmaga_flg">
-                <div class="form-check">
-                    {{- form_widget(form) -}}
-                    {{- form_errors(form) -}}
-                </div>
-            </div>
+            {{- form_widget(form) -}}
+            {{- form_errors(form) -}}
         </div>
     </div>
 {%- endblock _admin_customer_mailmaga_flg_row -%}
