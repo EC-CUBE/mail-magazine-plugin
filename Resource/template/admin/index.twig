@@ -115,11 +115,11 @@ function fnChangeActionSubmit(action) {
             <div class="row justify-content-start">
                 <div class="col-6">
                     <div class="mb-2">
-                        <label class="col-form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'tooltip.order.multi_search_label'|trans }}">>{{ 'admin.customer.multi_search_label'|trans }}<i class="fa fa-question-circle fa-lg ml-1"></i></label>
+                        <label class="col-form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'tooltip.order.multi_search_label'|trans }}">{{ 'admin.customer.multi_search_label'|trans }}<i class="fa fa-question-circle fa-lg ms-1"></i></label>
                         {{ form_widget(searchForm.multi) }}
                         {{ form_errors(searchForm.multi) }}
                     </div>
-                    <div class="d-inline-block mb-3 collapsed" data-bs-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail"><a><i class="fa fw-bold mr-1 fa-plus-square-o"></i><span class="fw-bold">{{ 'admin.common.search_detail'|trans }}</span></a></div>
+                    <div class="d-inline-block mb-3 collapsed" data-bs-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail"><a><i class="fa fw-bold me-1 fa-plus-square-o"></i><span class="fw-bold">{{ 'admin.common.search_detail'|trans }}</span></a></div>
                 </div>
             </div>
         </div>
@@ -312,7 +312,7 @@ function fnChangeActionSubmit(action) {
     <div class="c-outsideBlock__contents mb-5">
         <button type="submit" class="btn btn-ec-conversion px-5">{{ 'admin.common.search'|trans }}</button>
         {% if pagination %}
-            <span class="fw-bold ml-2">{{ 'admin.common.search_result'|trans({'%count%':pagination.totalItemCount}) }}</span>
+            <span class="fw-bold ms-2">{{ 'admin.common.search_result'|trans({'%count%':pagination.totalItemCount}) }}</span>
         {% endif %}
     </div>
     <div class="c-outsideBlock__contents mb-5">
