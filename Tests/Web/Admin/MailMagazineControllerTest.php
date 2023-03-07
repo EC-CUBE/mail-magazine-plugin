@@ -222,4 +222,22 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $sexCheckbox = $crawler->filter('#mail_magazine_sex_1:checked')->count();
         $this->assertEquals(1, $sexCheckbox);
     }
+
+    /**
+     * testExport
+     */
+    public function testExport()
+    {
+        for ($i = 0; $i < 10; $i++) {
+            $this->createMailMagazineCustomer('user-'.$i.'@example.com');
+        }
+
+        $this->expectOutputRegex('/user-[0-9]@example.com/');
+
+        $this->client->request(
+            'GET',
+            $this->generateUrl('plugin_mail_magazine_export'),
+            ['mail_magazine' => ['_token' => 'dummy']]
+        );
+    }
 }

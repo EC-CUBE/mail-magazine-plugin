@@ -21,10 +21,15 @@ use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine42\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine42\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Eccube\Entity\Master\CsvType;
+use Eccube\Event\EccubeEvents;
+use Eccube\Event\EventArgs;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\FormUtil;
 use Eccube\Repository\CustomerRepository;
+use Eccube\Service\CsvExportService;
 use Knp\Component\Pager\PaginatorInterface;
 use Plugin\MailMagazine42\Form\Type\MailMagazineType;
 use Doctrine\ORM\QueryBuilder;
@@ -58,23 +63,31 @@ class MailMagazineController extends AbstractController
     protected $mailMagazineService;
 
     /**
+     * @var CsvExportService
+     */
+    protected $csvExportService;
+
+    /**
      * MailMagazineController constructor.
      *
      * @param PageMaxRepository $pageMaxRepository
      * @param CustomerRepository $customerRepository
      * @param MailMagazineTemplateRepository $magazineTemplateRepository
      * @param MailMagazineService $mailMagazineService
+     * @param CsvExportService $csvExportService
      */
     public function __construct(
         PageMaxRepository $pageMaxRepository,
         CustomerRepository $customerRepository,
         MailMagazineTemplateRepository $magazineTemplateRepository,
-        MailMagazineService $mailMagazineService
+        MailMagazineService $mailMagazineService,
+        CsvExportService $csvExportService
     ) {
         $this->pageMaxRepository = $pageMaxRepository;
         $this->customerRepository = $customerRepository;
         $this->mailMagazineTemplateRepository = $magazineTemplateRepository;
         $this->mailMagazineService = $mailMagazineService;
+        $this->csvExportService = $csvExportService;
     }
 
     /**
@@ -376,5 +389,87 @@ class MailMagazineController extends AbstractController
         log_info('テストメール配信処理完了');
 
         return $this->json(['status' => true]);
+    }
+
+    /**
+     * メルマガ配信先CSVの出力.
+     *
+     * @Route("/%eccube_admin_route%/plugin/mail_magazine/export", name="plugin_mail_magazine_export", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return StreamedResponse
+     */
+    public function export(Request $request)
+    {
+        // タイムアウトを無効にする.
+        set_time_limit(0);
+
+        // sql loggerを無効にする.
+        $em = $this->entityManager;
+        $em->getConfiguration()->setSQLLogger(null);
+
+        $response = new StreamedResponse();
+        $response->setCallback(function () use ($request) {
+            // CSV種別を元に初期化.
+            $this->csvExportService->initCsvType(CsvType::CSV_TYPE_CUSTOMER);
+
+            // 会員データ検索用のクエリビルダを取得.
+            $session = $request->getSession();
+            $searchForm = $this->formFactory
+                ->createBuilder(MailMagazineType::class)
+                ->getForm();
+            $viewData = $session->get('mailmagazine.search', []);
+            $searchData = FormUtil::submitAndGetData($searchForm, $viewData);
+            $searchData['plg_mailmagazine_flg'] = Constant::ENABLED;
+            $qb = $this->customerRepository
+                ->getQueryBuilderBySearchData($searchData);
+
+            // ヘッダ行の出力.
+            $this->csvExportService->exportHeader();
+
+            // データ行の出力.
+            $this->csvExportService->setExportQueryBuilder($qb);
+            $this->csvExportService->exportData(function ($entity, $csvService) use ($request) {
+                $Csvs = $csvService->getCsvs();
+
+                /** @var $Customer \Eccube\Entity\Customer */
+                $Customer = $entity;
+
+                $ExportCsvRow = new \Eccube\Entity\ExportCsvRow();
+
+                // CSV出力項目と合致するデータを取得.
+                foreach ($Csvs as $Csv) {
+                    // 会員データを検索.
+                    $ExportCsvRow->setData($csvService->getData($Csv, $Customer));
+
+                    $event = new EventArgs(
+                        [
+                            'csvService' => $csvService,
+                            'Csv' => $Csv,
+                            'Customer' => $Customer,
+                            'ExportCsvRow' => $ExportCsvRow,
+                        ],
+                        $request
+                    );
+                    $this->eventDispatcher->dispatch($event, EccubeEvents::ADMIN_CUSTOMER_CSV_EXPORT);
+
+                    $ExportCsvRow->pushData();
+                }
+
+                // $row[] = number_format(memory_get_usage(true));
+                // 出力.
+                $csvService->fputcsv($ExportCsvRow->getRow());
+            });
+        });
+
+        $now = new \DateTime();
+        $filename = 'mail_magazine_'.$now->format('YmdHis').'.csv';
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', 'attachment; filename='.$filename);
+
+        log_info('メルマガ配信先CSVファイル名', [$filename]);
+
+        return $response;
     }
 }
