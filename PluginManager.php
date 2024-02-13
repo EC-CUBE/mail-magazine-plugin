@@ -14,7 +14,7 @@
 namespace Plugin\MailMagazine42;
 
 use Eccube\Plugin\AbstractPluginManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class PluginManager extends AbstractPluginManager
