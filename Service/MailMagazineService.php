@@ -84,27 +84,27 @@ class MailMagazineService
      *
      * @var string
      */
-    private $lastSendMailHtmlBody = '';
+    private string $lastSendMailHtmlBody = '';
 
     /**
      * @var string
      */
-    private $mailMagazineDir;
+    private mixed $mailMagazineDir;
 
     /**
      * @var BaseInfo
      */
-    public $BaseInfo;
+    public BaseInfo $BaseInfo;
 
     /**
      * @var EccubeConfig
      */
-    protected $eccubeConfig;
+    protected EccubeConfig $eccubeConfig;
 
     /**
      * @var MailerInterface
      */
-    protected $mailer;
+    protected MailerInterface $mailer;
 
     /**
      * @var Session
@@ -114,17 +114,17 @@ class MailMagazineService
     /**
      * @var CustomerRepository
      */
-    protected $customerRepository;
+    protected CustomerRepository $customerRepository;
 
     /**
      * @var MailMagazineSendHistoryRepository
      */
-    protected $mailMagazineSendHistoryRepository;
+    protected MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository;
 
     /**
      * @var EntityManagerInterface
      */
-    protected $entityManager;
+    protected EntityManagerInterface $entityManager;
 
     /**
      * MailMagazineService constructor.
