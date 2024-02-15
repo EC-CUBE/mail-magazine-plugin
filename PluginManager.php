@@ -13,6 +13,7 @@
 
 namespace Plugin\MailMagazine42;
 
+use Eccube\Common\EccubeConfig;
 use Eccube\Plugin\AbstractPluginManager;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -23,6 +24,7 @@ class PluginManager extends AbstractPluginManager
     public function uninstall(array $meta, ContainerInterface $container)
     {
         $file = new Filesystem();
-        $file->remove($container->getParameter('mail_magazine_dir'));
+
+        $file->remove($container->get(EccubeConfig::class)->get('mail_magazine_dir'));
     }
 }
