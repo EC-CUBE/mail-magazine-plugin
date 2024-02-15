@@ -87,7 +87,7 @@ class MailMagazineService
     /**
      * @var string
      */
-    private mixed $mailMagazineDir;
+    private string $mailMagazineDir;
 
     /**
      * @var BaseInfo
