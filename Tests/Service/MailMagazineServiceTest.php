@@ -14,6 +14,7 @@
 namespace Plugin\MailMagazine42\Tests\Service;
 
 use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine42\Service\MailMagazineService;
 use Plugin\MailMagazine42\Tests\AbstractMailMagazineTestCase;
 
 class MailMagazineServiceTest extends AbstractMailMagazineTestCase
@@ -32,7 +33,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
     {
         $this->markTestSkipped('Skipped due to still not assign mock Swift_Mailler to service container');
         parent::setUp();
-        $this->mailMagazineService = self::$container->get(MailMagazineService::class);
+        $this->mailMagazineService = self::getContainer()->get(MailMagazineService::class);
         $this->client->enableProfiler();
 //        $this->mailer = $this->getMockBuilder('\Swift_Mailer')->disableOriginalConstructor()->getMock();
         $this->sentAddresses = [];
@@ -40,7 +41,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 
     public function testGetHistoryFileName()
     {
-        $dir = self::$container->getParameter('kernel.project_dir').'/app/mail_magazine/';
+        $dir = self::getContainer()->getParameter('kernel.project_dir').'/app/mail_magazine/';
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1));
         self::assertEquals($dir.'mail_magazine_in_2.txt', $this->mailMagazineService->getHistoryFileName(2));
         self::assertEquals($dir.'mail_magazine_in_1.txt', $this->mailMagazineService->getHistoryFileName(1, true));

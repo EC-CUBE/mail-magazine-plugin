@@ -33,7 +33,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         if (!file_exists($this->rootDir)) {
             mkdir($this->rootDir);
         }
-        self::$container->get(MailMagazineService::class)->setMailMagazineDir($this->rootDir);
+        self::getContainer()->get(MailMagazineService::class)->setMailMagazineDir($this->rootDir);
     }
 
     public function tearDown(): void
@@ -154,7 +154,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->addSubscriber(new PaginationSubscriber);
         $eventDispatcher->addSubscriber(new SortableSubscriber);
-        $eventDispatcher->addSubscriber(self::$container->get(MailMagazineHistoryFilePaginationSubscriber::class));
+        $eventDispatcher->addSubscriber(self::getContainer()->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
         $paginator = new Paginator($eventDispatcher);
 
