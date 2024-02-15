@@ -22,7 +22,7 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
     /**
      * @var MailMagazineService
      */
-    protected $mailMagazineService;
+    protected MailMagazineService $mailMagazineService;
 
     /**
      * MailMagazineHistoryFilePaginationSubscriber constructor.
