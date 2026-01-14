@@ -22,6 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber;
 use Knp\Component\Pager\Event\Subscriber\Sortable\SortableSubscriber;
+use Knp\Component\Pager\ArgumentAccess\ArgumentAccess;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
 {
@@ -157,8 +158,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         $eventDispatcher->addSubscriber(new SortableSubscriber);
         $eventDispatcher->addSubscriber(self::getContainer()->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
-        $paginator = new Paginator($eventDispatcher, new RequestStack());
-
+        $paginator = new Paginator($eventDispatcher, new ArgumentAccess(), new RequestStack());
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }
 
