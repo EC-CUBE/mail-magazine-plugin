@@ -1,5 +1,5 @@
 parameters:
-    mail_magazine_dir: '%kernel.project_dir%/app/mail_magazine'
+    mail_magazine_dir: '%kernel.project_dir%/app/PluginData/mail_magazine'
 
 services:
     Plugin\MailMagazine42\Entity\AdminCustomerQueryCustomizer:
