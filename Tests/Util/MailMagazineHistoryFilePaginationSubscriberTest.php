@@ -19,6 +19,7 @@ use Plugin\MailMagazine42\Tests\AbstractMailMagazineTestCase;
 use Plugin\MailMagazine42\Service\MailMagazineService;
 use Plugin\MailMagazine42\Event\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber;
 use Knp\Component\Pager\Event\Subscriber\Sortable\SortableSubscriber;
 
@@ -156,7 +157,16 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         $eventDispatcher->addSubscriber(new SortableSubscriber);
         $eventDispatcher->addSubscriber(self::getContainer()->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
-        $paginator = new Paginator($eventDispatcher);
+        if (class_exists(\Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess::class)) {
+            // ECCUBE 4.3 (knplabs/knp-components v5.2) 対応
+            $requestStack = new RequestStack();
+            $accessor = new \Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess($requestStack);
+            $paginator = new Paginator($eventDispatcher, $accessor);
+        } else {
+            // ECCUBE 4.2 (knplabs/knp-components v3.6) 対応
+            $paginator = new Paginator($eventDispatcher);
+        }
+
 
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }
