@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ ubuntu-18.04 ]
+        operating-system: [ ubuntu-22.04 ]
         php: [ '7.1', '7.2', '7.3', '7.4' ]
         db: [ mysql, pgsql ]
         eccube_version: [ '4.0.6-p1', '4.1' ]
@@ -73,7 +73,6 @@ jobs:
           - 1080:1080
           - 1025:1025
     steps:
-    - run: sudo apt-get purge -y hhvm
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -94,28 +93,66 @@ jobs:
         ref: ${{ matrix.eccube_version }}
         path: 'ec-cube'
 
+    - name: Install Composer v1
+      if: matrix.composer == 'v1'
+      run: |
+        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+        php composer-setup.php --1 --install-dir=/usr/local/bin --filename=composer
+        php -r "unlink('composer-setup.php');"
+        sudo chmod +x /usr/local/bin/composer
+        composer --version
+
+    - name: Pin Composer to 2.2 LTS (v2)
+      if: matrix.composer == 'v2'
+      run: |
+        sudo composer self-update --2.2
+        composer --version
+
     - name: Get Composer Cache Directory
       id: composer-cache
       run: |
         echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-composer-
 
-    - if: matrix.composer == 'v1'
-      run: sudo composer selfupdate --1
+    - name: Patch composer.json for Composer v1
+      if: matrix.composer == 'v1'
+      working-directory: 'ec-cube'
+      run: |
+        php -r '
+          $f="composer.json";
+          $j=json_decode(file_get_contents($f), true);
+          unset($j["require-dev"]);
+          if (!isset($j["repositories"])) { $j["repositories"] = []; }
+          $j["repositories"]["packagist.org"] = false;
+          $j["repositories"]["eccube/plugin-installer"] = [
+            "type" => "vcs",
+            "url" => "https://github.com/EC-CUBE/eccube-plugin-installer",
+            "no-api" => true
+          ];
+          file_put_contents($f, json_encode($j, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES).PHP_EOL);
+        '
 
-    - name: Install to composer
+    - name: Install to composer (v1)
+      if: matrix.composer == 'v1'
+      working-directory: 'ec-cube'
+      run: composer install --no-interaction -o --apcu-autoloader --no-scripts --no-plugins
+
+    - name: Install to composer (v2)
+      if: matrix.composer == 'v2'
       working-directory: 'ec-cube'
       run: composer install --no-interaction -o --apcu-autoloader
 
     - if: matrix.composer == 'v1'
       working-directory: 'ec-cube'
-      run: composer require kiy0taka/eccube4-test-fixer "dev-main@dev"
+      run: |
+        mkdir -p vendor/kiy0taka
+        git clone --depth 1 https://github.com/kiy0taka/eccube4-test-fixer vendor/kiy0taka/eccube4-test-fixer
 
     - name: Setup EC-CUBE
       env:
