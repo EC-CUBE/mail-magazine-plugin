@@ -57,14 +57,14 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         return $MailTemplate;
     }
 
-    protected function createMailMagazineCustomer()
+    protected function createMailMagazineCustomer($email = null)
     {
         $fake = $this->getFaker();
         $current_date = new \DateTime();
 
         $Sex = $this->sexRepository->find(1);
 
-        $Customer = $this->createCustomer();
+        $Customer = $this->createCustomer($email);
         $Customer
             ->setSex($Sex)
             ->setBirth($current_date->modify('-20 years'))
