@@ -5,136 +5,70 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Entity;
+namespace Plugin\MailMagazine44\Entity;
 
-use Eccube\Entity\AbstractEntity;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Member;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 
-/**
- * SendHistory
- * Plugin MailMagazine.
- *
- * @ORM\Table(name="plg_mailmaga_send_history")
- * @ORM\Entity(repositoryClass="Plugin\MailMagazine42\Repository\MailMagazineSendHistoryRepository")
- */
+#[ORM\Table(name: 'plg_mailmaga_send_history')]
+#[ORM\Entity(repositoryClass: MailMagazineSendHistoryRepository::class)]
 class MailMagazineSendHistory extends AbstractEntity
 {
-    /**
-     * @ORM\Column(name="send_id", type="integer", options={"unsigned": true})
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     *
-     * @var int
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'send_id', type: Types::INTEGER, options: ['unsigned' => true])]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(name="mail_method", type="smallint", nullable=true, options={"unsigned": false})
-     *
-     * @var int
-     */
-    private $mail_method;
+    #[ORM\Column(name: 'mail_method', type: Types::SMALLINT, nullable: true, options: ['unsigned' => false])]
+    private ?int $mail_method = null;
 
-    /**
-     * @ORM\Column(name="subject", type="string", nullable=true, length=255)
-     *
-     * @var string
-     */
-    private $subject;
+    #[ORM\Column(name: 'subject', type: Types::STRING, length: 255, nullable: true)]
+    private ?string $subject = null;
 
-    /**
-     * @ORM\Column(name="body", type="text", nullable=true)
-     *
-     * @var string
-     */
-    private $body;
+    #[ORM\Column(name: 'body', type: Types::TEXT, nullable: true)]
+    private ?string $body = null;
 
-    /**
-     * @ORM\Column(name="html_body", type="text", nullable=true)
-     *
-     * @var string
-     */
-    private $html_body;
+    #[ORM\Column(name: 'html_body', type: Types::TEXT, nullable: true)]
+    private ?string $html_body = null;
 
-    /**
-     * @ORM\Column(name="send_count", type="integer", nullable=true, options={"unsigned": true})
-     *
-     * @var int
-     */
-    private $send_count;
+    #[ORM\Column(name: 'send_count', type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
+    private ?int $send_count = null;
 
-    /**
-     * @ORM\Column(name="complete_count", type="integer", nullable=true, options={"unsigned": true, "default": 0})
-     *
-     * @var int
-     */
-    private $complete_count;
+    #[ORM\Column(name: 'complete_count', type: Types::INTEGER, nullable: true, options: ['unsigned' => true, 'default' => 0])]
+    private ?int $complete_count = null;
 
-    /**
-     * @ORM\Column(name="error_count", type="integer", nullable=true, options={"unsigned": true, "default": 0})
-     *
-     * @var int
-     */
-    private $error_count;
+    #[ORM\Column(name: 'error_count', type: Types::INTEGER, nullable: true, options: ['unsigned' => true, 'default' => 0])]
+    private ?int $error_count = null;
 
-    /**
-     * @ORM\Column(name="start_date", type="datetimetz", nullable=true)
-     *
-     * @var \DateTime|null
-     */
-    private $start_date;
+    #[ORM\Column(name: 'start_date', type: Types::DATETIMETZ_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $start_date = null;
 
-    /**
-     * @ORM\Column(name="end_date", type="datetimetz", nullable=true)
-     *
-     * @var \DateTime|null
-     */
-    private $end_date;
+    #[ORM\Column(name: 'end_date', type: Types::DATETIMETZ_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $end_date = null;
 
-    /**
-     * @ORM\Column(name="search_data", type="text", nullable=true)
-     *
-     * @var string
-     */
-    private $search_data;
+    #[ORM\Column(name: 'search_data', type: Types::TEXT, nullable: true)]
+    private ?string $search_data = null;
 
-    /**
-     * @ORM\Column(name="create_date", type="datetimetz")
-     *
-     * @var \DateTime
-     */
-    private $create_date;
+    #[ORM\Column(name: 'create_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $create_date = null;
 
-    /**
-     * @ORM\Column(name="update_date", type="datetimetz")
-     *
-     * @var \DateTime
-     */
-    private $update_date;
+    #[ORM\Column(name: 'update_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $update_date = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Member")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator_id", referencedColumnName="id")
-     * })
-     *
-     * @var \Eccube\Entity\Member
-     */
-    private $Creator;
+    #[ORM\ManyToOne(targetEntity: Member::class)]
+    #[ORM\JoinColumn(name: 'creator_id', referencedColumnName: 'id')]
+    private ?Member $Creator = null;
 
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -146,7 +80,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setMailMethod($mailMethod)
+    public function setMailMethod(?int $mailMethod): self
     {
         $this->mail_method = $mailMethod;
 
@@ -158,7 +92,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return int
      */
-    public function getMailMethod()
+    public function getMailMethod(): ?int
     {
         return $this->mail_method;
     }
@@ -170,7 +104,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setSubject($subject)
+    public function setSubject(?string $subject): self
     {
         $this->subject = $subject;
 
@@ -182,7 +116,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return string
      */
-    public function getSubject()
+    public function getSubject(): ?string
     {
         return $this->subject;
     }
@@ -194,7 +128,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setBody($body)
+    public function setBody(?string $body): self
     {
         $this->body = $body;
 
@@ -206,7 +140,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return string
      */
-    public function getBody()
+    public function getBody(): ?string
     {
         return $this->body;
     }
@@ -214,7 +148,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * @return string
      */
-    public function getHtmlBody()
+    public function getHtmlBody(): ?string
     {
         return $this->html_body;
     }
@@ -224,7 +158,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setHtmlBody($html_body)
+    public function setHtmlBody(?string $html_body): self
     {
         $this->html_body = $html_body;
 
@@ -238,7 +172,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setSendCount($sendCount)
+    public function setSendCount(?int $sendCount): self
     {
         $this->send_count = $sendCount;
 
@@ -250,7 +184,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return int
      */
-    public function getSendCount()
+    public function getSendCount(): ?int
     {
         return $this->send_count;
     }
@@ -262,7 +196,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setCompleteCount($completeCount)
+    public function setCompleteCount(?int $completeCount): self
     {
         $this->complete_count = $completeCount;
 
@@ -274,7 +208,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return int
      */
-    public function getCompleteCount()
+    public function getCompleteCount(): ?int
     {
         return $this->complete_count;
     }
@@ -282,7 +216,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * @return int
      */
-    public function getErrorCount()
+    public function getErrorCount(): ?int
     {
         return $this->error_count;
     }
@@ -292,7 +226,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setErrorCount($errorCount)
+    public function setErrorCount(?int $errorCount): self
     {
         $this->error_count = $errorCount;
 
@@ -306,7 +240,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setStartDate($startDate)
+    public function setStartDate(?\DateTimeInterface $startDate): self
     {
         $this->start_date = $startDate;
 
@@ -318,7 +252,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return \DateTime
      */
-    public function getStartDate()
+    public function getStartDate(): ?\DateTimeInterface
     {
         return $this->start_date;
     }
@@ -330,7 +264,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setEndDate($endDate)
+    public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->end_date = $endDate;
 
@@ -342,7 +276,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return \DateTime
      */
-    public function getEndDate()
+    public function getEndDate(): ?\DateTimeInterface
     {
         return $this->end_date;
     }
@@ -354,7 +288,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setSearchData($searchData)
+    public function setSearchData(?string $searchData): self
     {
         $this->search_data = $searchData;
 
@@ -366,7 +300,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return string
      */
-    public function getSearchData()
+    public function getSearchData(): ?string
     {
         return $this->search_data;
     }
@@ -378,7 +312,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setCreateDate($createDate)
+    public function setCreateDate(?\DateTimeInterface $createDate): self
     {
         $this->create_date = $createDate;
 
@@ -390,7 +324,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return \DateTime
      */
-    public function getCreateDate()
+    public function getCreateDate(): ?\DateTimeInterface
     {
         return $this->create_date;
     }
@@ -402,7 +336,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setUpdateDate($updateDate)
+    public function setUpdateDate(?\DateTimeInterface $updateDate): self
     {
         $this->update_date = $updateDate;
 
@@ -414,7 +348,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return \DateTime
      */
-    public function getUpdateDate()
+    public function getUpdateDate(): ?\DateTimeInterface
     {
         return $this->update_date;
     }
@@ -426,7 +360,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return MailMagazineSendHistory
      */
-    public function setCreator(Member $creator = null)
+    public function setCreator(?Member $creator = null): self
     {
         $this->Creator = $creator;
 
@@ -438,7 +372,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return \Eccube\Entity\Member
      */
-    public function getCreator()
+    public function getCreator(): ?Member
     {
         return $this->Creator;
     }
@@ -448,7 +382,7 @@ class MailMagazineSendHistory extends AbstractEntity
      *
      * @return bool 配信完了した場合はtrue
      */
-    public function isComplete()
+    public function isComplete(): bool
     {
         return $this->getCompleteCount() == $this->getSendCount();
     }

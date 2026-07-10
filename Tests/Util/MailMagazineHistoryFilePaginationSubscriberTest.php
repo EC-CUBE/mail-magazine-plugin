@@ -5,19 +5,19 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Test\Util;
+namespace Plugin\MailMagazine44\Test\Util;
 
 use Knp\Component\Pager\Pagination\AbstractPagination;
 use Knp\Component\Pager\Paginator;
-use Plugin\MailMagazine42\Tests\AbstractMailMagazineTestCase;
-use Plugin\MailMagazine42\Service\MailMagazineService;
-use Plugin\MailMagazine42\Event\MailMagazineHistoryFilePaginationSubscriber;
+use Plugin\MailMagazine44\Tests\AbstractMailMagazineTestCase;
+use Plugin\MailMagazine44\Service\MailMagazineService;
+use Plugin\MailMagazine44\Event\MailMagazineHistoryFilePaginationSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber;

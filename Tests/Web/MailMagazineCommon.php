@@ -5,21 +5,21 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Tests\Web;
+namespace Plugin\MailMagazine44\Tests\Web;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\MailHistory;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Master\Sex;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine42\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
 use Eccube\Repository\Master\SexRepository;
 use Eccube\Repository\MailHistoryRepository;
 

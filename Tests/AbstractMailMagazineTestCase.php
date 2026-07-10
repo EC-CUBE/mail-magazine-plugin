@@ -5,18 +5,18 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Tests;
+namespace Plugin\MailMagazine44\Tests;
 
 use Eccube\Tests\Service\AbstractServiceTestCase;
-use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine42\Service\MailMagazineService;
-use Plugin\MailMagazine42\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Service\MailMagazineService;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 use Eccube\Entity\Customer;
 
 abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
@@ -58,7 +58,7 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
         $c->setMailmagaFlg(1);
 
         $this->entityManager->persist($c);
-        $this->entityManager->flush($c);
+        $this->entityManager->flush();
 
         return $c;
     }

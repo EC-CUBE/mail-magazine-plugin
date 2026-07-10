@@ -5,22 +5,26 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Controller;
+namespace Plugin\MailMagazine44\Controller;
 
 use Eccube\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
+use Symfony\Component\Routing\Attribute\Route;
 use Knp\Component\Pager\PaginatorInterface;
-use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine42\Repository\MailMagazineSendHistoryRepository;
-use Plugin\MailMagazine42\Service\MailMagazineService;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine44\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Entity\Master\Sex;
@@ -62,20 +66,12 @@ class MailMagazineHistoryController extends AbstractController
     /**
      * 配信履歴一覧.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history", name="plugin_mail_magazine_history")
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{page_no}",
-     *     requirements={"page_no" = "\d+"},
-     *     name="plugin_mail_magazine_history_page"
-     * )
-     * @Template("@MailMagazine42/admin/history_list.twig")
-     *
-     * @param Request $request
-     * @param PaginatorInterface $paginator
-     * @param int $page_no
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function index(Request $request, PaginatorInterface $paginator, $page_no = 1)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history', name: 'plugin_mail_magazine_history')]
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/{page_no}', name: 'plugin_mail_magazine_history_page', requirements: ['page_no' => '\d+'])]
+    #[Template('@MailMagazine44/admin/history_list.twig')]
+    public function index(Request $request, PaginatorInterface $paginator, int $page_no = 1): array
     {
         $pageNo = $page_no;
         $pageMaxis = $this->pageMaxRepository->findAll();
@@ -96,7 +92,7 @@ class MailMagazineHistoryController extends AbstractController
             ->createBuilder()
             ->getForm();
         $searchForm->handleRequest($request);
-        $searchData = $searchForm->getData();
+        $searchData = $searchForm->getData() ?? [];
 
         $qb = $this->mailMagazineSendHistoryRepository->getQueryBuilderBySearchData($searchData);
 
@@ -112,17 +108,11 @@ class MailMagazineHistoryController extends AbstractController
     /**
      * プレビュー
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/preview",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_history_preview"
-     * )
-     * @Template("@MailMagazine42/admin/history_preview.twig")
-     *
-     * @param MailMagazineSendHistory $mailMagazineSendHistory
-     *
-     * @return array
+     * @return array<string, MailMagazineSendHistory>
      */
-    public function preview(MailMagazineSendHistory $mailMagazineSendHistory)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/{id}/preview', name: 'plugin_mail_magazine_history_preview', requirements: ['id' => '\d+'])]
+    #[Template('@MailMagazine44/admin/history_preview.twig')]
+    public function preview(#[MapEntity(id: 'id')] MailMagazineSendHistory $mailMagazineSendHistory): array
     {
         // 配信履歴を取得する
         return [
@@ -133,23 +123,23 @@ class MailMagazineHistoryController extends AbstractController
     /**
      * 配信条件を表示する.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/condition",
-     *      requirements={"id":"\d+"},
-     *      name="plugin_mail_magazine_history_condition",
-     * )
-     * @Template("@MailMagazine42/admin/history_condition.twig")
-     *
-     * @param MailMagazineSendHistory $mailMagazineSendHistory
-     *
-     * @throws BadRequestHttpException
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|array
+     * @return array<string, mixed>
      */
-    public function condition(MailMagazineSendHistory $mailMagazineSendHistory)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/{id}/condition', name: 'plugin_mail_magazine_history_condition', requirements: ['id' => '\d+'])]
+    #[Template('@MailMagazine44/admin/history_condition.twig')]
+    public function condition(#[MapEntity(id: 'id')] MailMagazineSendHistory $mailMagazineSendHistory): array
     {
         // 検索条件をアンシリアライズする
         // base64,serializeされているので注意すること
-        $searchData = unserialize(base64_decode($mailMagazineSendHistory->getSearchData()));
+        $encodedSearchData = $mailMagazineSendHistory->getSearchData();
+        $decodedSearchData = null !== $encodedSearchData ? base64_decode($encodedSearchData, true) : false;
+        if (false === $decodedSearchData) {
+            throw new BadRequestHttpException('Invalid search data.');
+        }
+        $searchData = unserialize($decodedSearchData);
+        if (!is_array($searchData)) {
+            throw new BadRequestHttpException('Invalid search data.');
+        }
 
         // 区分値を文字列に変更する
         // 必要な項目のみ
@@ -167,14 +157,14 @@ class MailMagazineHistoryController extends AbstractController
      *
      * @return array
      */
-    protected function searchDataToDisplayData($searchData)
+    protected function searchDataToDisplayData(array $searchData): array
     {
         $data = $searchData;
 
         // 会員種別
         $val = [];
         if (isset($searchData['customer_status']) && is_array($searchData['customer_status'])) {
-            array_map(function ($CustomerStatus) use (&$val) {
+            array_map(function ($CustomerStatus) use (&$val): void {
                 /* @var \Eccube\Entity\Master\CustomerStatus $CustomerStatus */
                 $val[] = $CustomerStatus->getName();
             }, $searchData['customer_status']);
@@ -184,7 +174,7 @@ class MailMagazineHistoryController extends AbstractController
         // 性別
         $val = [];
         if (isset($searchData['sex']) && is_array($searchData['sex'])) {
-            array_map(function ($Sex) use (&$val) {
+            array_map(function (Sex $Sex) use (&$val): void {
                 /* @var Sex $Sex */
                 $val[] = $Sex->getName();
             }, $searchData['sex']);
@@ -195,22 +185,10 @@ class MailMagazineHistoryController extends AbstractController
     }
 
     /**
-     * 配信履歴を論理削除する
-     * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
-     *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/delete",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_history_delete",
-     *     methods={"POST"}
-     * )
-     *
-     * @param MailMagazineSendHistory $mailMagazineSendHistory
-     *
-     * @throws BadRequestHttpException
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * 配信履歴を論理削除する.
      */
-    public function delete(MailMagazineSendHistory $mailMagazineSendHistory)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/{id}/delete', name: 'plugin_mail_magazine_history_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(#[MapEntity(id: 'id')] MailMagazineSendHistory $mailMagazineSendHistory): RedirectResponse
     {
         try {
             $this->isTokenValid();
@@ -229,19 +207,8 @@ class MailMagazineHistoryController extends AbstractController
         return $this->redirect($this->generateUrl('plugin_mail_magazine_history'));
     }
 
-    /**
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/{id}/retry",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_history_retry",
-     *     methods={"POST"}
-     * )
-     *
-     * @param Request $request
-     * @param MailMagazineSendHistory $mailMagazineSendHistory
-     *
-     * @return mixed
-     */
-    public function retry(Request $request, MailMagazineSendHistory $mailMagazineSendHistory)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/{id}/retry', name: 'plugin_mail_magazine_history_retry', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function retry(Request $request, #[MapEntity(id: 'id')] MailMagazineSendHistory $mailMagazineSendHistory): JsonResponse
     {
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
@@ -265,29 +232,16 @@ class MailMagazineHistoryController extends AbstractController
     }
 
     /**
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_history_result"
-     * )
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}/{page_no}",
-     *     requirements={"id":"\d+", "page_no" = "\d+"},
-     *     name="plugin_mail_magazine_history_result_page"
-     * )
-     * @Template("@MailMagazine42/admin/history_result.twig")
-     *
-     * @param Request $request
-     * @param MailMagazineSendHistory $mailMagazineSendHistory
-     * @param PaginatorInterface $paginator
-     * @param int $page_no
-     *
-     * @return mixed
+     * @return array<string, mixed>
      */
-    public function result(Request $request, MailMagazineSendHistory $mailMagazineSendHistory, PaginatorInterface $paginator, $page_no = 1)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}', name: 'plugin_mail_magazine_history_result', requirements: ['id' => '\d+'])]
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}/{page_no}', name: 'plugin_mail_magazine_history_result_page', requirements: ['id' => '\d+', 'page_no' => '\d+'])]
+    #[Template('@MailMagazine44/admin/history_result.twig')]
+    public function result(Request $request, #[MapEntity(id: 'id')] MailMagazineSendHistory $mailMagazineSendHistory, PaginatorInterface $paginator, int $page_no = 1): array
     {
         $resultFile = $this->mailMagazineService->getHistoryFileName($mailMagazineSendHistory->getId(), false);
         $pageMaxis = $this->pageMaxRepository->findAll();
-        $pageCount = $request->get('page_count');
-        $pageCount = $pageCount ? $pageCount : $this->eccubeConfig['eccube_default_page_count'];
+        $pageCount = (int) ($request->get('page_count') ?: $this->eccubeConfig['eccube_default_page_count']);
 
         $pagination = $paginator->paginate($resultFile,
             $page_no,

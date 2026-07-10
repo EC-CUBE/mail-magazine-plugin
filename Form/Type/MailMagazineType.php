@@ -5,7 +5,7 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,7 @@
  * [メルマガ配信]-[配信内容設定]用Form
  */
 
-namespace Plugin\MailMagazine42\Form\Type;
+namespace Plugin\MailMagazine44\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,7 +29,7 @@ class MailMagazineType extends SearchCustomerType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -62,18 +62,10 @@ class MailMagazineType extends SearchCustomerType
 
     /**
      * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'mail_magazine';
-    }
-
-    /**
-     * {@inheritdoc}
      *
      * @return string
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'mail_magazine';
     }

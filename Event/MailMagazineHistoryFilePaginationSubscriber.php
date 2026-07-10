@@ -5,17 +5,17 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Event;
+namespace Plugin\MailMagazine44\Event;
 
 use Knp\Component\Pager\Event\ItemsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Plugin\MailMagazine42\Service\MailMagazineService;
+use Plugin\MailMagazine44\Service\MailMagazineService;
 
 class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInterface
 {
@@ -34,7 +34,7 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
         $this->mailMagazineService = $mailMagazineService;
     }
 
-    public function items(ItemsEvent $event)
+    public function items(ItemsEvent $event): void
     {
         $mailMagazineDir = $this->mailMagazineService->getMailMagazineDir();
         if (!is_string($event->target) || strpos($event->target, $mailMagazineDir) !== 0) {
@@ -52,11 +52,17 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
 
         $skip = $event->getOffset();
         $fp = fopen($file, 'r');
+        if (false === $fp) {
+            $event->count = 0;
+            $event->items = [];
+
+            return;
+        }
         $count = $event->getLimit();
         $total = 0;
 
         $event->items = [];
-        while ($line = fgets($fp)) {
+        while (false !== ($line = fgets($fp))) {
             $total++;
             if ($skip-- > 0) {
                 continue;
@@ -72,10 +78,11 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
             }
             --$count;
         }
+        fclose($fp);
         $event->count = $total;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'knp_pager.items' => ['items', 1],

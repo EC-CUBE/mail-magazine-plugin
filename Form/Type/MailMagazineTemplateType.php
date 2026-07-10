@@ -5,7 +5,7 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,9 +15,11 @@
  * メルマガテンプレート選択コンボボックス用に作成
  */
 
-namespace Plugin\MailMagazine42\Form\Type;
+namespace Plugin\MailMagazine44\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -27,17 +29,17 @@ class MailMagazineTemplateType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'class' => 'Plugin\MailMagazine42\Entity\MailMagazineTemplate',
-            'property' => 'subject',
+            'class' => MailMagazineTemplate::class,
+            'choice_label' => 'subject',
             'label' => false,
             'multiple' => false,
             'expanded' => false,
             'required' => false,
-            'empty_value' => '-',
-            'query_builder' => function (EntityRepository $er) {
+            'placeholder' => '-',
+            'query_builder' => function (EntityRepository $er): QueryBuilder {
                 return $er->createQueryBuilder('mt')
                     ->orderBy('mt.id', 'ASC');
             },
@@ -47,7 +49,7 @@ class MailMagazineTemplateType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
         return 'mail_magazine_template';
     }
@@ -55,7 +57,7 @@ class MailMagazineTemplateType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): string
     {
         return EntityType::class;
     }

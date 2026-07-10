@@ -5,13 +5,13 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Entity;
+namespace Plugin\MailMagazine44\Entity;
 
 use Eccube\Doctrine\Query\WhereClause;
 use Eccube\Doctrine\Query\WhereCustomizer;
@@ -27,7 +27,7 @@ class AdminCustomerQueryCustomizer extends WhereCustomizer
      *
      * @return WhereClause[]
      */
-    protected function createStatements($params, $queryKey)
+    protected function createStatements(mixed $params, mixed $queryKey): array
     {
         if (!isset($params['plg_mailmagazine_flg'])) {
             return [];
@@ -43,7 +43,7 @@ class AdminCustomerQueryCustomizer extends WhereCustomizer
      *
      * @return string
      */
-    public function getQueryKey()
+    public function getQueryKey(): string
     {
         return QueryKey::CUSTOMER_SEARCH;
     }

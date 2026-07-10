@@ -2,5 +2,5 @@ parameters:
     mail_magazine_dir: '%kernel.project_dir%/app/PluginData/mail_magazine'
 
 services:
-    Plugin\MailMagazine42\Entity\AdminCustomerQueryCustomizer:
+    Plugin\MailMagazine44\Entity\AdminCustomerQueryCustomizer:
         tags: ['eccube.query_customizer']

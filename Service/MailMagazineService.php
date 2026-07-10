@@ -5,23 +5,22 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Service;
+namespace Plugin\MailMagazine44\Service;
 
 use Eccube\Common\Constant;
-use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Eccube\Repository\BaseInfoRepository;
 use Eccube\Entity\BaseInfo;
 use Eccube\Common\EccubeConfig;
 use Eccube\Repository\CustomerRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Plugin\MailMagazine42\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Mailer\MailerInterface;
@@ -59,13 +58,13 @@ class MailMagazineService
 
     // send_flagの定数
     /** メール未送信 */
-    const SEND_FLAG_NONE = 0;
+    public const SEND_FLAG_NONE = 0;
 
     /** メール送信成功 */
-    const SEND_FLAG_SUCCESS = 1;
+    public const SEND_FLAG_SUCCESS = 1;
 
     /** メール送信失敗 */
-    const SEND_FLAG_FAILURE = 2;
+    public const SEND_FLAG_FAILURE = 2;
 
     // ====================================
     // 変数宣言
@@ -75,7 +74,7 @@ class MailMagazineService
      *
      * @var string
      */
-    private $lastSendMailBody = '';
+    private string $lastSendMailBody = '';
 
     /**
      * 最後の送信者に送信したメールの本文(HTML形式).
@@ -147,8 +146,8 @@ class MailMagazineService
         $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
         $this->entityManager = $entityManager;
         $this->mailMagazineDir = $this->eccubeConfig['mail_magazine_dir'];
-        if (!file_exists($this->mailMagazineDir)) {
-            mkdir($this->mailMagazineDir);
+        if (!is_dir($this->mailMagazineDir) && !mkdir($this->mailMagazineDir, 0777, true) && !is_dir($this->mailMagazineDir)) {
+            throw new \RuntimeException(sprintf('Could not create mail magazine directory "%s".', $this->mailMagazineDir));
         }
     }
 
@@ -157,7 +156,7 @@ class MailMagazineService
      *
      * @return string
      */
-    public function getMailMagazineDir()
+    public function getMailMagazineDir(): string
     {
         return $this->mailMagazineDir;
     }
@@ -169,7 +168,7 @@ class MailMagazineService
      *
      * @return $this
      */
-    public function setMailMagazineDir($mailMagazineDir)
+    public function setMailMagazineDir(string $mailMagazineDir): self
     {
         $this->mailMagazineDir = $mailMagazineDir;
 
@@ -186,7 +185,7 @@ class MailMagazineService
      *
      * @return int
      */
-    public function sendMail($formData)
+    public function sendMail(array $formData): void
     {
         // メール送信
         $message = (new Email())
@@ -201,7 +200,7 @@ class MailMagazineService
             $message->html($formData['htmlBody'], 'text/html');
         }
 
-        return $this->mailer->send($message);
+        $this->mailer->send($message);
     }
 
     /**
@@ -214,7 +213,7 @@ class MailMagazineService
      * @return int 採番されたsend_id
      *             エラー時はfalseを返す
      */
-    public function createMailMagazineHistory($formData)
+    public function createMailMagazineHistory(array $formData): ?int
     {
         /* @var $qb QueryBuilder */
         $formData['plg_mailmagazine_flg'] = Constant::ENABLED;
@@ -267,9 +266,18 @@ class MailMagazineService
             $this->entityManager->flush();
 
             $sendId = $sendHistory->getId();
+            if (null === $sendId) {
+                throw new \RuntimeException('Mail magazine history ID was not generated.');
+            }
             $fp = fopen($this->getHistoryFileName($sendId), 'w');
+            if (false === $fp) {
+                throw new \RuntimeException('Could not open the mail magazine history file.');
+            }
             foreach ($customerList as $customer) {
-                fwrite($fp, self::SEND_FLAG_NONE.','.$customer->getId().','.$customer->getEmail().','.$customer->getName01().' '.$customer->getName02().PHP_EOL);
+                if (false === fwrite($fp, self::SEND_FLAG_NONE.','.$customer->getId().','.$customer->getEmail().','.$customer->getName01().' '.$customer->getName02().PHP_EOL)) {
+                    fclose($fp);
+                    throw new \RuntimeException('Could not write the mail magazine history file.');
+                }
             }
             fclose($fp);
         } catch (\Exception $e) {
@@ -298,19 +306,39 @@ class MailMagazineService
      * @param string|$fileHistory 履歴ファイル
      * @param string|$fileResult 結果ファイル
      */
-    private function mergeHistoryFile($fileHistory, $fileResult)
+    private function mergeHistoryFile(string $fileHistory, string $fileResult): void
     {
         // 結果ファイルのバイト数
         $resultBytes = filesize($fileResult);
+        if (false === $resultBytes) {
+            throw new \RuntimeException('Could not read the mail magazine result file size.');
+        }
 
         // 結果ファイルのバイト数分、履歴ファイルを読み飛ばす
         $fin = fopen($fileHistory, 'r');
-        fseek($fin, $resultBytes);
+        $fout = fopen($fileResult, 'a');
+        if (false === $fin || false === $fout) {
+            if (is_resource($fin)) {
+                fclose($fin);
+            }
+            if (is_resource($fout)) {
+                fclose($fout);
+            }
+            throw new \RuntimeException('Could not open mail magazine files.');
+        }
+        if (0 !== fseek($fin, $resultBytes)) {
+            fclose($fin);
+            fclose($fout);
+            throw new \RuntimeException('Could not seek the mail magazine history file.');
+        }
 
         // 残りの履歴ファイルの内容を結果ファイルに追記する
-        $fout = fopen($fileResult, 'a');
-        while ($line = fgets($fin)) {
-            fwrite($fout, $line);
+        while (false !== ($line = fgets($fin))) {
+            if (false === fwrite($fout, $line)) {
+                fclose($fin);
+                fclose($fout);
+                throw new \RuntimeException('Could not write the mail magazine result file.');
+            }
         }
 
         fclose($fin);
@@ -322,7 +350,7 @@ class MailMagazineService
      *
      * @param $sendId
      */
-    public function markRetry($sendId)
+    public function markRetry(int $sendId): void
     {
         // 再送時の前処理
         $fileHistory = $this->getHistoryFileName($sendId);
@@ -351,7 +379,7 @@ class MailMagazineService
      *
      * @return bool|MailMagazineSendHistory
      */
-    public function sendrMailMagazine($sendId, $offset = 0, $max = 100)
+    public function sendrMailMagazine(int $sendId, int $offset = 0, int $max = 100): MailMagazineSendHistory
     {
         // send_historyを取得する
         /** @var MailMagazineSendHistory $sendHistory */
@@ -359,7 +387,7 @@ class MailMagazineService
 
         if (is_null($sendHistory)) {
             // 削除されている場合は終了する
-            return false;
+            throw new \RuntimeException(sprintf('Mail magazine history %d was not found.', $sendId));
         }
 
         if ($offset == 0) {
@@ -373,13 +401,17 @@ class MailMagazineService
         $fileHistory = $this->getHistoryFileName($sendId);
         $fileResult = $this->getHistoryFileName($sendId, false);
         $handleHistory = fopen($fileHistory, 'r');
+        if (false === $handleHistory) {
+            throw new \RuntimeException('Could not open the mail magazine history file.');
+        }
 
         // スキップ数
         $skipCount = $offset;
         // 処理数
         $processCount = 0;
 
-        while ($line = str_replace(PHP_EOL, '', fgets($handleHistory))) {
+        while (false !== ($rawLine = fgets($handleHistory))) {
+            $line = rtrim($rawLine, "\r\n");
             if ($skipCount-- > 0) {
                 continue;
             }
@@ -392,7 +424,13 @@ class MailMagazineService
 
             if ($status == self::SEND_FLAG_SUCCESS) {
                 $handleResult = fopen($fileResult, 'a');
-                fwrite($handleResult, $line.PHP_EOL);
+                if (false === $handleResult || false === fwrite($handleResult, $line.PHP_EOL)) {
+                    if (is_resource($handleResult)) {
+                        fclose($handleResult);
+                    }
+                    fclose($handleHistory);
+                    throw new \RuntimeException('Could not write the mail magazine result file.');
+                }
                 fclose($handleResult);
                 ++$processCount;
                 continue;
@@ -420,13 +458,22 @@ class MailMagazineService
 
             // メール送信成功時
             $handleResult = fopen($fileResult, 'a');
+            if (false === $handleResult) {
+                fclose($handleHistory);
+                throw new \RuntimeException('Could not open the mail magazine result file.');
+            }
             if ($sendResult) {
-                fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$customerId.','.$email.','.$name.PHP_EOL);
+                $written = fwrite($handleResult, self::SEND_FLAG_SUCCESS.','.$customerId.','.$email.','.$name.PHP_EOL);
             }
             // メール送信失敗時
             else {
-                fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$customerId.','.$email.','.$name.PHP_EOL);
+                $written = fwrite($handleResult, self::SEND_FLAG_FAILURE.','.$customerId.','.$email.','.$name.PHP_EOL);
                 ++$errorCount;
+            }
+            if (false === $written) {
+                fclose($handleResult);
+                fclose($handleHistory);
+                throw new \RuntimeException('Could not write the mail magazine result file.');
             }
             fclose($handleResult);
 
@@ -438,7 +485,10 @@ class MailMagazineService
         if ($offset + $processCount >= $sendHistory->getSendCount()) {
             $errorCount = 0;
             $handleResult = fopen($fileResult, 'r');
-            while ($line = fgets($handleResult)) {
+            if (false === $handleResult) {
+                throw new \RuntimeException('Could not open the mail magazine result file.');
+            }
+            while (false !== ($line = fgets($handleResult))) {
                 if (substr($line, 0, 1) == self::SEND_FLAG_FAILURE) {
                     ++$errorCount;
                 }
@@ -462,7 +512,7 @@ class MailMagazineService
      *
      * @return number
      */
-    public function sendMailMagazineCompleateReportMail()
+    public function sendMailMagazineCompleateReportMail(): bool
     {
         $subject = date('Y年m月d日H時i分').'　下記メールの配信が完了しました。';
 
@@ -474,7 +524,9 @@ class MailMagazineService
         ];
 
         try {
-            return $this->sendMail($mailData);
+            $this->sendMail($mailData);
+
+            return true;
         } catch (\Exception $e) {
             log_error($e->getMessage());
 
@@ -482,7 +534,7 @@ class MailMagazineService
         }
     }
 
-    public function getAdminEmail()
+    public function getAdminEmail(): string
     {
         return $this->BaseInfo->getEmail03();
     }
@@ -495,7 +547,7 @@ class MailMagazineService
      *
      * @return string
      */
-    public function getHistoryFileName($historyId, $input = true)
+    public function getHistoryFileName(int $historyId, bool $input = true): string
     {
         return $this->mailMagazineDir.'/mail_magazine_'.($input ? 'in' : 'out').'_'.$historyId.'.txt';
     }
@@ -505,7 +557,7 @@ class MailMagazineService
      *
      * @param $historyId
      */
-    public function unlinkHistoryFiles($historyId)
+    public function unlinkHistoryFiles(int $historyId): void
     {
         foreach ([$this->getHistoryFileName($historyId), $this->getHistoryFileName($historyId, false)] as $f) {
             if (file_exists($f)) {
@@ -519,7 +571,7 @@ class MailMagazineService
      *
      * @param array|$mailData メールデータ
      */
-    public function sendTestMail($mailData)
+    public function sendTestMail(array $mailData): void
     {
         $this->replaceMailVars($mailData, $mailData['name']);
         $this->sendMail($mailData);
@@ -529,10 +581,11 @@ class MailMagazineService
      * @param array|$mailData メールデータ
      * @param string|$name 名前
      */
-    public function replaceMailVars(&$mailData, $name)
+    public function replaceMailVars(array &$mailData, string $name): void
     {
         foreach (['subject', 'body', 'htmlBody'] as $key) {
-            $mailData[$key] = preg_replace('/{name}/', $name, $mailData[$key]);
+            $value = (string) ($mailData[$key] ?? '');
+            $mailData[$key] = preg_replace('/{name}/', $name, $value) ?? $value;
         }
     }
 }

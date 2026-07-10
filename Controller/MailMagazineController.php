@@ -5,31 +5,33 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Controller;
+namespace Plugin\MailMagazine44\Controller;
 
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bridge\Twig\Attribute\Template;
+use Symfony\Component\Routing\Attribute\Route;
 use Eccube\Controller\AbstractController;
-use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine42\Entity\MailMagazineTemplate;
-use Plugin\MailMagazine42\Service\MailMagazineService;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine44\Service\MailMagazineService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\FormUtil;
 use Eccube\Repository\CustomerRepository;
 use Knp\Component\Pager\PaginatorInterface;
-use Plugin\MailMagazine42\Form\Type\MailMagazineType;
+use Plugin\MailMagazine44\Form\Type\MailMagazineType;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Common\Constant;
-use Plugin\MailMagazine42\Repository\MailMagazineTemplateRepository;
+use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -81,17 +83,12 @@ class MailMagazineController extends AbstractController
      * 配信内容設定検索画面を表示する.
      * 左ナビゲーションの選択はGETで遷移する.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine", name="plugin_mail_magazine")
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/{page_no}", requirements={"page_no" = "\d+"}, name="plugin_mail_magazine_page")
-     * @Template("@MailMagazine42/admin/index.twig")
-     *
-     * @param Request $request
-     * @param PaginatorInterface $paginator
-     * @param integer $page_no
-     *
-     * @return \Symfony\Component\HttpFoundation\Response|array
+     * @return Response|array<string, mixed>
      */
-    public function index(Request $request, PaginatorInterface $paginator, $page_no = null)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine', name: 'plugin_mail_magazine')]
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/{page_no}', name: 'plugin_mail_magazine_page', requirements: ['page_no' => '\d+'])]
+    #[Template('@MailMagazine44/admin/index.twig')]
+    public function index(Request $request, PaginatorInterface $paginator, ?int $page_no = null): Response|array
     {
         $session = $request->getSession();
         $pageNo = $page_no;
@@ -175,19 +172,11 @@ class MailMagazineController extends AbstractController
      * テンプレート選択
      * RequestがPOST以外の場合はBadRequestHttpExceptionを発生させる.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/select/{id}",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_select",
-     *     methods={"POST"}
-     * )
-     * @Template("@MailMagazine42/admin/template_select.twig")
-     *
-     * @param Request     $request
-     * @param string      $id
-     *
-     * @return \Symfony\Component\HttpFoundation\Response|array
+     * @return Response|array<string, mixed>
      */
-    public function select(Request $request, $id = null)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/select/{id}', name: 'plugin_mail_magazine_select', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Template('@MailMagazine44/admin/template_select.twig')]
+    public function select(Request $request, ?int $id = null): Response|array
     {
         /** @var MailMagazineTemplate $Template */
         $Template = null;
@@ -233,7 +222,7 @@ class MailMagazineController extends AbstractController
                 ->getForm();
             $form->handleRequest($request);
             if ($form->isValid()) {
-                return $this->render('@MailMagazine42/admin/confirm.twig', [
+                return $this->render('@MailMagazine44/admin/confirm.twig', [
                     'form' => $form->createView(),
                     'subject_itm' => $form['subject']->getData(),
                     'body_itm' => $form['body']->getData(),
@@ -262,14 +251,9 @@ class MailMagazineController extends AbstractController
     /**
      * 配信前処理
      * 配信履歴データを作成する.
-     *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/prepare", name="plugin_mail_magazine_prepare", methods={"POST"})
-     *
-     * @param Request     $request
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function prepare(Request $request)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/prepare', name: 'plugin_mail_magazine_prepare', methods: ['POST'])]
+    public function prepare(Request $request): RedirectResponse
     {
         log_info('メルマガ配信前処理開始');
 
@@ -309,14 +293,9 @@ class MailMagazineController extends AbstractController
      * 配信処理
      * 配信終了後配信履歴に遷移する
      * RequestがAjaxかつPOSTでなければBadRequestHttpExceptionを発生させる.
-     *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/commit", name="plugin_mail_magazine_commit", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function commit(Request $request)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/commit', name: 'plugin_mail_magazine_commit', methods: ['POST'])]
+    public function commit(Request $request): JsonResponse
     {
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest() || 'POST' !== $request->getMethod()) {
@@ -329,7 +308,7 @@ class MailMagazineController extends AbstractController
         // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
         // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
 
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
         $offset = (int) $request->get('offset', 0);
         $max = (int) $request->get('max', 100);
 
@@ -354,14 +333,9 @@ class MailMagazineController extends AbstractController
 
     /**
      * テストメール送信
-     *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/test", name="plugin_mail_magazine_test", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function sendTest(Request $request)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/test', name: 'plugin_mail_magazine_test', methods: ['POST'])]
+    public function sendTest(Request $request): JsonResponse
     {
         // Ajax/POSTでない場合は終了する
         if (!$request->isXmlHttpRequest()) {
