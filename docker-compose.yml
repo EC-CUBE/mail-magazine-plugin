@@ -20,7 +20,7 @@ services:
     ### PHP バージョンを変える場合は環境変数 TAG を指定します
     ## TAG=8.3-apache-4.4 docker compose up -d --wait
     ## 利用可能: 8.2-apache-4.4 / 8.3-apache-4.4 / 8.4-apache-4.4 / 8.5-apache-4.4
-    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-ec-cube/ec-cube-php}:${TAG:-8.2-apache-4.4}
+    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-ec-cube/ec-cube-php}:${TAG:-8.5-apache-4.4}
     pull_policy: missing
     ports:
       - 8080:80
