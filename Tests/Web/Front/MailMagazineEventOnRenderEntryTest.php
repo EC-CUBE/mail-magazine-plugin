@@ -65,7 +65,7 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
         return $form;
     }
 
-    public function testOnRenderEntry()
+    public function testOnRenderEntry(): void
     {
         $crawler = $this->client->request('GET',
             $this->generateUrl('entry')
@@ -75,7 +75,7 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
         $this->assertEquals(1, $crawler->filter('#entry_mailmaga_flg')->count());
     }
 
-    public function testOnRenderEntryPost()
+    public function testOnRenderEntryPost(): void
     {
         $formData = $this->createFormData();
         $updateFlg = Constant::ENABLED;
@@ -93,7 +93,7 @@ class MailMagazineEventOnRenderEntryTest extends AbstractWebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testOnRenderEntryPostComplete()
+    public function testOnRenderEntryPostComplete(): void
     {
         $formData = $this->createFormData();
         $updateFlg = Constant::ENABLED;

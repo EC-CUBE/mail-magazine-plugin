@@ -20,7 +20,7 @@ use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
 
 #[ORM\Table(name: 'plg_mailmaga_template')]
 #[ORM\Entity(repositoryClass: MailMagazineTemplateRepository::class)]
-class MailMagazineTemplate extends AbstractEntity
+class MailMagazineTemplate extends AbstractEntity implements \Stringable
 {
     public function __toString(): string
     {

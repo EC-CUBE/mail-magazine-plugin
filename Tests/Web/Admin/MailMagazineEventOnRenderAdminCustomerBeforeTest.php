@@ -73,7 +73,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         return $form;
     }
 
-    public function testOnRenderAdminCustomerBeforeEdit()
+    public function testOnRenderAdminCustomerBeforeEdit(): void
     {
         $Customer = $this->createMailMagazineCustomer();
 
@@ -84,7 +84,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testOnRenderAdminCustomerBeforeEditPost()
+    public function testOnRenderAdminCustomerBeforeEditPost(): void
     {
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;
@@ -105,7 +105,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->verify();
     }
 
-    public function testOnRenderAdminCustomerBeforeEditPostWithInvalidPostData()
+    public function testOnRenderAdminCustomerBeforeEditPostWithInvalidPostData(): void
     {
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;

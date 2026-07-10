@@ -20,24 +20,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var MailMagazineService
-     */
-    protected MailMagazineService $mailMagazineService;
-
-    /**
      * MailMagazineHistoryFilePaginationSubscriber constructor.
      *
      * @param MailMagazineService $mailMagazineService
      */
-    public function __construct(MailMagazineService $mailMagazineService)
+    public function __construct(protected MailMagazineService $mailMagazineService)
     {
-        $this->mailMagazineService = $mailMagazineService;
     }
 
     public function items(ItemsEvent $event): void
     {
         $mailMagazineDir = $this->mailMagazineService->getMailMagazineDir();
-        if (!is_string($event->target) || strpos($event->target, $mailMagazineDir) !== 0) {
+        if (!is_string($event->target) || !str_starts_with($event->target, $mailMagazineDir)) {
             return;
         }
 
@@ -68,7 +62,7 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
                 continue;
             }
             if ($count > 0) {
-                list($status, $customerId, $email, $name) = explode(',', str_replace(PHP_EOL, '', $line), 4);
+                [$status, $customerId, $email, $name] = explode(',', str_replace(PHP_EOL, '', $line), 4);
                 $event->items[] = [
                     'status' => $status,
                     'customerId' => $customerId,

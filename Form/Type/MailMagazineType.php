@@ -33,9 +33,7 @@ class MailMagazineType extends SearchCustomerType
     {
         parent::buildForm($builder, $options);
 
-        $constraints = isset($options['eccube_form_options']['constraints'])
-            ? $options['eccube_form_options']['constraints']
-            : true;
+        $constraints = $options['eccube_form_options']['constraints'] ?? true;
 
         // 以降テンプレート選択で使用する項目
         $builder->add('id', HiddenType::class)

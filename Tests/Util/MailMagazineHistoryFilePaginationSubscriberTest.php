@@ -48,7 +48,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         parent::tearDown();
     }
 
-    public function testファイルがないときは0件()
+    public function testファイルがないときは0件(): void
     {
         $file = $this->file();
         self::assertEquals(false, file_exists($file));
@@ -57,7 +57,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         self::assertEquals(0, $actual->getTotalItemCount());
     }
 
-    public function test1ページ目()
+    public function test1ページ目(): void
     {
         $file = $this->file();
         file_put_contents($file,
@@ -86,7 +86,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         );
     }
 
-    public function test2ページ目()
+    public function test2ページ目(): void
     {
         $file = $this->file();
         file_put_contents($file,
@@ -115,7 +115,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         );
     }
 
-    public function test最終ページ()
+    public function test最終ページ(): void
     {
         $file = $this->file();
         file_put_contents($file,

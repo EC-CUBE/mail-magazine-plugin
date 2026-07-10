@@ -78,7 +78,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         return $form;
     }
 
-    public function testOnRenderMypageChangeNotLogin()
+    public function testOnRenderMypageChangeNotLogin(): void
     {
         $this->client->request('GET',
             $this->generateUrl('mypage_change')
@@ -87,7 +87,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->assertFalse($this->client->getResponse()->isSuccessful());
     }
 
-    public function testOnRenderMypageChange()
+    public function testOnRenderMypageChange(): void
     {
         $Customer = $this->createCustomer();
         $this->loginTo($Customer);
@@ -100,7 +100,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->assertEquals(1, $crawler->filter('#entry_mailmaga_flg')->count());
     }
 
-    public function testOnRenderMypageChangePost()
+    public function testOnRenderMypageChangePost(): void
     {
         $Customer = $this->createCustomer();
         $this->loginTo($Customer);

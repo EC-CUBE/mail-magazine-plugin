@@ -164,7 +164,7 @@ jobs:
     runs-on: ubuntu-24.04
     # 静的解析は DB 種別に依存しないため、SQLite 1 構成で一度だけ実行する。
     # （php-cs-fixer / rector は DB 不要だが、phpstan は objectManagerLoader が
-    #   カーネルを起動し EccubeExtension が dtb_plugin を読むため本体+DBが必要）
+    #   カーネルを起動するため本体+DBが必要）
     env:
       PLUGIN_CODE: MailMagazine44
       APP_ENV: 'test'
@@ -210,7 +210,7 @@ jobs:
         run: |
           bin/console doctrine:database:create
           bin/console doctrine:schema:create
-          # プラグイン有効化時に DeviceType 等のマスタデータを参照するため fixtures を投入する
+          # プラグイン有効化時にマスタデータを参照するため fixtures を投入する
           bin/console eccube:fixtures:load
       - name: Setup Plugin
         working-directory: 'ec-cube'

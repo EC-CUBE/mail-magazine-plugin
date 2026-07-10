@@ -27,11 +27,6 @@ use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 class MailMagazineSendHistoryRepository extends AbstractRepository
 {
     /**
-     * @var Queries
-     */
-    protected Queries $queries;
-
-    /**
      * MailMagazineSendHistoryRepository constructor.
      *
      * @param Queries $queries
@@ -39,12 +34,11 @@ class MailMagazineSendHistoryRepository extends AbstractRepository
      * @param string $entityClass
      */
     public function __construct(
-        Queries $queries,
+        protected Queries $queries,
         ManagerRegistry $registry,
         string $entityClass = MailMagazineSendHistory::class,
     ) {
         parent::__construct($registry, $entityClass);
-        $this->queries = $queries;
     }
 
     /**

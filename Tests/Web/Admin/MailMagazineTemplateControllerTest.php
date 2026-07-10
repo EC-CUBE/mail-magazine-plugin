@@ -44,7 +44,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
     /**
      * Test routing.
      */
-    public function testRoutingMailMagazineTemplate()
+    public function testRoutingMailMagazineTemplate(): void
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_template')
@@ -52,7 +52,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testRegist()
+    public function testRegist(): void
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_template_regist')
@@ -60,7 +60,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testEdit()
+    public function testEdit(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -71,7 +71,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testEditIdIsNull()
+    public function testEditIdIsNull(): void
     {
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_template_edit', ['id' => null])
@@ -80,7 +80,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testEditIdIncorrect()
+    public function testEditIdIncorrect(): void
     {
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_template_edit', ['id' => 9999999])
@@ -89,7 +89,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testEditNotPost()
+    public function testEditNotPost(): void
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_template_edit', ['id' => null])
@@ -97,7 +97,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testCommitFormInvalid()
+    public function testCommitFormInvalid(): void
     {
         $form = $this->createFormData();
         unset($form['subject']);
@@ -109,7 +109,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue(true);
     }
 
-    public function testCommitEditIdIncorrect()
+    public function testCommitEditIdIncorrect(): void
     {
         $form = $this->createFormData();
 
@@ -120,7 +120,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_template')));
     }
 
-    public function testCommitEditIdIsZero()
+    public function testCommitEditIdIsZero(): void
     {
         $form = $this->createFormData();
 
@@ -131,7 +131,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_template')));
     }
 
-    public function testCommitRegist()
+    public function testCommitRegist(): void
     {
         $form = $this->createFormData();
 
@@ -147,7 +147,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->verify();
     }
 
-    public function testCommitEdit()
+    public function testCommitEdit(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -165,7 +165,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->verify();
     }
 
-    public function testPreview()
+    public function testPreview(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -176,7 +176,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testPreviewIdIsNull()
+    public function testPreviewIdIsNull(): void
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_template_preview', ['id' => null])
@@ -185,7 +185,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testPreviewIdIncorrect()
+    public function testPreviewIdIncorrect(): void
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_template_preview', ['id' => 9999999])
@@ -194,7 +194,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -205,7 +205,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_template')));
     }
 
-    public function testDeleteIdIsNull()
+    public function testDeleteIdIsNull(): void
     {
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_template_delete', ['id' => null])
@@ -214,7 +214,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testDeleteIdIncorrect()
+    public function testDeleteIdIncorrect(): void
     {
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_template_delete', ['id' => 9999999])
@@ -223,7 +223,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testDeleteIdIsZero()
+    public function testDeleteIdIsZero(): void
     {
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_template_delete', ['id' => 0])

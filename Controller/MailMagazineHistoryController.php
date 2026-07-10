@@ -56,6 +56,7 @@ class MailMagazineHistoryController extends AbstractController
         MailMagazineService $mailMagazineService,
         MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
         PageMaxRepository $pageMaxRepository,
+        private readonly PaginatorInterface $paginator,
     ) {
         $this->mailMagazineService = $mailMagazineService;
         $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
@@ -70,7 +71,7 @@ class MailMagazineHistoryController extends AbstractController
     #[Route('/%eccube_admin_route%/plugin/mail_magazine/history', name: 'plugin_mail_magazine_history')]
     #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/{page_no}', name: 'plugin_mail_magazine_history_page', requirements: ['page_no' => '\d+'])]
     #[Template('@MailMagazine44/admin/history_list.twig')]
-    public function index(Request $request, PaginatorInterface $paginator, int $page_no = 1): array
+    public function index(Request $request, int $page_no = 1): array
     {
         $pageNo = $page_no;
         $pageMaxis = $this->pageMaxRepository->findAll();
@@ -95,7 +96,7 @@ class MailMagazineHistoryController extends AbstractController
 
         $qb = $this->mailMagazineSendHistoryRepository->getQueryBuilderBySearchData($searchData);
 
-        $pagination = $paginator->paginate($qb, $pageNo, $pageCount);
+        $pagination = $this->paginator->paginate($qb, $pageNo, $pageCount);
 
         return [
             'pagination' => $pagination,
@@ -198,12 +199,12 @@ class MailMagazineHistoryController extends AbstractController
             $this->mailMagazineService->unlinkHistoryFiles($id);
 
             $this->addSuccess('admin.mailmagazine.history.delete.sucesss', 'admin');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addError('admin.mailmagazine.history.delete.failure', 'admin');
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $this->redirect($this->generateUrl('plugin_mail_magazine_history'));
+        return $this->redirectToRoute('plugin_mail_magazine_history');
     }
 
     #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/{id}/retry', name: 'plugin_mail_magazine_history_retry', requirements: ['id' => '\d+'], methods: ['POST'])]
@@ -236,13 +237,13 @@ class MailMagazineHistoryController extends AbstractController
     #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}', name: 'plugin_mail_magazine_history_result', requirements: ['id' => '\d+'])]
     #[Route('/%eccube_admin_route%/plugin/mail_magazine/history/result/{id}/{page_no}', name: 'plugin_mail_magazine_history_result_page', requirements: ['id' => '\d+', 'page_no' => '\d+'])]
     #[Template('@MailMagazine44/admin/history_result.twig')]
-    public function result(Request $request, #[MapEntity(id: 'id')] MailMagazineSendHistory $mailMagazineSendHistory, PaginatorInterface $paginator, int $page_no = 1): array
+    public function result(Request $request, #[MapEntity(id: 'id')] MailMagazineSendHistory $mailMagazineSendHistory, int $page_no = 1): array
     {
         $resultFile = $this->mailMagazineService->getHistoryFileName($mailMagazineSendHistory->getId(), false);
         $pageMaxis = $this->pageMaxRepository->findAll();
         $pageCount = (int) ($request->get('page_count') ?: $this->eccubeConfig['eccube_default_page_count']);
 
-        $pagination = $paginator->paginate($resultFile,
+        $pagination = $this->paginator->paginate($resultFile,
             $page_no,
             $pageCount
         );

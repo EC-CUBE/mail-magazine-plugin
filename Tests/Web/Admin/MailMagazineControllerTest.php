@@ -20,7 +20,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
     /**
      * Test routing.
      */
-    public function testRoutingMailMagazine()
+    public function testRoutingMailMagazine(): void
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine')
@@ -28,7 +28,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testMailMagazineSearchWithBirthmonthLowOctorber()
+    public function testMailMagazineSearchWithBirthmonthLowOctorber(): void
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
         // test search with birth month < 10
@@ -45,7 +45,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
-    public function testMailMagazineSearchWithBirthmonthHightOctorber()
+    public function testMailMagazineSearchWithBirthmonthHightOctorber(): void
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
         // test search with birth month > 10
@@ -63,7 +63,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
-    public function testMailMagazineSearchWithBirthmonthNull()
+    public function testMailMagazineSearchWithBirthmonthNull(): void
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
         $searchForm = $this->createSearchForm($MaiCustomer);
@@ -75,7 +75,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -92,7 +92,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testSelectNotPost()
+    public function testSelectNotPost(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
         $this->client->request(
@@ -108,7 +108,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertEquals(405, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testConfirmInValid()
+    public function testConfirmInValid(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -126,7 +126,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testConfirm()
+    public function testConfirm(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -145,7 +145,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testPrepare()
+    public function testPrepare(): void
     {
         //        $this->initializeMailCatcher();
         $MailTemplate = $this->createMagazineTemplate();
@@ -172,7 +172,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         //        $this->cleanUpMailCatcherMessages();
     }
 
-    public function testPagination()
+    public function testPagination(): void
     {
         for ($i = 0; $i < 30; ++$i) {
             $this->createMailMagazineCustomer();

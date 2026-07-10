@@ -15,6 +15,8 @@ namespace Plugin\MailMagazine44\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Common\Constant;
 use Eccube\Common\EccubeConfig;
@@ -94,31 +96,6 @@ class MailMagazineService
     public BaseInfo $BaseInfo;
 
     /**
-     * @var EccubeConfig
-     */
-    protected EccubeConfig $eccubeConfig;
-
-    /**
-     * @var MailerInterface
-     */
-    protected MailerInterface $mailer;
-
-    /**
-     * @var CustomerRepository
-     */
-    protected CustomerRepository $customerRepository;
-
-    /**
-     * @var MailMagazineSendHistoryRepository
-     */
-    protected MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected EntityManagerInterface $entityManager;
-
-    /**
      * MailMagazineService constructor.
      *
      * @param MailerInterface $mailer
@@ -128,23 +105,18 @@ class MailMagazineService
      * @param MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository
      * @param EntityManagerInterface $entityManager
      *
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function __construct(
-        MailerInterface $mailer,
+        protected MailerInterface $mailer,
         BaseInfoRepository $baseInfoRepository,
-        EccubeConfig $eccubeConfig,
-        CustomerRepository $customerRepository,
-        MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
-        EntityManagerInterface $entityManager,
+        protected EccubeConfig $eccubeConfig,
+        protected CustomerRepository $customerRepository,
+        protected MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
+        protected EntityManagerInterface $entityManager,
     ) {
-        $this->mailer = $mailer;
         $this->BaseInfo = $baseInfoRepository->get();
-        $this->eccubeConfig = $eccubeConfig;
-        $this->customerRepository = $customerRepository;
-        $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
-        $this->entityManager = $entityManager;
         $this->mailMagazineDir = $this->eccubeConfig['mail_magazine_dir'];
         if (!is_dir($this->mailMagazineDir) && !mkdir($this->mailMagazineDir, 0777, true) && !is_dir($this->mailMagazineDir)) {
             throw new \RuntimeException(sprintf('Could not create mail magazine directory "%s".', $this->mailMagazineDir));
@@ -420,7 +392,7 @@ class MailMagazineService
                 break;
             }
 
-            list($status, $customerId, $email, $name) = explode(',', $line, 4);
+            [$status, $customerId, $email, $name] = explode(',', $line, 4);
 
             if ($status == self::SEND_FLAG_SUCCESS) {
                 $handleResult = fopen($fileResult, 'a');

@@ -72,6 +72,7 @@ class MailMagazineController extends AbstractController
         CustomerRepository $customerRepository,
         MailMagazineTemplateRepository $magazineTemplateRepository,
         MailMagazineService $mailMagazineService,
+        private readonly PaginatorInterface $paginator,
     ) {
         $this->pageMaxRepository = $pageMaxRepository;
         $this->customerRepository = $customerRepository;
@@ -88,7 +89,7 @@ class MailMagazineController extends AbstractController
     #[Route('/%eccube_admin_route%/plugin/mail_magazine', name: 'plugin_mail_magazine')]
     #[Route('/%eccube_admin_route%/plugin/mail_magazine/{page_no}', name: 'plugin_mail_magazine_page', requirements: ['page_no' => '\d+'])]
     #[Template('@MailMagazine44/admin/index.twig')]
-    public function index(Request $request, PaginatorInterface $paginator, ?int $page_no = null): Response|array
+    public function index(Request $request, ?int $page_no = null): Response|array
     {
         $session = $request->getSession();
         $pageNo = $page_no;
@@ -128,7 +129,7 @@ class MailMagazineController extends AbstractController
                     'searchForm' => $searchForm->createView(),
                     'pagination' => [],
                     'pageMaxis' => $pageMaxis,
-                    'page_no' => $pageNo ? $pageNo : 1,
+                    'page_no' => $pageNo ?: 1,
                     'page_count' => $pageCount,
                     'has_errors' => true,
                 ];
@@ -153,7 +154,7 @@ class MailMagazineController extends AbstractController
         $searchData['plg_mailmagazine_flg'] = Constant::ENABLED;
         /** @var QueryBuilder $qb */
         $qb = $this->customerRepository->getQueryBuilderBySearchData($searchData);
-        $pagination = $paginator->paginate(
+        $pagination = $this->paginator->paginate(
             $qb,
             $pageNo,
             $pageCount
@@ -286,7 +287,7 @@ class MailMagazineController extends AbstractController
         log_info('メルマガ配信前処理完了', ['sendId' => $sendId]);
 
         // 配信履歴画面に遷移する
-        return $this->redirect($this->generateUrl('plugin_mail_magazine_history'));
+        return $this->redirectToRoute('plugin_mail_magazine_history');
     }
 
     /**

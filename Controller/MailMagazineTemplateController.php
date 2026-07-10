@@ -87,12 +87,12 @@ class MailMagazineTemplateController extends AbstractController
             $this->mailMagazineTemplateRepository->delete($mailMagazineTemplate);
             $this->entityManager->flush();
             $this->addSuccess('admin.mailmagazine.template.delete.complete', 'admin');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addError('admin.mailmagazine.template.delete.failure', 'admin');
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
+        return $this->redirectToRoute('plugin_mail_magazine_template');
     }
 
     /**
@@ -130,7 +130,7 @@ class MailMagazineTemplateController extends AbstractController
         if (is_null($Template)) {
             $this->addError('admin.mailmagazine.template.data.notfound', 'admin');
 
-            return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
+            return $this->redirectToRoute('plugin_mail_magazine_template');
         }
 
         // Formを取得
@@ -156,7 +156,7 @@ class MailMagazineTemplateController extends AbstractController
                 $this->entityManager->flush();
                 // 成功時のメッセージを登録する
                 $this->addSuccess('admin.mailmagazine.template.save.complete', 'admin');
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $this->addError('admin.mailmagazine.template.save.failure', 'admin');
 
                 return [
@@ -167,7 +167,7 @@ class MailMagazineTemplateController extends AbstractController
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
+        return $this->redirectToRoute('plugin_mail_magazine_template');
     }
 
     /**
