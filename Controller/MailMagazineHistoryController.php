@@ -14,20 +14,19 @@
 namespace Plugin\MailMagazine44\Controller;
 
 use Eccube\Controller\AbstractController;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Bridge\Twig\Attribute\Template;
-use Symfony\Component\Routing\Attribute\Route;
+use Eccube\Entity\Master\Sex;
+use Eccube\Repository\Master\PageMaxRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine44\Service\MailMagazineService;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Eccube\Repository\Master\PageMaxRepository;
-use Eccube\Entity\Master\Sex;
+use Symfony\Component\Routing\Attribute\Route;
 
 class MailMagazineHistoryController extends AbstractController
 {
@@ -56,7 +55,7 @@ class MailMagazineHistoryController extends AbstractController
     public function __construct(
         MailMagazineService $mailMagazineService,
         MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
-        PageMaxRepository $pageMaxRepository
+        PageMaxRepository $pageMaxRepository,
     ) {
         $this->mailMagazineService = $mailMagazineService;
         $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;

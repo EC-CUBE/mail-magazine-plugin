@@ -17,11 +17,11 @@ use Eccube\Common\Constant;
 use Eccube\Entity\MailHistory;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Master\Sex;
+use Eccube\Repository\MailHistoryRepository;
+use Eccube\Repository\Master\SexRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
-use Eccube\Repository\Master\SexRepository;
-use Eccube\Repository\MailHistoryRepository;
 
 class MailMagazineCommon extends AbstractAdminWebTestCase
 {

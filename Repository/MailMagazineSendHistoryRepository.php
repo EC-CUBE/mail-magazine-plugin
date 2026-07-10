@@ -13,11 +13,11 @@
 
 namespace Plugin\MailMagazine44\Repository;
 
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Eccube\Doctrine\Query\Queries;
 use Eccube\Repository\AbstractRepository;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
-use Eccube\Doctrine\Query\Queries;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * SendHistoryRepository.
@@ -41,7 +41,7 @@ class MailMagazineSendHistoryRepository extends AbstractRepository
     public function __construct(
         Queries $queries,
         ManagerRegistry $registry,
-        string $entityClass = MailMagazineSendHistory::class
+        string $entityClass = MailMagazineSendHistory::class,
     ) {
         parent::__construct($registry, $entityClass);
         $this->queries = $queries;
@@ -50,7 +50,7 @@ class MailMagazineSendHistoryRepository extends AbstractRepository
     /**
      * @param array $searchData
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
     public function getQueryBuilderBySearchData(array $searchData = []): QueryBuilder
     {

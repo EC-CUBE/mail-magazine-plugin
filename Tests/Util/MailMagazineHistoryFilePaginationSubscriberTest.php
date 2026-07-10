@@ -13,15 +13,15 @@
 
 namespace Plugin\MailMagazine44\Test\Util;
 
-use Knp\Component\Pager\Pagination\AbstractPagination;
-use Knp\Component\Pager\Paginator;
-use Plugin\MailMagazine44\Tests\AbstractMailMagazineTestCase;
-use Plugin\MailMagazine44\Service\MailMagazineService;
-use Plugin\MailMagazine44\Event\MailMagazineHistoryFilePaginationSubscriber;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber;
 use Knp\Component\Pager\Event\Subscriber\Sortable\SortableSubscriber;
+use Knp\Component\Pager\Pagination\AbstractPagination;
+use Knp\Component\Pager\Paginator;
+use Plugin\MailMagazine44\Event\MailMagazineHistoryFilePaginationSubscriber;
+use Plugin\MailMagazine44\Service\MailMagazineService;
+use Plugin\MailMagazine44\Tests\AbstractMailMagazineTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
 {
@@ -48,7 +48,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         parent::tearDown();
     }
 
-    public function test_ファイルがないときは0件()
+    public function testファイルがないときは0件()
     {
         $file = $this->file();
         self::assertEquals(false, file_exists($file));
@@ -57,7 +57,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         self::assertEquals(0, $actual->getTotalItemCount());
     }
 
-    public function test_1ページ目()
+    public function test1ページ目()
     {
         $file = $this->file();
         file_put_contents($file,
@@ -86,7 +86,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         );
     }
 
-    public function test_2ページ目()
+    public function test2ページ目()
     {
         $file = $this->file();
         file_put_contents($file,
@@ -115,7 +115,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         );
     }
 
-    public function test_最終ページ()
+    public function test最終ページ()
     {
         $file = $this->file();
         file_put_contents($file,
@@ -150,11 +150,11 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
      *
      * @return AbstractPagination
      */
-    private function newPagination($file, $page, $limit, $total)
+    private function newPagination($file, $page, $limit, $total): AbstractPagination
     {
         $eventDispatcher = new EventDispatcher();
-        $eventDispatcher->addSubscriber(new PaginationSubscriber);
-        $eventDispatcher->addSubscriber(new SortableSubscriber);
+        $eventDispatcher->addSubscriber(new PaginationSubscriber());
+        $eventDispatcher->addSubscriber(new SortableSubscriber());
         $eventDispatcher->addSubscriber(self::getContainer()->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
         if (class_exists(\Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess::class)) {
@@ -166,7 +166,6 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
             // ECCUBE 4.2 (knplabs/knp-components v3.6) 対応
             $paginator = new Paginator($eventDispatcher);
         }
-
 
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }

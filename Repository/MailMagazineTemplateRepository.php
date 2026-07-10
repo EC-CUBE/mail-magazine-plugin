@@ -13,9 +13,9 @@
 
 namespace Plugin\MailMagazine44\Repository;
 
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
-use Doctrine\ORM\Query;
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
 
 /**

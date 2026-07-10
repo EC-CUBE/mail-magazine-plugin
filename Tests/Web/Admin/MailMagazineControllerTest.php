@@ -31,7 +31,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
     public function testMailMagazineSearchWithBirthmonthLowOctorber()
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
-        //test search with birth month < 10
+        // test search with birth month < 10
         $MaiCustomer->setBirth(new \DateTime('2016-09-19 23:59:59'));
         $this->entityManager->persist($MaiCustomer);
         $this->entityManager->flush();
@@ -48,11 +48,11 @@ class MailMagazineControllerTest extends MailMagazineCommon
     public function testMailMagazineSearchWithBirthmonthHightOctorber()
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
-        //test search with birth month > 10
+        // test search with birth month > 10
         $MaiCustomer->setBirth(new \DateTime('2016-11-19 23:59:59'));
         $this->entityManager->persist($MaiCustomer);
         $this->entityManager->flush();
-        //because 誕生月 select box value start from 0. We need minus 1
+        // because 誕生月 select box value start from 0. We need minus 1
         $birth_month = $MaiCustomer->getBirth()->format('n');
         $searchForm = $this->createSearchForm($MaiCustomer, $birth_month);
         $crawler = $this->client->request(
@@ -92,7 +92,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testSelect_NotPost()
+    public function testSelectNotPost()
     {
         $MailTemplate = $this->createMagazineTemplate();
         $this->client->request(
@@ -108,7 +108,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertEquals(405, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testConfirm_InValid()
+    public function testConfirmInValid()
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -147,7 +147,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
     public function testPrepare()
     {
-//        $this->initializeMailCatcher();
+        //        $this->initializeMailCatcher();
         $MailTemplate = $this->createMagazineTemplate();
         $MaiCustomer = $this->createMailMagazineCustomer();
         $searchForm = $this->createSearchForm($MaiCustomer);
@@ -163,13 +163,13 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_history')));
 
-//        $Messages = $this->getMailCatcherMessages();
-//        $Message = $this->getMailCatcherMessage($Messages[0]->id);
-//
-//        $this->expected = $searchForm['subject'];
-//        $this->actual = $Message->subject;
-//        $this->verify();
-//        $this->cleanUpMailCatcherMessages();
+        //        $Messages = $this->getMailCatcherMessages();
+        //        $Message = $this->getMailCatcherMessage($Messages[0]->id);
+        //
+        //        $this->expected = $searchForm['subject'];
+        //        $this->actual = $Message->subject;
+        //        $this->verify();
+        //        $this->cleanUpMailCatcherMessages();
     }
 
     public function testPagination()
@@ -208,17 +208,17 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $pageNumber = $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->html();
         $this->assertMatchesRegularExpression('/件/', $pageNumber);
 
-        //pagination
+        // pagination
         $crawler = $this->client->request(
             'GET',
             $this->generateUrl('plugin_mail_magazine_page', ['page_no' => '2'])
         );
 
-        //check result
+        // check result
         $pageNumber = $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->html();
         $this->assertMatchesRegularExpression('/件/', $pageNumber);
 
-        //check search condition
+        // check search condition
         $sexCheckbox = $crawler->filter('#mail_magazine_sex_1:checked')->count();
         $this->assertEquals(1, $sexCheckbox);
     }

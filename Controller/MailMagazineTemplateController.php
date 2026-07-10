@@ -15,14 +15,14 @@ namespace Plugin\MailMagazine44\Controller;
 
 use Eccube\Controller\AbstractController;
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine44\Form\Type\MailMagazineTemplateEditType;
 use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Attribute\Template;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
-use Plugin\MailMagazine44\Form\Type\MailMagazineTemplateEditType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class MailMagazineTemplateController extends AbstractController
 {
@@ -37,7 +37,7 @@ class MailMagazineTemplateController extends AbstractController
      * @param MailMagazineTemplateRepository $mailMagazineTemplateRepository
      */
     public function __construct(
-        MailMagazineTemplateRepository $mailMagazineTemplateRepository
+        MailMagazineTemplateRepository $mailMagazineTemplateRepository,
     ) {
         $this->mailMagazineTemplateRepository = $mailMagazineTemplateRepository;
     }

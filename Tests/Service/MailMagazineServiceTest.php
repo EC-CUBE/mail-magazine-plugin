@@ -35,7 +35,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         parent::setUp();
         $this->mailMagazineService = self::getContainer()->get(MailMagazineService::class);
         $this->client->enableProfiler();
-//        $this->mailer = $this->getMockBuilder('\Swift_Mailer')->disableOriginalConstructor()->getMock();
+        //        $this->mailer = $this->getMockBuilder('\Swift_Mailer')->disableOriginalConstructor()->getMock();
         $this->sentAddresses = [];
     }
 
@@ -48,7 +48,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals($dir.'mail_magazine_out_2.txt', $this->mailMagazineService->getHistoryFileName(2, false));
     }
 
-    public function testCreateMailMagazineHistory_履歴データができる()
+    public function testCreateMailMagazineHistory履歴データができる()
     {
         $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
         $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
@@ -69,7 +69,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals(0, $actual->getCompleteCount());
     }
 
-    public function testCreateMailMagazineHistory_履歴ファイルができる()
+    public function testCreateMailMagazineHistory履歴ファイルができる()
     {
         $c1 = $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
         $c2 = $this->createMailmagaCustomer('2_create_mail_magazine_history@example.com', 'name01_2', 'name02_2');
@@ -91,10 +91,10 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals($expected, file_get_contents($fileName));
     }
 
-    public function testSendrMailMagazine_送信成功時に送信完了件数が更新される()
+    public function testSendrMailMagazine送信成功時に送信完了件数が更新される()
     {
         $historyId = $this->createHistory($this->createMailmagaCustomer());
-//        $this->setUpMailerStub([true]);
+        //        $this->setUpMailerStub([true]);
 
         $history = $this->mailMagazineSendHistoryRepository->find($historyId);
         self::assertEquals(0, $history->getCompleteCount());
@@ -106,11 +106,11 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals(1, $history->getCompleteCount());
     }
 
-    public function testSendrMailMagazine_送信成功時に結果ファイルが作成される()
+    public function testSendrMailMagazine送信成功時に結果ファイルが作成される()
     {
         $customer = $this->createMailmagaCustomer('sendr_mail_magazine@example.com', 'name01', 'name02');
         $historyId = $this->createHistory($customer);
-        //$this->setUpMailerStub([true]);
+        // $this->setUpMailerStub([true]);
 
         $this->mailMagazineService->sendrMailMagazine($historyId);
 
@@ -118,10 +118,10 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals('1,'.$customer->getId().',sendr_mail_magazine@example.com,name01 name02'.PHP_EOL, file_get_contents($fileName));
     }
 
-    public function testSendrMailMagazine_送信成功時に配信ファイルが削除される()
+    public function testSendrMailMagazine送信成功時に配信ファイルが削除される()
     {
         $historyId = $this->createHistory($this->createMailmagaCustomer());
-//        $this->setUpMailerStub([true]);
+        //        $this->setUpMailerStub([true]);
 
         self::assertTrue(file_exists($this->mailMagazineService->getHistoryFileName($historyId)));
 
@@ -130,10 +130,10 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertFalse(file_exists($this->mailMagazineService->getHistoryFileName($historyId)));
     }
 
-    public function testSendrMailMagazine_送信失敗時にも送信完了件数が更新される()
+    public function testSendrMailMagazine送信失敗時にも送信完了件数が更新される()
     {
         $historyId = $this->createHistory($this->createMailmagaCustomer());
-//        $this->setUpMailerStub([false]);
+        //        $this->setUpMailerStub([false]);
 
         $history = $this->mailMagazineSendHistoryRepository->find($historyId);
         self::assertEquals(0, $history->getCompleteCount());
@@ -145,11 +145,11 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals(1, $history->getCompleteCount());
     }
 
-    public function testSendrMailMagazine_送信失敗時に結果ファイルが作成される()
+    public function testSendrMailMagazine送信失敗時に結果ファイルが作成される()
     {
         $customer = $this->createMailmagaCustomer('sendr_mail_magazine@example.com', 'name01', 'name02');
         $historyId = $this->createHistory($customer);
-//        $this->setUpMailerStub([false]);
+        //        $this->setUpMailerStub([false]);
 
         $this->mailMagazineService->sendrMailMagazine($historyId);
 
@@ -157,10 +157,10 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals('2,'.$customer->getId().',sendr_mail_magazine@example.com,name01 name02'.PHP_EOL, file_get_contents($fileName));
     }
 
-    public function testSendrMailMagazine_送信失敗時に配信ファイルが削除される()
+    public function testSendrMailMagazine送信失敗時に配信ファイルが削除される()
     {
         $historyId = $this->createHistory($this->createMailmagaCustomer());
-//        $this->setUpMailerStub([false]);
+        //        $this->setUpMailerStub([false]);
 
         self::assertTrue(file_exists($this->mailMagazineService->getHistoryFileName($historyId)));
 
@@ -169,9 +169,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertFalse(file_exists($this->mailMagazineService->getHistoryFileName($historyId)));
     }
 
-    public function testSendrMailMagazine_成功していたメールは再送できない()
+    public function testSendrMailMagazine成功していたメールは再送できない()
     {
-//        $this->setUpMailerStub([true]);
+        //        $this->setUpMailerStub([true]);
         $historyId = $this->createHistory($this->createMailmagaCustomer());
 
         $this->mailMagazineService->sendrMailMagazine($historyId);
@@ -181,9 +181,9 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals(['mail_magazine_service_test@example.com'], $this->sentAddresses);
     }
 
-    public function testSendrMailMagazine_失敗したメールは再送できる()
+    public function testSendrMailMagazine失敗したメールは再送できる()
     {
-//        $this->setUpMailerStub([false, true]);
+        //        $this->setUpMailerStub([false, true]);
         $historyId = $this->createHistory($this->createMailmagaCustomer());
 
         $this->mailMagazineService->sendrMailMagazine($historyId);
@@ -201,7 +201,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         ], $this->sentAddresses);
     }
 
-    public function testSendrMailMagazine_未配信メールを再送できる()
+    public function testSendrMailMagazine未配信メールを再送できる()
     {
         // 3件分の履歴を作成
         $c1 = $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
@@ -218,7 +218,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         $resultFile = $this->mailMagazineService->getHistoryFileName($historyId, false);
         file_put_contents($resultFile, '1,'.$c1->getId().',1_create_mail_magazine_history@example.com,name01_1 name02_1'.PHP_EOL);
 
-//        $this->setUpMailerStub([true, true]);
+        //        $this->setUpMailerStub([true, true]);
 
         // 再送
         $this->mailMagazineService->markRetry($historyId);
@@ -237,7 +237,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals($expected, file_get_contents($resultFile));
     }
 
-    public function testSendrMailMagazine_10件中最初の5件だけメールを送れる()
+    public function testSendrMailMagazine10件中最初の5件だけメールを送れる()
     {
         $customers = [
             $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0'),
@@ -258,7 +258,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
             'multi' => 'create_mail_magazine_history@example.com',
         ]);
 
-//        $this->setUpMailerStub([true, true, true, true, true]);
+        //        $this->setUpMailerStub([true, true, true, true, true]);
 
         // 最初の5件だけ送信
         $this->mailMagazineService->sendrMailMagazine($historyId, 0, 5);
@@ -282,7 +282,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals($expected, file_get_contents($resultFile));
     }
 
-    public function testSendrMailMagazine_10件中最初の6件目から10件目までメールを送れる()
+    public function testSendrMailMagazine10件中最初の6件目から10件目までメールを送れる()
     {
         $customers = [
             $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0'),
@@ -303,7 +303,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
             'multi' => 'create_mail_magazine_history@example.com',
         ]);
 
-//        $this->setUpMailerStub(array_fill(0, 10, true));
+        //        $this->setUpMailerStub(array_fill(0, 10, true));
 
         // 最初の5件だけ送信
         $this->mailMagazineService->sendrMailMagazine($historyId, 0, 5);
@@ -357,7 +357,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals($expected, file_get_contents($resultFile));
     }
 
-    public function testSendrMailMagazine_未送信がある状態で再送処理をせずに送信する()
+    public function testSendrMailMagazine未送信がある状態で再送処理をせずに送信する()
     {
         // 10件分の履歴
         $customers = [
@@ -379,7 +379,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
             'multi' => 'create_mail_magazine_history@example.com',
         ]);
 
-//        $this->setUpMailerStub(array_fill(0, 10, true));
+        //        $this->setUpMailerStub(array_fill(0, 10, true));
 
         /*
          * 5件送信
@@ -465,7 +465,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals(10, $history->getCompleteCount());
     }
 
-    public function testSendrMailMagazine_エラーがあった場合はエラー数を履歴に保持する()
+    public function testSendrMailMagazineエラーがあった場合はエラー数を履歴に保持する()
     {
         $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0');
         $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
@@ -489,11 +489,11 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
             'multi' => 'create_mail_magazine_history@example.com',
         ]);
 
-//        $this->setUpMailerStub([
-//            true, false, false, true, false,
-//            true, true,  false, true, false,
-//            true, true,  true,  true, false,
-//        ]);
+        //        $this->setUpMailerStub([
+        //            true, false, false, true, false,
+        //            true, true,  false, true, false,
+        //            true, true,  true,  true, false,
+        //        ]);
 
         /*
          * 5件送信
@@ -529,7 +529,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals(6, $history->getErrorCount());
     }
 
-    public function testSendrMailMagazine_再送してもエラー数を正しく履歴に保持する()
+    public function testSendrMailMagazine再送してもエラー数を正しく履歴に保持する()
     {
         $this->createMailmagaCustomer('0_create_mail_magazine_history@example.com', 'name01_0', 'name02_0');
         $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
@@ -553,10 +553,10 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
             'multi' => 'create_mail_magazine_history@example.com',
         ]);
 
-//        $this->setUpMailerStub([
-//            true, false, false, true, false,
-//            true, false, false,
-//        ]);
+        //        $this->setUpMailerStub([
+        //            true, false, false, true, false,
+        //            true, false, false,
+        //        ]);
 
         /*
          * 5件送信
@@ -607,7 +607,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
      *
      * @return int
      */
-    protected function createHistory(Customer $Customer)
+    protected function createHistory(Customer $Customer): int
     {
         return $this->mailMagazineService->createMailMagazineHistory([
             'subject' => 'subject',

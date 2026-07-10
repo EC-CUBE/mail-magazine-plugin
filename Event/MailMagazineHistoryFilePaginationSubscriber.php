@@ -14,8 +14,8 @@
 namespace Plugin\MailMagazine44\Event;
 
 use Knp\Component\Pager\Event\ItemsEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Plugin\MailMagazine44\Service\MailMagazineService;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInterface
 {

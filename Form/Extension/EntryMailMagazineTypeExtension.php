@@ -51,7 +51,7 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
                     'form_theme' => '@MailMagazine44/entry_add_mailmaga.twig',
                 ],
             ])
-            ;
+        ;
     }
 
     /**

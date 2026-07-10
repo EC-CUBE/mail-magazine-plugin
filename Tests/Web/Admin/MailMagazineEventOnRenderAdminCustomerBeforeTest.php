@@ -15,8 +15,8 @@ namespace Plugin\MailMagazine44\Tests\Web\Admin;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
-use Plugin\MailMagazine44\Tests\Web\MailMagazineCommon;
 use Eccube\Repository\CustomerRepository;
+use Plugin\MailMagazine44\Tests\Web\MailMagazineCommon;
 
 class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommon
 {
@@ -73,7 +73,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         return $form;
     }
 
-    public function testOnRenderAdminCustomerBefore_Edit()
+    public function testOnRenderAdminCustomerBeforeEdit()
     {
         $Customer = $this->createMailMagazineCustomer();
 
@@ -84,7 +84,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testOnRenderAdminCustomerBefore_EditPost()
+    public function testOnRenderAdminCustomerBeforeEditPost()
     {
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;
@@ -105,7 +105,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->verify();
     }
 
-    public function testOnRenderAdminCustomerBefore_EditPost_WithInvalidPostData()
+    public function testOnRenderAdminCustomerBeforeEditPostWithInvalidPostData()
     {
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;

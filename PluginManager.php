@@ -20,7 +20,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class PluginManager extends AbstractPluginManager
 {
-
     public function uninstall(array $meta, ContainerInterface $container): void
     {
         $file = new Filesystem();

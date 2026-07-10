@@ -15,8 +15,8 @@ namespace Plugin\MailMagazine44\Tests\Web\Front;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
-use Eccube\Tests\Web\AbstractWebTestCase;
 use Eccube\Repository\CustomerRepository;
+use Eccube\Tests\Web\AbstractWebTestCase;
 
 class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
 {
@@ -78,7 +78,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         return $form;
     }
 
-    public function testOnRenderMypageChange_NotLogin()
+    public function testOnRenderMypageChangeNotLogin()
     {
         $this->client->request('GET',
             $this->generateUrl('mypage_change')
@@ -100,7 +100,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->assertEquals(1, $crawler->filter('#entry_mailmaga_flg')->count());
     }
 
-    public function testOnRenderMypageChange_Post()
+    public function testOnRenderMypageChangePost()
     {
         $Customer = $this->createCustomer();
         $this->loginTo($Customer);

@@ -37,7 +37,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testPreview_IdIncorrect()
+    public function testPreviewIdIncorrect()
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_history_preview', ['id' => 9999999])
@@ -46,7 +46,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testPreview_IdIsNull()
+    public function testPreviewIdIsNull()
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_history_preview', ['id' => null])
@@ -67,7 +67,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testCondition_IdIncorrect()
+    public function testConditionIdIncorrect()
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_history_condition', ['id' => 9999999])
@@ -76,7 +76,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testCondition_IdIsNull()
+    public function testConditionIdIsNull()
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_history_condition', ['id' => null])
@@ -96,7 +96,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_history')));
     }
 
-    public function testDelete_IdIncorrect()
+    public function testDeleteIdIncorrect()
     {
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_history_delete', ['id' => 9999999])
@@ -105,7 +105,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    public function testDelete_IdIsNull()
+    public function testDeleteIdIsNull()
     {
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_history_delete', ['id' => null])
@@ -113,7 +113,7 @@ class MailMagazineHistoryControllerTest extends MailMagazineCommon
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testDelete_NotPost()
+    public function testDeleteNotPost()
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine_history_delete', ['id' => null])

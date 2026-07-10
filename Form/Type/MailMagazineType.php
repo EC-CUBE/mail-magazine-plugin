@@ -17,11 +17,11 @@
 
 namespace Plugin\MailMagazine44\Form\Type;
 
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Eccube\Form\Type\Admin\SearchCustomerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Eccube\Form\Type\Admin\SearchCustomerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class MailMagazineType extends SearchCustomerType

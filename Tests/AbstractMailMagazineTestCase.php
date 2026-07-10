@@ -13,11 +13,11 @@
 
 namespace Plugin\MailMagazine44\Tests;
 
+use Eccube\Entity\Customer;
 use Eccube\Tests\Service\AbstractServiceTestCase;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine44\Service\MailMagazineService;
 use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
-use Eccube\Entity\Customer;
+use Plugin\MailMagazine44\Service\MailMagazineService;
 
 abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
 {
@@ -46,7 +46,7 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
      *
      * @return Customer
      */
-    protected function createMailmagaCustomer($email = 'mail_magazine_service_test@example.com', $name01 = 'name01', $name02 = 'name02')
+    protected function createMailmagaCustomer(string $email = 'mail_magazine_service_test@example.com', string $name01 = 'name01', string $name02 = 'name02'): Customer
     {
         $c = $this->createCustomer($email);
         if ($name01) {

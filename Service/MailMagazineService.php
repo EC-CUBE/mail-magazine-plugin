@@ -13,16 +13,16 @@
 
 namespace Plugin\MailMagazine44\Service;
 
-use Eccube\Common\Constant;
-use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
-use Eccube\Repository\BaseInfoRepository;
-use Eccube\Entity\BaseInfo;
-use Eccube\Common\EccubeConfig;
-use Eccube\Repository\CustomerRepository;
-use Doctrine\ORM\QueryBuilder;
-use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
+use Eccube\Common\Constant;
+use Eccube\Common\EccubeConfig;
+use Eccube\Entity\BaseInfo;
+use Eccube\Repository\BaseInfoRepository;
+use Eccube\Repository\CustomerRepository;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -137,7 +137,7 @@ class MailMagazineService
         EccubeConfig $eccubeConfig,
         CustomerRepository $customerRepository,
         MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ) {
         $this->mailer = $mailer;
         $this->BaseInfo = $baseInfoRepository->get();
@@ -517,10 +517,10 @@ class MailMagazineService
         $subject = date('Y年m月d日H時i分').'　下記メールの配信が完了しました。';
 
         $mailData = [
-                'email' => $this->getAdminEmail(),
-                'subject' => $subject,
-                'body' => $this->lastSendMailBody,
-                'htmlBody' => $this->lastSendMailHtmlBody,
+            'email' => $this->getAdminEmail(),
+            'subject' => $subject,
+            'body' => $this->lastSendMailBody,
+            'htmlBody' => $this->lastSendMailHtmlBody,
         ];
 
         try {

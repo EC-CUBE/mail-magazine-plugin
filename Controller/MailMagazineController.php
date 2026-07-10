@@ -13,26 +13,26 @@
 
 namespace Plugin\MailMagazine44\Controller;
 
-use Symfony\Bridge\Twig\Attribute\Template;
-use Symfony\Component\Routing\Attribute\Route;
-use Eccube\Controller\AbstractController;
-use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
-use Plugin\MailMagazine44\Service\MailMagazineService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Eccube\Repository\Master\PageMaxRepository;
-use Eccube\Util\FormUtil;
-use Eccube\Repository\CustomerRepository;
-use Knp\Component\Pager\PaginatorInterface;
-use Plugin\MailMagazine44\Form\Type\MailMagazineType;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Common\Constant;
+use Eccube\Controller\AbstractController;
+use Eccube\Repository\CustomerRepository;
+use Eccube\Repository\Master\PageMaxRepository;
+use Eccube\Util\FormUtil;
+use Knp\Component\Pager\PaginatorInterface;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine44\Form\Type\MailMagazineType;
 use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
+use Plugin\MailMagazine44\Service\MailMagazineService;
+use Symfony\Bridge\Twig\Attribute\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Class MailMagazineController
@@ -71,7 +71,7 @@ class MailMagazineController extends AbstractController
         PageMaxRepository $pageMaxRepository,
         CustomerRepository $customerRepository,
         MailMagazineTemplateRepository $magazineTemplateRepository,
-        MailMagazineService $mailMagazineService
+        MailMagazineService $mailMagazineService,
     ) {
         $this->pageMaxRepository = $pageMaxRepository;
         $this->customerRepository = $customerRepository;

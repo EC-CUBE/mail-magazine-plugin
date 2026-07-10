@@ -370,7 +370,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * Get Creator.
      *
-     * @return \Eccube\Entity\Member
+     * @return Member
      */
     public function getCreator(): ?Member
     {
