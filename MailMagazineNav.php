@@ -20,7 +20,7 @@ class MailMagazineNav implements EccubeNav
     /**
      * {@inheritdoc}
      *
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     public static function getNav(): array
     {

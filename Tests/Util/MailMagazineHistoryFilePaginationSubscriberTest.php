@@ -15,7 +15,7 @@ namespace Plugin\MailMagazine44\Test\Util;
 
 use Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber;
 use Knp\Component\Pager\Event\Subscriber\Sortable\SortableSubscriber;
-use Knp\Component\Pager\Pagination\AbstractPagination;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\Paginator;
 use Plugin\MailMagazine44\Event\MailMagazineHistoryFilePaginationSubscriber;
 use Plugin\MailMagazine44\Service\MailMagazineService;
@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
 {
+    /** @var string */
     private $rootDir;
 
     public function setUp(): void
@@ -143,34 +144,23 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
     }
 
     /**
-     * @param $file
-     * @param $page
-     * @param $limit
-     * @param $total
-     *
-     * @return AbstractPagination
+     * @return PaginationInterface<int, mixed>
      */
-    private function newPagination($file, $page, $limit, $total): AbstractPagination
+    private function newPagination(string $file, int $page, int $limit, int $total): PaginationInterface
     {
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->addSubscriber(new PaginationSubscriber());
         $eventDispatcher->addSubscriber(new SortableSubscriber());
         $eventDispatcher->addSubscriber(self::getContainer()->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
-        if (class_exists(\Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess::class)) {
-            // ECCUBE 4.3 (knplabs/knp-components v5.2) 対応
-            $requestStack = new RequestStack();
-            $accessor = new \Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess($requestStack);
-            $paginator = new Paginator($eventDispatcher, $accessor);
-        } else {
-            // ECCUBE 4.2 (knplabs/knp-components v3.6) 対応
-            $paginator = new Paginator($eventDispatcher);
-        }
+        $requestStack = new RequestStack();
+        $accessor = new \Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess($requestStack);
+        $paginator = new Paginator($eventDispatcher, $accessor);
 
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }
 
-    private function file($name = 'out.txt')
+    private function file(string $name = 'out.txt'): string
     {
         return $this->rootDir.'/'.$name;
     }

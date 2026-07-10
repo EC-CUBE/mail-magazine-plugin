@@ -13,7 +13,6 @@
 
 namespace Plugin\MailMagazine44\Repository;
 
-use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Eccube\Repository\AbstractRepository;
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
@@ -42,15 +41,15 @@ class MailMagazineTemplateRepository extends AbstractRepository
     /**
      * find all.
      *
-     * @return list<array<string, mixed>>
+     * @return list<MailMagazineTemplate>
      */
     public function findAll(): array
     {
         $query = $this
             ->getEntityManager()
             ->createQuery('SELECT m FROM Plugin\MailMagazine44\Entity\MailMagazineTemplate m ORDER BY m.id DESC');
-        $result = $query
-            ->getResult(Query::HYDRATE_ARRAY);
+        /** @var list<MailMagazineTemplate> $result */
+        $result = $query->getResult();
 
         return $result;
     }

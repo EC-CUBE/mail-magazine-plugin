@@ -153,9 +153,9 @@ class MailMagazineHistoryController extends AbstractController
     /**
      * search_dataの配列を表示用に変換する.
      *
-     * @param array $searchData
+     * @param array<string, mixed> $searchData
      *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function searchDataToDisplayData(array $searchData): array
     {

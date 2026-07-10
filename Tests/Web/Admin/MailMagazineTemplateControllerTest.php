@@ -14,12 +14,13 @@
 namespace Plugin\MailMagazine44\Tests\Web\Admin;
 
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
 use Plugin\MailMagazine44\Tests\Web\MailMagazineCommon;
 
 class MailMagazineTemplateControllerTest extends MailMagazineCommon
 {
     /**
-     * @var MailMagazineTemplate
+     * @var MailMagazineTemplateRepository
      */
     protected $mailMagaTemplateRepository;
 
@@ -29,7 +30,10 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->mailMagaTemplateRepository = $this->entityManager->getRepository(MailMagazineTemplate::class);
     }
 
-    protected function createFormData()
+    /**
+     * @return array<string, string>
+     */
+    protected function createFormData(): array
     {
         $fake = $this->getFaker();
 
@@ -99,6 +103,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
 
     public function testCommitFormInvalid(): void
     {
+        $this->expectNotToPerformAssertions();
         $form = $this->createFormData();
         unset($form['subject']);
 
@@ -106,7 +111,6 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
             $this->generateUrl('plugin_mail_magazine_template_commit'),
             ['mail_magazine_template_edit' => $form]
         );
-        $this->assertTrue(true);
     }
 
     public function testCommitEditIdIncorrect(): void
@@ -142,6 +146,7 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_template')));
         $MailTemplate = $this->mailMagaTemplateRepository->findOneBy(['subject' => $form['subject']]);
+        self::assertInstanceOf(MailMagazineTemplate::class, $MailTemplate);
         $this->actual = $MailTemplate->getBody();
         $this->expected = $form['body'];
         $this->verify();

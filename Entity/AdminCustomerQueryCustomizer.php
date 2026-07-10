@@ -22,7 +22,7 @@ class AdminCustomerQueryCustomizer extends WhereCustomizer
     /**
      * {@inheritdoc}
      *
-     * @param array $params
+     * @param array<string, mixed> $params
      * @param $queryKey
      *
      * @return WhereClause[]

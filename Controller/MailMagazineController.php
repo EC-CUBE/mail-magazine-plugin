@@ -179,7 +179,7 @@ class MailMagazineController extends AbstractController
     #[Template('@MailMagazine44/admin/template_select.twig')]
     public function select(Request $request, ?int $id = null): Response|array
     {
-        /** @var MailMagazineTemplate $Template */
+        /** @var MailMagazineTemplate|null $Template */
         $Template = null;
 
         // テンプレート選択によるPOSTの場合はテンプレートからデータを取得する

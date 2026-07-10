@@ -250,7 +250,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * Get start_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
     public function getStartDate(): ?\DateTimeInterface
     {
@@ -274,7 +274,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * Get end_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
     public function getEndDate(): ?\DateTimeInterface
     {
@@ -322,7 +322,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * Get create_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
     public function getCreateDate(): ?\DateTimeInterface
     {
@@ -346,7 +346,7 @@ class MailMagazineSendHistory extends AbstractEntity
     /**
      * Get update_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
     public function getUpdateDate(): ?\DateTimeInterface
     {

@@ -13,6 +13,7 @@
 
 namespace Plugin\MailMagazine44\Tests\Service;
 
+use Eccube\Entity\Customer;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Service\MailMagazineService;
 use Plugin\MailMagazine44\Tests\AbstractMailMagazineTestCase;
@@ -20,23 +21,17 @@ use Plugin\MailMagazine44\Tests\AbstractMailMagazineTestCase;
 class MailMagazineServiceTest extends AbstractMailMagazineTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var list<string>
      */
-    private $mailer;
-
-    /**
-     * @var array
-     */
-    private $sentAddresses;
+    private $sentAddresses = [];
 
     public function setUp(): void
     {
-        $this->markTestSkipped('Skipped due to still not assign mock Swift_Mailler to service container');
         parent::setUp();
         $this->mailMagazineService = self::getContainer()->get(MailMagazineService::class);
         $this->client->enableProfiler();
-        //        $this->mailer = $this->getMockBuilder('\Swift_Mailer')->disableOriginalConstructor()->getMock();
         $this->sentAddresses = [];
+        $this->markTestSkipped('Skipped due to still not assign mock Swift_Mailler to service container');
     }
 
     public function testGetHistoryFileName(): void
@@ -579,25 +574,6 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals(15, $history->getSendCount());
         self::assertEquals(5, $history->getCompleteCount());
         self::assertEquals(2, $history->getErrorCount());
-    }
-
-    /**
-     * メーラのスタブを設定。
-     * 引数の順番でメールの送信結果を返す。
-     * [false, true] なら最初のメール送信は失敗、2通目のメール送信は成功。
-     *
-     * @param array|$arrayOfReturn メール送信結果の配列
-     */
-    private function setUpMailerStub($arrayOfReturn)
-    {
-        $stack = &$this->sentAddresses;
-        $this->mailer->expects($this->exactly(count($arrayOfReturn)))->method('send')->with(
-            $this->callback(function ($message) use (&$stack) {
-                $stack[] = current(array_keys($message->getTo()));
-
-                return true;
-            })
-        )->will(new \PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls($arrayOfReturn));
     }
 
     /**

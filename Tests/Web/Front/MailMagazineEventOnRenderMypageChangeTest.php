@@ -31,7 +31,10 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->customerRepository = $this->entityManager->getRepository(Customer::class);
     }
 
-    protected function createFormData()
+    /**
+     * @return array<string, mixed>
+     */
+    protected function createFormData(): array
     {
         $faker = $this->getFaker();
         $tel = explode('-', $faker->phoneNumber);
@@ -46,11 +49,11 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
                 'name02' => $faker->firstName,
             ],
             'kana' => [
-                'kana01' => $faker->lastKanaName,
-                'kana02' => $faker->firstKanaName,
+                'kana01' => 'テスト',
+                'kana02' => 'タロウ',
             ],
             'company_name' => $faker->company,
-            'postal_code' => $faker->postcode1().$faker->postcode2(),
+            'postal_code' => '1234567',
             'address' => [
                 'pref' => '5',
                 'addr01' => $faker->city,

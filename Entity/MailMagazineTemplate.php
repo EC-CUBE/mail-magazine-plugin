@@ -112,7 +112,7 @@ class MailMagazineTemplate extends AbstractEntity implements \Stringable
     /**
      * Get create_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
     public function getCreateDate(): ?\DateTimeInterface
     {
@@ -136,7 +136,7 @@ class MailMagazineTemplate extends AbstractEntity implements \Stringable
     /**
      * Get update_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
     public function getUpdateDate(): ?\DateTimeInterface
     {

@@ -42,7 +42,7 @@ class MailMagazineSendHistoryRepository extends AbstractRepository
     }
 
     /**
-     * @param array $searchData
+     * @param array<string, mixed> $searchData
      *
      * @return QueryBuilder
      */

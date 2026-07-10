@@ -150,12 +150,10 @@ class MailMagazineService
     /**
      * メールを送信する.
      *
-     * @param array $formData メルマガ情報
+     * @param array{email: string, subject: string, body: string, htmlBody?: string|null} $formData メルマガ情報
      *                  email: 送信先メールアドレス
      *                  subject: 件名
      *                  body：本文
-     *
-     * @return int
      */
     public function sendMail(array $formData): void
     {
@@ -180,7 +178,7 @@ class MailMagazineService
      *
      * 配信履歴データ(MailMagazineSendHistory)の作成と、配信履歴ファイルを作成します。
      *
-     * @param array $formData
+     * @param array<string, mixed> $formData
      *
      * @return int 採番されたsend_id
      *             エラー時はfalseを返す
@@ -275,8 +273,8 @@ class MailMagazineService
      * none,bbb@example.com,bbb
      * none,ccc@example.com,ccc
      *
-     * @param string|$fileHistory 履歴ファイル
-     * @param string|$fileResult 結果ファイル
+     * @param string $fileHistory 履歴ファイル
+     * @param string $fileResult 結果ファイル
      */
     private function mergeHistoryFile(string $fileHistory, string $fileResult): void
     {
@@ -349,12 +347,11 @@ class MailMagazineService
      * @param int $offset
      * @param int $max
      *
-     * @return bool|MailMagazineSendHistory
+     * @return MailMagazineSendHistory
      */
     public function sendrMailMagazine(int $sendId, int $offset = 0, int $max = 100): MailMagazineSendHistory
     {
         // send_historyを取得する
-        /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $this->mailMagazineSendHistoryRepository->find($sendId);
 
         if (is_null($sendHistory)) {
@@ -482,7 +479,7 @@ class MailMagazineService
     /**
      * 送信完了報告メールを送信する.
      *
-     * @return number
+     * @return bool
      */
     public function sendMailMagazineCompleateReportMail(): bool
     {
@@ -541,7 +538,7 @@ class MailMagazineService
     /**
      * テストメール送信
      *
-     * @param array|$mailData メールデータ
+     * @param array{email: string, subject: string, body: string, htmlBody?: string|null, name: string} $mailData メールデータ
      */
     public function sendTestMail(array $mailData): void
     {
@@ -550,8 +547,8 @@ class MailMagazineService
     }
 
     /**
-     * @param array|$mailData メールデータ
-     * @param string|$name 名前
+     * @param array{email?: string, subject?: string, body?: string, htmlBody?: string|null, name?: string} $mailData メールデータ
+     * @param string $name 名前
      */
     public function replaceMailVars(array &$mailData, string $name): void
     {

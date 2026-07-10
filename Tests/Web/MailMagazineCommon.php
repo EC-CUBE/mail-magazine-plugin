@@ -17,6 +17,7 @@ use Eccube\Common\Constant;
 use Eccube\Entity\MailHistory;
 use Eccube\Entity\Master\OrderStatus;
 use Eccube\Entity\Master\Sex;
+use Eccube\Entity\OrderItem;
 use Eccube\Repository\MailHistoryRepository;
 use Eccube\Repository\Master\SexRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
@@ -42,7 +43,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $this->mailHistoryRepository = $this->entityManager->getRepository(MailHistory::class);
     }
 
-    protected function createMagazineTemplate()
+    protected function createMagazineTemplate(): MailMagazineTemplate
     {
         $fake = $this->getFaker();
         $MailTemplate = new MailMagazineTemplate();
@@ -57,7 +58,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         return $MailTemplate;
     }
 
-    protected function createMailMagazineCustomer()
+    protected function createMailMagazineCustomer(): \Eccube\Entity\Customer
     {
         $fake = $this->getFaker();
         $current_date = new \DateTime();
@@ -68,7 +69,7 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $Customer
             ->setSex($Sex)
             ->setBirth($current_date->modify('-20 years'))
-            ->setPhoneNumber($fake->randomNumber(9))
+            ->setPhoneNumber((string) $fake->randomNumber(9))
             ->setCreateDate($current_date->modify('-20 days'))
             ->setUpdateDate($current_date->modify('-1 days'))
             ->setLastBuyDate($current_date->modify('-1 days'))
@@ -80,7 +81,10 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         return $Customer;
     }
 
-    protected function createSearchForm(\Eccube\Entity\Customer $MailCustomer, $birth_month = null)
+    /**
+     * @return array<string, mixed>
+     */
+    protected function createSearchForm(\Eccube\Entity\Customer $MailCustomer, int|string|null $birth_month = null): array
     {
         // create order
         $Order = $this->createOrder($MailCustomer);
@@ -110,12 +114,12 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
             'last_buy_start' => $old_date->format('Y-m-d'),
             'last_buy_end' => $MailCustomer->getLastBuyDate()->format('Y-m-d'),
             'customer_status' => [$MailCustomer->getStatus()->getId()],
-            'buy_product_name' => $order_detail[0]->getProductName(),
+            'buy_product_name' => $this->getOrderItemProductName($order_detail[0]),
             'birth_month' => $birth_month,
         ];
     }
 
-    protected function createSendHistoy(\Eccube\Entity\Customer $MailCustomer)
+    protected function createSendHistoy(\Eccube\Entity\Customer $MailCustomer): MailMagazineSendHistory
     {
         $currentDatetime = new \DateTime();
         $MailTemplate = $this->createMagazineTemplate();
@@ -147,5 +151,14 @@ class MailMagazineCommon extends AbstractAdminWebTestCase
         $this->entityManager->flush();
 
         return $SendHistory;
+    }
+
+    private function getOrderItemProductName(mixed $item): string
+    {
+        if (!$item instanceof OrderItem) {
+            throw new \UnexpectedValueException('Expected an order item.');
+        }
+
+        return $item->getProductName();
     }
 }

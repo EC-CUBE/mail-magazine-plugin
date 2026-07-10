@@ -25,7 +25,7 @@ class EntryMailMagazineTypeExtension extends AbstractTypeExtension
      * {@inheritdoc}
      *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
