@@ -33,10 +33,10 @@ class MailMagazineTemplate extends AbstractEntity implements \Stringable
     private ?int $id = null;
 
     #[ORM\Column(name: 'subject', type: Types::STRING, length: 255)]
-    private ?string $subject = null;
+    private string $subject = '';
 
     #[ORM\Column(name: 'body', type: Types::TEXT)]
-    private ?string $body = null;
+    private string $body = '';
 
     #[ORM\Column(name: 'html_body', type: Types::TEXT, nullable: true)]
     private ?string $html_body = null;
@@ -78,7 +78,7 @@ class MailMagazineTemplate extends AbstractEntity implements \Stringable
      */
     public function getSubject(): string
     {
-        return $this->subject ?? '';
+        return $this->subject;
     }
 
     /**
@@ -164,7 +164,7 @@ class MailMagazineTemplate extends AbstractEntity implements \Stringable
      */
     public function getBody(): string
     {
-        return $this->body ?? '';
+        return $this->body;
     }
 
     /**
