@@ -21,6 +21,7 @@ use Doctrine\ORM\QueryBuilder;
 use Eccube\Common\Constant;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\BaseInfo;
+use Eccube\Entity\Customer;
 use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\CustomerRepository;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
@@ -189,6 +190,10 @@ class MailMagazineService
         $formData['plg_mailmagazine_flg'] = Constant::ENABLED;
         $qb = $this->customerRepository->getQueryBuilderBySearchData($formData);
         $customerList = $qb->getQuery()->getResult();
+
+        // 配信ファイルの並びを決定的にするため会員IDの昇順に整列する。
+        // (会員検索のデフォルト順は update_date/id の降順で、配信・再送・ページングの検証が不安定になるため)
+        usort($customerList, static fn (Customer $a, Customer $b): int => $a->getId() <=> $b->getId());
 
         $currentDatetime = new \DateTime();
 
