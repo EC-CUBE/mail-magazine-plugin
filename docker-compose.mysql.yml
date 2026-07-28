@@ -18,7 +18,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: dbuser
       MYSQL_PASSWORD: secret
-      #MYSQL_DATABASE: eccubedb
+      MYSQL_DATABASE: eccubedb
     volumes:
       - mysql-database:/var/lib/mysql
       - ./dockerbuild/grant_to_dbuser.sql:/docker-entrypoint-initdb.d/grant_to_dbuser.sql
