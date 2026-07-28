@@ -168,7 +168,7 @@ class MailMagazineService
             ->text($formData['body']);
 
         if ($formData['htmlBody']) {
-            $message->html($formData['htmlBody'], 'text/html');
+            $message->html($formData['htmlBody']);
         }
 
         $this->mailer->send($message);

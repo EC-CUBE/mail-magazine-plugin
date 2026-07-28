@@ -64,6 +64,22 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals($dir.'mail_magazine_out_2.txt', $this->mailMagazineService->getHistoryFileName(2, false));
     }
 
+    public function testSendTestMailHTML本文をUTF8で送信する(): void
+    {
+        $this->mailMagazineService->sendTestMail([
+            'email' => 'mail_magazine_service_test@example.com',
+            'subject' => 'subject',
+            'body' => 'body',
+            'htmlBody' => '<p>{name}</p>',
+            'name' => '水 イーシーキューブ',
+        ]);
+
+        $message = $this->getMailerMessage();
+        self::assertInstanceOf(Email::class, $message);
+        self::assertSame('<p>水 イーシーキューブ</p>', $message->getHtmlBody());
+        self::assertSame('utf-8', $message->getHtmlCharset());
+    }
+
     public function testCreateMailMagazineHistory履歴データができる(): void
     {
         $this->createMailmagaCustomer('1_create_mail_magazine_history@example.com', 'name01_1', 'name02_1');
