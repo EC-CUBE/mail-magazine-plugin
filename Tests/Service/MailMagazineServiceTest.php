@@ -25,17 +25,19 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
     use MailerAssertionsTrait;
 
     /**
-     * 送信失敗系のテストで使用するメーラースタブ。
-     * null の場合は実メーラーで送信し、送信内容は profiler(MailerAssertionsTrait) から取得する。
+     * services_test.yaml 経由で注入されるメーラースタブ。
+     * setResults(null) のときは実メーラーへ委譲し、送信内容は profiler から取得する。
+     * EccubeTestCase::tearDown がプロパティを null クリアするため nullable。
      */
     private ?MailerStub $mailerStub = null;
 
     public function setUp(): void
     {
         parent::setUp();
+        $this->mailerStub = self::getContainer()->get(MailerStub::class);
+        $this->mailerStub->setResults(null);
         $this->mailMagazineService = self::getContainer()->get(MailMagazineService::class);
         $this->client->enableProfiler();
-        $this->mailerStub = null;
 
         // 配信/結果ファイルはDBと違いロールバックされず、履歴IDの再利用でテスト間の汚染が起きるため掃除する。
         $this->cleanMailMagazineDir();
@@ -618,19 +620,15 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
     }
 
     /**
-     * メーラースタブを設定し、MailMagazineService に注入する。
+     * メーラースタブを設定する。
      * 送信失敗を含むテストで、送信結果を任意に制御するために使用する。
      *
      * @param list<bool> $results 送信結果(true:成功, false:失敗)を送信順に並べた配列
      */
     private function setUpMailerStub(array $results): void
     {
-        $this->mailerStub = new MailerStub($results);
-
-        // MailMagazineService は mailer をコンストラクタ注入しているため、
-        // 注入済みの mailer をスタブへ差し替える。
-        $property = new \ReflectionProperty(MailMagazineService::class, 'mailer');
-        $property->setValue($this->mailMagazineService, $this->mailerStub);
+        assert(null !== $this->mailerStub);
+        $this->mailerStub->setResults($results);
     }
 
     /**
@@ -641,7 +639,7 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
      */
     private function getSentAddresses(): array
     {
-        if (null !== $this->mailerStub) {
+        if (null !== $this->mailerStub && $this->mailerStub->isControlling()) {
             return $this->mailerStub->getSentAddresses();
         }
 

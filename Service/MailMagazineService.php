@@ -26,6 +26,7 @@ use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\CustomerRepository;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -119,9 +120,21 @@ class MailMagazineService
     ) {
         $this->BaseInfo = $baseInfoRepository->get();
         $this->mailMagazineDir = $this->eccubeConfig['mail_magazine_dir'];
-        if (!is_dir($this->mailMagazineDir) && !mkdir($this->mailMagazineDir, 0777, true) && !is_dir($this->mailMagazineDir)) {
-            throw new \RuntimeException(sprintf('Could not create mail magazine directory "%s".', $this->mailMagazineDir));
+    }
+
+    /**
+     * 配信ファイル書き込み前にディレクトリを確保する。
+     *
+     * MailMagazineService は knp_pager.items 購読経由でメルマガ以外の画面でも生成されるため、
+     * コンストラクタでは作成せず、実際に書き込む直前でのみ例外を投げる。
+     */
+    private function ensureMailMagazineDir(): void
+    {
+        if (is_dir($this->mailMagazineDir)) {
+            return;
         }
+
+        (new Filesystem())->mkdir($this->mailMagazineDir);
     }
 
     /**
@@ -244,6 +257,7 @@ class MailMagazineService
             if (null === $sendId) {
                 throw new \RuntimeException('Mail magazine history ID was not generated.');
             }
+            $this->ensureMailMagazineDir();
             $fp = fopen($this->getHistoryFileName($sendId), 'w');
             if (false === $fp) {
                 throw new \RuntimeException('Could not open the mail magazine history file.');
@@ -372,6 +386,7 @@ class MailMagazineService
         $errorCount = $offset > 0 ? $sendHistory->getErrorCount() : 0;
 
         // 履歴ファイルと結果ファイル
+        $this->ensureMailMagazineDir();
         $fileHistory = $this->getHistoryFileName($sendId);
         $fileResult = $this->getHistoryFileName($sendId, false);
         $handleHistory = fopen($fileHistory, 'r');

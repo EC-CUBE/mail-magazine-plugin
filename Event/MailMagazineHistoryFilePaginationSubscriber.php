@@ -57,12 +57,16 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
 
         $event->items = [];
         while (false !== ($line = fgets($fp))) {
+            $line = rtrim($line, "\r\n");
+            if ('' === $line) {
+                continue;
+            }
             $total++;
             if ($skip-- > 0) {
                 continue;
             }
             if ($count > 0) {
-                [$status, $customerId, $email, $name] = explode(',', str_replace(PHP_EOL, '', $line), 4);
+                [$status, $customerId, $email, $name] = explode(',', $line, 4);
                 $event->items[] = [
                     'status' => $status,
                     'customerId' => $customerId,

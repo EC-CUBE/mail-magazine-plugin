@@ -41,15 +41,14 @@ class MailMagazineTemplateRepository extends AbstractRepository
     /**
      * find all.
      *
+     * 4.3 以前は HYDRATE_ARRAY で連想配列を返していたが、エンティティ配列を返す。
+     *
      * @return list<MailMagazineTemplate>
      */
     public function findAll(): array
     {
-        $query = $this
-            ->getEntityManager()
-            ->createQuery('SELECT m FROM Plugin\MailMagazine44\Entity\MailMagazineTemplate m ORDER BY m.id DESC');
         /** @var list<MailMagazineTemplate> $result */
-        $result = $query->getResult();
+        $result = $this->findBy([], ['id' => 'DESC']);
 
         return $result;
     }

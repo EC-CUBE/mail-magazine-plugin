@@ -8,7 +8,7 @@ EC-CUBE 4 系の**メルマガ管理プラグイン**。配信先の絞り込み
 
 - 管理画面: 「メルマガ管理」（`Controller/MailMagazineController.php`、`Controller/MailMagazineHistoryController.php`、`Controller/MailMagazineTemplateController.php`）
 
-プラグインコードは `MailMagazine44`、Composer パッケージ名は `ec-cube/MailMagazine44`。コード中の Twig 名前空間（`@MailMagazine44`）・クラス名前空間（`Plugin\MailMagazine44\...`）はすべて `MailMagazine44` 接頭辞を使う。
+プラグインコードは `MailMagazine44`、Composer パッケージ名は `ec-cube/mailmagazine44`。コード中の Twig 名前空間（`@MailMagazine44`）・クラス名前空間（`Plugin\MailMagazine44\...`）はすべて `MailMagazine44` 接頭辞を使う。
 
 ### ブランチ運用
 
@@ -35,7 +35,7 @@ TAG=8.3-apache-4.4 docker compose up -d --wait
 
 ### PHPUnit
 
-テストは `Tests/` 配下の PHPUnit（`Tests/Repository/`・`Tests/Web/`）。`phpunit.xml.dist` により `APP_ENV=test` で実行される。
+テストは `Tests/` 配下の PHPUnit（`Tests/Service/`・`Tests/Util/`・`Tests/Web/`）。`phpunit.xml.dist` により `APP_ENV=test` で実行される。
 
 ```bash
 docker compose exec ec-cube bash -lc \

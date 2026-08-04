@@ -15,7 +15,7 @@ jobs:
           rm -rf $GITHUB_WORKSPACE/.github
           # 開発・テスト用ファイルは配布パッケージに含めない
           rm -rf $GITHUB_WORKSPACE/docker-compose*.yml $GITHUB_WORKSPACE/dockerbuild
-          rm -f $GITHUB_WORKSPACE/CLAUDE.md $GITHUB_WORKSPACE/phpstan.neon.dist
+          rm -f $GITHUB_WORKSPACE/CLAUDE.md $GITHUB_WORKSPACE/AGENTS.md $GITHUB_WORKSPACE/phpstan.neon.dist
           rm -f $GITHUB_WORKSPACE/Resource/rector.php "$GITHUB_WORKSPACE/Resource/.php-cs-fixer.dist.php"
           find $GITHUB_WORKSPACE -name "dummy" -delete
           find $GITHUB_WORKSPACE -name ".git*" -and ! -name ".gitkeep" -print0 | xargs -0 rm -rf

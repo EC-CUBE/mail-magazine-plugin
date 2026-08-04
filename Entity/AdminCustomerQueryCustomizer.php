@@ -23,11 +23,10 @@ class AdminCustomerQueryCustomizer extends WhereCustomizer
      * {@inheritdoc}
      *
      * @param array<string, mixed> $params
-     * @param $queryKey
      *
      * @return WhereClause[]
      */
-    protected function createStatements(mixed $params, mixed $queryKey): array
+    protected function createStatements(array $params, string $queryKey): array
     {
         if (!isset($params['plg_mailmagazine_flg'])) {
             return [];
