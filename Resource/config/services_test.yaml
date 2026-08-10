@@ -4,5 +4,15 @@ services:
     autoconfigure: true
     public: true
 
-  Plugin\MailMagazine42\Service\MailMagazineService:
-  Plugin\MailMagazine42\Event\MailMagazineHistoryFilePaginationSubscriber:
+  # 送信失敗を再現するため MailMagazineService の mailer だけ差し替える。
+  # setResults(null) のときは実メーラーへ委譲し、profiler 検証も可能。
+  Plugin\MailMagazine44\Tests\Service\MailerStub:
+    autoconfigure: false
+    arguments:
+      $inner: '@mailer.mailer'
+
+  Plugin\MailMagazine44\Service\MailMagazineService:
+    arguments:
+      $mailer: '@Plugin\MailMagazine44\Tests\Service\MailerStub'
+
+  Plugin\MailMagazine44\Event\MailMagazineHistoryFilePaginationSubscriber:

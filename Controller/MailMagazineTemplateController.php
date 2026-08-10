@@ -5,22 +5,24 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Controller;
+namespace Plugin\MailMagazine44\Controller;
 
 use Eccube\Controller\AbstractController;
-use Plugin\MailMagazine42\Entity\MailMagazineTemplate;
-use Plugin\MailMagazine42\Repository\MailMagazineTemplateRepository;
-use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Routing\Annotation\Route;
-use Plugin\MailMagazine42\Form\Type\MailMagazineTemplateEditType;
+use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
+use Plugin\MailMagazine44\Form\Type\MailMagazineTemplateEditType;
+use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class MailMagazineTemplateController extends AbstractController
 {
@@ -35,7 +37,7 @@ class MailMagazineTemplateController extends AbstractController
      * @param MailMagazineTemplateRepository $mailMagazineTemplateRepository
      */
     public function __construct(
-        MailMagazineTemplateRepository $mailMagazineTemplateRepository
+        MailMagazineTemplateRepository $mailMagazineTemplateRepository,
     ) {
         $this->mailMagazineTemplateRepository = $mailMagazineTemplateRepository;
     }
@@ -43,10 +45,11 @@ class MailMagazineTemplateController extends AbstractController
     /**
      * 一覧表示.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template", name="plugin_mail_magazine_template")
-     * @Template("@MailMagazine42/admin/template_list.twig")
+     * @return array<string, mixed>
      */
-    public function index()
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/template', name: 'plugin_mail_magazine_template')]
+    #[Template('@MailMagazine44/admin/template_list.twig')]
+    public function index(): array
     {
         $templateList = $this->mailMagazineTemplateRepository->findAll();
 
@@ -58,17 +61,11 @@ class MailMagazineTemplateController extends AbstractController
     /**
      * preview画面表示.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/preview",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_template_preview"
-     * )
-     * @Template("@MailMagazine42/admin/preview.twig")
-     *
-     * @param MailMagazineTemplate $mailMagazineTemplate
-     *
-     * @return array
+     * @return array<string, MailMagazineTemplate>
      */
-    public function preview(MailMagazineTemplate $mailMagazineTemplate)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/template/{id}/preview', name: 'plugin_mail_magazine_template_preview', requirements: ['id' => '\d+'])]
+    #[Template('@MailMagazine44/admin/preview.twig')]
+    public function preview(#[MapEntity(id: 'id')] MailMagazineTemplate $mailMagazineTemplate): array
     {
         // プレビューページ表示
         return [
@@ -78,18 +75,9 @@ class MailMagazineTemplateController extends AbstractController
 
     /**
      * メルマガテンプレートを論理削除.
-     *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/delete",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_template_delete",
-     *     methods={"POST"}
-     * )
-     *
-     * @param MailMagazineTemplate $mailMagazineTemplate
-     *
-     * @return RedirectResponse
      */
-    public function delete(MailMagazineTemplate $mailMagazineTemplate)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/template/{id}/delete', name: 'plugin_mail_magazine_template_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(#[MapEntity(id: 'id')] MailMagazineTemplate $mailMagazineTemplate): RedirectResponse
     {
         // POSTかどうか判定
         // パラメータ$idにマッチするデータが存在するか判定
@@ -99,28 +87,22 @@ class MailMagazineTemplateController extends AbstractController
             $this->mailMagazineTemplateRepository->delete($mailMagazineTemplate);
             $this->entityManager->flush();
             $this->addSuccess('admin.mailmagazine.template.delete.complete', 'admin');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addError('admin.mailmagazine.template.delete.failure', 'admin');
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
+        return $this->redirectToRoute('plugin_mail_magazine_template');
     }
 
     /**
      * テンプレート編集画面表示.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/{id}/edit",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_template_edit"
-     * )
-     * @Template("@MailMagazine42/admin/template_edit.twig")
-     *
-     * @param MailMagazineTemplate $mailMagazineTemplate
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function edit(MailMagazineTemplate $mailMagazineTemplate)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/template/{id}/edit', name: 'plugin_mail_magazine_template_edit', requirements: ['id' => '\d+'])]
+    #[Template('@MailMagazine44/admin/template_edit.twig')]
+    public function edit(#[MapEntity(id: 'id')] MailMagazineTemplate $mailMagazineTemplate): array
     {
         // formの作成
         $form = $this->formFactory
@@ -136,19 +118,11 @@ class MailMagazineTemplateController extends AbstractController
     /**
      * テンプレート編集確定処理.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/commit/{id}",
-     *     requirements={"id":"\d+"},
-     *     name="plugin_mail_magazine_template_commit",
-     *     methods={"POST"}
-     * )
-     * @Template("@MailMagazine42/admin/template_edit.twig")
-     *
-     * @param Request $request
-     * @param int $id
-     *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return Response|array<string, mixed>
      */
-    public function commit(Request $request, $id = null)
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/template/commit/{id}', name: 'plugin_mail_magazine_template_commit', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Template('@MailMagazine44/admin/template_edit.twig')]
+    public function commit(Request $request, ?int $id = null): Response|array
     {
         $Template = $id ? $this->mailMagazineTemplateRepository->find($id) : new MailMagazineTemplate();
 
@@ -156,7 +130,7 @@ class MailMagazineTemplateController extends AbstractController
         if (is_null($Template)) {
             $this->addError('admin.mailmagazine.template.data.notfound', 'admin');
 
-            return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
+            return $this->redirectToRoute('plugin_mail_magazine_template');
         }
 
         // Formを取得
@@ -182,7 +156,7 @@ class MailMagazineTemplateController extends AbstractController
                 $this->entityManager->flush();
                 // 成功時のメッセージを登録する
                 $this->addSuccess('admin.mailmagazine.template.save.complete', 'admin');
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $this->addError('admin.mailmagazine.template.save.failure', 'admin');
 
                 return [
@@ -193,18 +167,17 @@ class MailMagazineTemplateController extends AbstractController
         }
 
         // メルマガテンプレート一覧へリダイレクト
-        return $this->redirect($this->generateUrl('plugin_mail_magazine_template'));
+        return $this->redirectToRoute('plugin_mail_magazine_template');
     }
 
     /**
      * メルマガテンプレート登録画面を表示する.
      *
-     * @Route("/%eccube_admin_route%/plugin/mail_magazine/template/regist", name="plugin_mail_magazine_template_regist")
-     * @Template("@MailMagazine42/admin/template_edit.twig")
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function regist()
+    #[Route('/%eccube_admin_route%/plugin/mail_magazine/template/regist', name: 'plugin_mail_magazine_template_regist')]
+    #[Template('@MailMagazine44/admin/template_edit.twig')]
+    public function regist(): array
     {
         $Template = new MailMagazineTemplate();
 

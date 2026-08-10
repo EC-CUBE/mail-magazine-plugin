@@ -5,77 +5,47 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Entity;
+namespace Plugin\MailMagazine44\Entity;
 
-use Eccube\Entity\AbstractEntity;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
+use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
 
-/**
- * Class MailMagazineTemplate
- *
- *
- * @ORM\Table(name="plg_mailmaga_template")
- * @ORM\Entity(repositoryClass="Plugin\MailMagazine42\Repository\MailMagazineTemplateRepository")
- */
-class MailMagazineTemplate extends AbstractEntity
+#[ORM\Table(name: 'plg_mailmaga_template')]
+#[ORM\Entity(repositoryClass: MailMagazineTemplateRepository::class)]
+class MailMagazineTemplate extends AbstractEntity implements \Stringable
 {
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getSubject();
     }
 
-    /**
-     * @ORM\Id()
-     * @ORM\Column(name="template_id", type="integer", nullable=false, options={"unsigned": true})
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     *
-     * @var int
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'template_id', type: Types::INTEGER, options: ['unsigned' => true])]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(name="subject", type="string", nullable=false, length=255)
-     *
-     * @var string
-     */
-    private $subject;
+    #[ORM\Column(name: 'subject', type: Types::STRING, length: 255)]
+    private string $subject = '';
 
-    /**
-     * @ORM\Column(name="body", type="text", nullable=false)
-     *
-     * @var string
-     */
-    private $body;
+    #[ORM\Column(name: 'body', type: Types::TEXT)]
+    private string $body = '';
 
-    /**
-     * @ORM\Column(name="html_body", type="text", nullable=true)
-     *
-     * @var string
-     */
-    private $html_body;
+    #[ORM\Column(name: 'html_body', type: Types::TEXT, nullable: true)]
+    private ?string $html_body = null;
 
-    /**
-     * @ORM\Column(name="create_date", type="datetimetz")
-     *
-     * @var \DateTime
-     */
-    private $create_date;
+    #[ORM\Column(name: 'create_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $create_date = null;
 
-    /**
-     * @ORM\Column(name="update_date", type="datetimetz")
-     *
-     * @var \DateTime
-     */
-    private $update_date;
+    #[ORM\Column(name: 'update_date', type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $update_date = null;
 
     /**
      * Set template id.
@@ -84,7 +54,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return MailMagazineTemplate
      */
-    public function setId($id)
+    public function setId(?int $id): self
     {
         $this->id = $id;
 
@@ -96,7 +66,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return int
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -106,7 +76,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return string
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -118,7 +88,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return MailMagazineTemplate
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
 
@@ -132,7 +102,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return MailMagazineTemplate
      */
-    public function setCreateDate($createDate)
+    public function setCreateDate(?\DateTimeInterface $createDate): self
     {
         $this->create_date = $createDate;
 
@@ -142,9 +112,9 @@ class MailMagazineTemplate extends AbstractEntity
     /**
      * Get create_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
-    public function getCreateDate()
+    public function getCreateDate(): ?\DateTimeInterface
     {
         return $this->create_date;
     }
@@ -156,7 +126,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return MailMagazineTemplate
      */
-    public function setUpdateDate($updateDate)
+    public function setUpdateDate(?\DateTimeInterface $updateDate): self
     {
         $this->update_date = $updateDate;
 
@@ -166,9 +136,9 @@ class MailMagazineTemplate extends AbstractEntity
     /**
      * Get update_date.
      *
-     * @return \DateTime
+     * @return \DateTimeInterface|null
      */
-    public function getUpdateDate()
+    public function getUpdateDate(): ?\DateTimeInterface
     {
         return $this->update_date;
     }
@@ -180,7 +150,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return MailMagazineTemplate
      */
-    public function setBody($body)
+    public function setBody(string $body): self
     {
         $this->body = $body;
 
@@ -192,7 +162,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return string
      */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
@@ -200,7 +170,7 @@ class MailMagazineTemplate extends AbstractEntity
     /**
      * @return string
      */
-    public function getHtmlBody()
+    public function getHtmlBody(): ?string
     {
         return $this->html_body;
     }
@@ -210,7 +180,7 @@ class MailMagazineTemplate extends AbstractEntity
      *
      * @return MailMagazineTemplate
      */
-    public function setHtmlBody($html_body)
+    public function setHtmlBody(?string $html_body): self
     {
         $this->html_body = $html_body;
 

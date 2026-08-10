@@ -5,22 +5,22 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Tests\Web\Admin;
+namespace Plugin\MailMagazine44\Tests\Web\Admin;
 
-use Plugin\MailMagazine42\Tests\Web\MailMagazineCommon;
+use Plugin\MailMagazine44\Tests\Web\MailMagazineCommon;
 
 class MailMagazineControllerTest extends MailMagazineCommon
 {
     /**
      * Test routing.
      */
-    public function testRoutingMailMagazine()
+    public function testRoutingMailMagazine(): void
     {
         $this->client->request('GET',
             $this->generateUrl('plugin_mail_magazine')
@@ -28,10 +28,10 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testMailMagazineSearchWithBirthmonthLowOctorber()
+    public function testMailMagazineSearchWithBirthmonthLowOctorber(): void
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
-        //test search with birth month < 10
+        // test search with birth month < 10
         $MaiCustomer->setBirth(new \DateTime('2016-09-19 23:59:59'));
         $this->entityManager->persist($MaiCustomer);
         $this->entityManager->flush();
@@ -45,14 +45,14 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
-    public function testMailMagazineSearchWithBirthmonthHightOctorber()
+    public function testMailMagazineSearchWithBirthmonthHightOctorber(): void
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
-        //test search with birth month > 10
+        // test search with birth month > 10
         $MaiCustomer->setBirth(new \DateTime('2016-11-19 23:59:59'));
         $this->entityManager->persist($MaiCustomer);
         $this->entityManager->flush();
-        //because 誕生月 select box value start from 0. We need minus 1
+        // because 誕生月 select box value start from 0. We need minus 1
         $birth_month = $MaiCustomer->getBirth()->format('n');
         $searchForm = $this->createSearchForm($MaiCustomer, $birth_month);
         $crawler = $this->client->request(
@@ -63,7 +63,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
-    public function testMailMagazineSearchWithBirthmonthNull()
+    public function testMailMagazineSearchWithBirthmonthNull(): void
     {
         $MaiCustomer = $this->createMailMagazineCustomer();
         $searchForm = $this->createSearchForm($MaiCustomer);
@@ -75,7 +75,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertStringContainsString('検索結果：1件が該当しました', $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->text());
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -92,7 +92,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testSelect_NotPost()
+    public function testSelectNotPost(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
         $this->client->request(
@@ -108,7 +108,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertEquals(405, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testConfirm_InValid()
+    public function testConfirmInValid(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -126,7 +126,7 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testConfirm()
+    public function testConfirm(): void
     {
         $MailTemplate = $this->createMagazineTemplate();
 
@@ -145,9 +145,9 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testPrepare()
+    public function testPrepare(): void
     {
-//        $this->initializeMailCatcher();
+        //        $this->initializeMailCatcher();
         $MailTemplate = $this->createMagazineTemplate();
         $MaiCustomer = $this->createMailMagazineCustomer();
         $searchForm = $this->createSearchForm($MaiCustomer);
@@ -163,16 +163,16 @@ class MailMagazineControllerTest extends MailMagazineCommon
 
         $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_history')));
 
-//        $Messages = $this->getMailCatcherMessages();
-//        $Message = $this->getMailCatcherMessage($Messages[0]->id);
-//
-//        $this->expected = $searchForm['subject'];
-//        $this->actual = $Message->subject;
-//        $this->verify();
-//        $this->cleanUpMailCatcherMessages();
+        //        $Messages = $this->getMailCatcherMessages();
+        //        $Message = $this->getMailCatcherMessage($Messages[0]->id);
+        //
+        //        $this->expected = $searchForm['subject'];
+        //        $this->actual = $Message->subject;
+        //        $this->verify();
+        //        $this->cleanUpMailCatcherMessages();
     }
 
-    public function testPagination()
+    public function testPagination(): void
     {
         for ($i = 0; $i < 30; ++$i) {
             $this->createMailMagazineCustomer();
@@ -208,17 +208,17 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $pageNumber = $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->html();
         $this->assertMatchesRegularExpression('/件/', $pageNumber);
 
-        //pagination
+        // pagination
         $crawler = $this->client->request(
             'GET',
             $this->generateUrl('plugin_mail_magazine_page', ['page_no' => '2'])
         );
 
-        //check result
+        // check result
         $pageNumber = $crawler->filter('.c-outsideBlock__contents.mb-5 > span')->html();
         $this->assertMatchesRegularExpression('/件/', $pageNumber);
 
-        //check search condition
+        // check search condition
         $sexCheckbox = $crawler->filter('#mail_magazine_sex_1:checked')->count();
         $this->assertEquals(1, $sexCheckbox);
     }

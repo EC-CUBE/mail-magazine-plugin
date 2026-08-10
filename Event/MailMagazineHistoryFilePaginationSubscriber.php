@@ -5,39 +5,33 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Event;
+namespace Plugin\MailMagazine44\Event;
 
 use Knp\Component\Pager\Event\ItemsEvent;
+use Plugin\MailMagazine44\Service\MailMagazineService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Plugin\MailMagazine42\Service\MailMagazineService;
 
 class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var MailMagazineService
-     */
-    protected MailMagazineService $mailMagazineService;
-
     /**
      * MailMagazineHistoryFilePaginationSubscriber constructor.
      *
      * @param MailMagazineService $mailMagazineService
      */
-    public function __construct(MailMagazineService $mailMagazineService)
+    public function __construct(protected MailMagazineService $mailMagazineService)
     {
-        $this->mailMagazineService = $mailMagazineService;
     }
 
-    public function items(ItemsEvent $event)
+    public function items(ItemsEvent $event): void
     {
         $mailMagazineDir = $this->mailMagazineService->getMailMagazineDir();
-        if (!is_string($event->target) || strpos($event->target, $mailMagazineDir) !== 0) {
+        if (!is_string($event->target) || !str_starts_with($event->target, $mailMagazineDir)) {
             return;
         }
 
@@ -52,17 +46,27 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
 
         $skip = $event->getOffset();
         $fp = fopen($file, 'r');
+        if (false === $fp) {
+            $event->count = 0;
+            $event->items = [];
+
+            return;
+        }
         $count = $event->getLimit();
         $total = 0;
 
         $event->items = [];
-        while ($line = fgets($fp)) {
+        while (false !== ($line = fgets($fp))) {
+            $line = rtrim($line, "\r\n");
+            if ('' === $line) {
+                continue;
+            }
             $total++;
             if ($skip-- > 0) {
                 continue;
             }
             if ($count > 0) {
-                list($status, $customerId, $email, $name) = explode(',', str_replace(PHP_EOL, '', $line), 4);
+                [$status, $customerId, $email, $name] = explode(',', $line, 4);
                 $event->items[] = [
                     'status' => $status,
                     'customerId' => $customerId,
@@ -72,10 +76,11 @@ class MailMagazineHistoryFilePaginationSubscriber implements EventSubscriberInte
             }
             --$count;
         }
+        fclose($fp);
         $event->count = $total;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'knp_pager.items' => ['items', 1],

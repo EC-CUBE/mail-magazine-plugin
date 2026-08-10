@@ -1,0 +1,16 @@
+parameters:
+    level: 6
+    paths:
+        - .
+    excludePaths:
+        - Resource/*
+        - Tests/bootstrap.php
+    ignoreErrors:
+        # CustomerTrait は EntityExtension により実行時に Eccube\Entity\Customer へ注入される。
+        # phpstan は静的解析時にこの注入を解決できないため、trait 自体が「未使用」に見え、
+        # 注入されたメソッド呼び出しも「未定義メソッド」に見えるが、実行時には有効。
+        - '#Trait Plugin\\MailMagazine44\\Entity\\CustomerTrait is used zero times and is not analysed#'
+        - '#Call to an undefined method Eccube\\Entity\\Customer::(getMailmagaFlg|setMailmagaFlg)\(\)#'
+    doctrine:
+        objectManagerLoader: ../../../tests/object-manager.php
+        ormRepositoryClass: Eccube\Repository\AbstractRepository

@@ -5,18 +5,18 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Tests\Web\Front;
+namespace Plugin\MailMagazine44\Tests\Web\Front;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
-use Eccube\Tests\Web\AbstractWebTestCase;
 use Eccube\Repository\CustomerRepository;
+use Eccube\Tests\Web\AbstractWebTestCase;
 
 class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
 {
@@ -31,13 +31,16 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->customerRepository = $this->entityManager->getRepository(Customer::class);
     }
 
-    protected function createFormData()
+    /**
+     * @return array<string, mixed>
+     */
+    protected function createFormData(): array
     {
         $faker = $this->getFaker();
         $tel = explode('-', $faker->phoneNumber);
 
         $email = $faker->safeEmail;
-        $password = 'password1234';
+        $password = $faker->lexify('?????????????').'a1';
         $birth = $faker->dateTimeBetween;
 
         $form = [
@@ -46,11 +49,11 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
                 'name02' => $faker->firstName,
             ],
             'kana' => [
-                'kana01' => $faker->lastKanaName,
-                'kana02' => $faker->firstKanaName,
+                'kana01' => 'テスト',
+                'kana02' => 'タロウ',
             ],
             'company_name' => $faker->company,
-            'postal_code' => $faker->postcode1().$faker->postcode2(),
+            'postal_code' => '1234567',
             'address' => [
                 'pref' => '5',
                 'addr01' => $faker->city,
@@ -78,7 +81,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         return $form;
     }
 
-    public function testOnRenderMypageChange_NotLogin()
+    public function testOnRenderMypageChangeNotLogin(): void
     {
         $this->client->request('GET',
             $this->generateUrl('mypage_change')
@@ -87,7 +90,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->assertFalse($this->client->getResponse()->isSuccessful());
     }
 
-    public function testOnRenderMypageChange()
+    public function testOnRenderMypageChange(): void
     {
         $Customer = $this->createCustomer();
         $this->loginTo($Customer);
@@ -100,7 +103,7 @@ class MailMagazineEventOnRenderMypageChangeTest extends AbstractWebTestCase
         $this->assertEquals(1, $crawler->filter('#entry_mailmaga_flg')->count());
     }
 
-    public function testOnRenderMypageChange_Post()
+    public function testOnRenderMypageChangePost(): void
     {
         $Customer = $this->createCustomer();
         $this->loginTo($Customer);

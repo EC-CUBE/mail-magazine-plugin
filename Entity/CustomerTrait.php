@@ -5,28 +5,24 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Entity;
+namespace Plugin\MailMagazine44\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Eccube\Annotation as Eccube;
+use Eccube\Attribute\EntityExtension;
+use Eccube\Entity\Customer;
 
-/**
- * @Eccube\EntityExtension("Eccube\Entity\Customer")
- */
+#[EntityExtension(Customer::class)]
 trait CustomerTrait
 {
-    /**
-     * @ORM\Column(name="plg_mailmagazine_flg", type="smallint", length=1, nullable=true, options={"default":0, "unsigned": true})
-     *
-     * @var int
-     */
-    protected $mailmaga_flg;
+    #[ORM\Column(name: 'plg_mailmagazine_flg', type: Types::SMALLINT, nullable: true, options: ['default' => 0, 'unsigned' => true])]
+    protected ?int $mailmaga_flg = null;
 
     /**
      * Set mailmaga_flg
@@ -35,7 +31,7 @@ trait CustomerTrait
      *
      * @return $this
      */
-    public function setMailmagaFlg($mailmagaFlg)
+    public function setMailmagaFlg(?int $mailmagaFlg): self
     {
         $this->mailmaga_flg = $mailmagaFlg;
 
@@ -47,7 +43,7 @@ trait CustomerTrait
      *
      * @return int
      */
-    public function getMailmagaFlg()
+    public function getMailmagaFlg(): ?int
     {
         return $this->mailmaga_flg;
     }

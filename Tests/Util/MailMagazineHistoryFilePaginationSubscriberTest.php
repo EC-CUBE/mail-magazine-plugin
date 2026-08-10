@@ -5,26 +5,27 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Test\Util;
+namespace Plugin\MailMagazine44\Tests\Util;
 
-use Knp\Component\Pager\Pagination\AbstractPagination;
-use Knp\Component\Pager\Paginator;
-use Plugin\MailMagazine42\Tests\AbstractMailMagazineTestCase;
-use Plugin\MailMagazine42\Service\MailMagazineService;
-use Plugin\MailMagazine42\Event\MailMagazineHistoryFilePaginationSubscriber;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber;
 use Knp\Component\Pager\Event\Subscriber\Sortable\SortableSubscriber;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\Paginator;
+use Plugin\MailMagazine44\Event\MailMagazineHistoryFilePaginationSubscriber;
+use Plugin\MailMagazine44\Service\MailMagazineService;
+use Plugin\MailMagazine44\Tests\AbstractMailMagazineTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazineTestCase
 {
+    /** @var string */
     private $rootDir;
 
     public function setUp(): void
@@ -48,7 +49,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         parent::tearDown();
     }
 
-    public function test_ファイルがないときは0件()
+    public function testファイルがないときは0件(): void
     {
         $file = $this->file();
         self::assertEquals(false, file_exists($file));
@@ -57,7 +58,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         self::assertEquals(0, $actual->getTotalItemCount());
     }
 
-    public function test_1ページ目()
+    public function test1ページ目(): void
     {
         $file = $this->file();
         file_put_contents($file,
@@ -86,7 +87,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         );
     }
 
-    public function test_2ページ目()
+    public function test2ページ目(): void
     {
         $file = $this->file();
         file_put_contents($file,
@@ -115,7 +116,7 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
         );
     }
 
-    public function test_最終ページ()
+    public function test最終ページ(): void
     {
         $file = $this->file();
         file_put_contents($file,
@@ -143,35 +144,23 @@ class MailMagazineHistoryFilePaginationSubscriberTest extends AbstractMailMagazi
     }
 
     /**
-     * @param $file
-     * @param $page
-     * @param $limit
-     * @param $total
-     *
-     * @return AbstractPagination
+     * @return PaginationInterface<int, mixed>
      */
-    private function newPagination($file, $page, $limit, $total)
+    private function newPagination(string $file, int $page, int $limit, int $total): PaginationInterface
     {
         $eventDispatcher = new EventDispatcher();
-        $eventDispatcher->addSubscriber(new PaginationSubscriber);
-        $eventDispatcher->addSubscriber(new SortableSubscriber);
+        $eventDispatcher->addSubscriber(new PaginationSubscriber());
+        $eventDispatcher->addSubscriber(new SortableSubscriber());
         $eventDispatcher->addSubscriber(self::getContainer()->get(MailMagazineHistoryFilePaginationSubscriber::class));
 
-        if (class_exists(\Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess::class)) {
-            // ECCUBE 4.3 (knplabs/knp-components v5.2) 対応
-            $requestStack = new RequestStack();
-            $accessor = new \Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess($requestStack);
-            $paginator = new Paginator($eventDispatcher, $accessor);
-        } else {
-            // ECCUBE 4.2 (knplabs/knp-components v3.6) 対応
-            $paginator = new Paginator($eventDispatcher);
-        }
-
+        $requestStack = new RequestStack();
+        $accessor = new \Knp\Component\Pager\ArgumentAccess\RequestArgumentAccess($requestStack);
+        $paginator = new Paginator($eventDispatcher, $accessor);
 
         return $paginator->paginate($file, $page, $limit, ['total' => $total]);
     }
 
-    private function file($name = 'out.txt')
+    private function file(string $name = 'out.txt'): string
     {
         return $this->rootDir.'/'.$name;
     }

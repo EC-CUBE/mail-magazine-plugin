@@ -5,19 +5,19 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Tests;
+namespace Plugin\MailMagazine44\Tests;
 
-use Eccube\Tests\Service\AbstractServiceTestCase;
-use Plugin\MailMagazine42\Entity\MailMagazineSendHistory;
-use Plugin\MailMagazine42\Service\MailMagazineService;
-use Plugin\MailMagazine42\Repository\MailMagazineSendHistoryRepository;
 use Eccube\Entity\Customer;
+use Eccube\Tests\Service\AbstractServiceTestCase;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine44\Service\MailMagazineService;
 
 abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
 {
@@ -46,7 +46,7 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
      *
      * @return Customer
      */
-    protected function createMailmagaCustomer($email = 'mail_magazine_service_test@example.com', $name01 = 'name01', $name02 = 'name02')
+    protected function createMailmagaCustomer(string $email = 'mail_magazine_service_test@example.com', string $name01 = 'name01', string $name02 = 'name02'): Customer
     {
         $c = $this->createCustomer($email);
         if ($name01) {
@@ -58,7 +58,7 @@ abstract class AbstractMailMagazineTestCase extends AbstractServiceTestCase
         $c->setMailmagaFlg(1);
 
         $this->entityManager->persist($c);
-        $this->entityManager->flush($c);
+        $this->entityManager->flush();
 
         return $c;
     }

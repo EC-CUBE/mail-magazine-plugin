@@ -5,18 +5,18 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\MailMagazine42\Tests\Web\Admin;
+namespace Plugin\MailMagazine44\Tests\Web\Admin;
 
 use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
-use Plugin\MailMagazine42\Tests\Web\MailMagazineCommon;
 use Eccube\Repository\CustomerRepository;
+use Plugin\MailMagazine44\Tests\Web\MailMagazineCommon;
 
 class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommon
 {
@@ -31,13 +31,16 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->customerRepository = $this->entityManager->getRepository(Customer::class);
     }
 
-    protected function createFormData()
+    /**
+     * @return array<string, mixed>
+     */
+    protected function createFormData(): array
     {
         $faker = $this->getFaker();
         $tel = $faker->phoneNumber;
 
         $email = $faker->safeEmail;
-        $password = 'password1234';
+        $password = $faker->lexify('?????????????').'a1';
         $birth = $faker->dateTimeBetween;
 
         $form = [
@@ -46,11 +49,11 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
                 'name02' => $faker->firstName,
             ],
             'kana' => [
-                'kana01' => $faker->lastKanaName,
-                'kana02' => $faker->firstKanaName,
+                'kana01' => 'テスト',
+                'kana02' => 'タロウ',
             ],
             'company_name' => $faker->company,
-            'postal_code' => $faker->postcode1().'-'.$faker->postcode2(),
+            'postal_code' => '123-4567',
             'address' => [
                 'pref' => '5',
                 'addr01' => $faker->city,
@@ -73,7 +76,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         return $form;
     }
 
-    public function testOnRenderAdminCustomerBefore_Edit()
+    public function testOnRenderAdminCustomerBeforeEdit(): void
     {
         $Customer = $this->createMailMagazineCustomer();
 
@@ -84,7 +87,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    public function testOnRenderAdminCustomerBefore_EditPost()
+    public function testOnRenderAdminCustomerBeforeEditPost(): void
     {
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;
@@ -105,7 +108,7 @@ class MailMagazineEventOnRenderAdminCustomerBeforeTest extends MailMagazineCommo
         $this->verify();
     }
 
-    public function testOnRenderAdminCustomerBefore_EditPost_WithInvalidPostData()
+    public function testOnRenderAdminCustomerBeforeEditPostWithInvalidPostData(): void
     {
         $Customer = $this->createMailMagazineCustomer();
         $updateFlg = Constant::DISABLED;
