@@ -61,6 +61,7 @@ admin.mailmagazine.template.delete.failure: メールテンプレート情報の
 admin.mailmagazine.template.data.notfound: メールテンプレートが存在しません。
 admin.mailmagazine.template.data.illegalaccess: 正常なアクセスではありません。
 admin.mailmagazine.send.register.failure: 配信履歴の登録に失敗しました。
+admin.mailmagazine.send.register.no_recipient: 配信条件に一致する会員がいないため、配信できませんでした。
 admin.mailmagazine.history.datanotfound: 配信履歴が存在しません。
 admin.mailmagazine.history.delete.sucesss: 配信履歴を削除しました。
 admin.mailmagazine.history.delete.failure: 配信履歴の削除に失敗しました。

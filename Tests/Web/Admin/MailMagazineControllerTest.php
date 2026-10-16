@@ -13,7 +13,11 @@
 
 namespace Plugin\MailMagazine44\Tests\Web\Admin;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Service\MailMagazineService;
 use Plugin\MailMagazine44\Tests\Web\MailMagazineCommon;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class MailMagazineControllerTest extends MailMagazineCommon
 {
@@ -221,5 +225,158 @@ class MailMagazineControllerTest extends MailMagazineCommon
         // check search condition
         $sexCheckbox = $crawler->filter('#mail_magazine_sex_1:checked')->count();
         $this->assertEquals(1, $sexCheckbox);
+    }
+
+    public function testPrepare配信対象が0件なら配信履歴を作らない(): void
+    {
+        $MailTemplate = $this->createMagazineTemplate();
+        $searchForm = [
+            '_token' => 'dummy',
+            'multi' => 'no-such-customer-'.uniqid().'@example.com',
+            'template' => $MailTemplate->getId(),
+            'subject' => $MailTemplate->getSubject(),
+            'body' => $MailTemplate->getBody(),
+        ];
+        $historyRepository = $this->entityManager->getRepository(MailMagazineSendHistory::class);
+        $before = $historyRepository->count([]);
+
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_prepare'),
+            ['mail_magazine' => $searchForm]
+        );
+
+        $this->assertTrue($this->client->getResponse()->isRedirect($this->generateUrl('plugin_mail_magazine_history')));
+        $this->assertSame($before, $historyRepository->count([]));
+
+        $session = $this->client->getRequest()->getSession();
+        $this->assertInstanceOf(Session::class, $session);
+        $flashBag = $session->getFlashBag();
+        $this->assertFalse($flashBag->has('eccube.mailmagazine.history'));
+        $this->assertContains('admin.mailmagazine.send.register.no_recipient', $flashBag->get('eccube.admin.error'));
+    }
+
+    public function testCommit配信対象が0件の配信履歴でも完了する(): void
+    {
+        // 配信準備で 0 件を弾く前に作られた配信履歴を想定する
+        $SendHistory = new MailMagazineSendHistory();
+        $SendHistory->setSubject('subject');
+        $SendHistory->setBody('body');
+        $SendHistory->setSendCount(0);
+        $SendHistory->setCompleteCount(0);
+        $SendHistory->setErrorCount(0);
+        $SendHistory->setCreateDate(new \DateTime());
+        $SendHistory->setStartDate(new \DateTime());
+        $SendHistory->setSearchData(base64_encode(serialize([])));
+        $this->entityManager->persist($SendHistory);
+        $this->entityManager->flush();
+
+        $service = static::getContainer()->get(MailMagazineService::class);
+        $service->unlinkHistoryFiles((int) $SendHistory->getId());
+
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_commit'),
+            ['id' => $SendHistory->getId(), 'offset' => 0, '_token' => 'dummy'],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $json = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertSame(0, $json['total']);
+        $this->assertSame(0, $json['count']);
+    }
+
+    /**
+     * @return iterable<string, array{array<string, mixed>}>
+     */
+    public static function commitHistoryNotFoundProvider(): iterable
+    {
+        yield 'id なし' => [['offset' => 0]];
+        yield 'id が 0' => [['id' => 0, 'offset' => 0]];
+        yield '存在しない id' => [['id' => 99999999, 'offset' => 0]];
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     */
+    #[DataProvider('commitHistoryNotFoundProvider')]
+    public function testCommit配信履歴が無ければ404(array $params): void
+    {
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_commit'),
+            $params + ['_token' => 'dummy'],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSendTest正常なメールアドレスなら送信する(): void
+    {
+        $this->client->enableProfiler();
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_test'),
+            self::validTestMailParams(),
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(['status' => true], json_decode((string) $this->client->getResponse()->getContent(), true));
+        $this->assertEmailCount(1);
+    }
+
+    /**
+     * @return iterable<string, array{array<string, mixed>}>
+     */
+    public static function invalidTestMailParamsProvider(): iterable
+    {
+        yield 'メールアドレスでない文字列' => [['email' => 'not-an-email'] + self::validTestMailParams()];
+        yield 'メールアドレスが空' => [['email' => ''] + self::validTestMailParams()];
+        yield 'メールアドレスが無い' => [array_diff_key(self::validTestMailParams(), ['email' => true])];
+        yield 'メールアドレスに改行' => [['email' => "admin@example.com\r\nBcc: x@example.com"] + self::validTestMailParams()];
+        yield 'ドメインが長すぎる' => [['email' => 'admin@'.str_repeat('a', 300).'.com'] + self::validTestMailParams()];
+        yield 'Mailer の RFC 検証で拒否される' => [['email' => 'a..b@example.com'] + self::validTestMailParams()];
+        yield 'メールアドレスが配列' => [['email' => ['admin@example.com']] + self::validTestMailParams()];
+        yield '名前が配列' => [['name' => ['name']] + self::validTestMailParams()];
+        yield '件名が配列' => [['subject' => ['subject']] + self::validTestMailParams()];
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     */
+    #[DataProvider('invalidTestMailParamsProvider')]
+    public function testSendTest不正な入力は400(array $params): void
+    {
+        $this->client->enableProfiler();
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_test'),
+            $params,
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertSame(400, $this->client->getResponse()->getStatusCode());
+        $this->assertEmailCount(0);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function validTestMailParams(): array
+    {
+        return [
+            'email' => 'admin@example.com',
+            'name' => 'name',
+            'subject' => 'test',
+            'body' => 'body',
+            'htmlBody' => '<b>body</b>',
+        ];
     }
 }

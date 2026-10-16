@@ -23,7 +23,9 @@ use Knp\Component\Pager\PaginatorInterface;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine44\Form\Type\MailMagazineType;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
+use Plugin\MailMagazine44\Service\Exception\NoRecipientException;
 use Plugin\MailMagazine44\Service\MailMagazineService;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +34,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mime\Exception\RfcComplianceException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class MailMagazineController
@@ -73,6 +78,8 @@ class MailMagazineController extends AbstractController
         MailMagazineTemplateRepository $magazineTemplateRepository,
         MailMagazineService $mailMagazineService,
         private readonly PaginatorInterface $paginator,
+        private readonly MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
+        private readonly ValidatorInterface $validator,
     ) {
         $this->pageMaxRepository = $pageMaxRepository;
         $this->customerRepository = $customerRepository;
@@ -276,13 +283,21 @@ class MailMagazineController extends AbstractController
         $service = $this->mailMagazineService;
 
         // 配信履歴を登録する
-        $sendId = $service->createMailMagazineHistory($data);
-        if (is_null($sendId)) {
-            $this->addError('admin.mailmagazine.send.register.failure', 'admin');
+        try {
+            $sendId = $service->createMailMagazineHistory($data);
+        } catch (NoRecipientException) {
+            log_info('メルマガ配信対象なし');
+            $this->addError('admin.mailmagazine.send.register.no_recipient', 'admin');
+
+            return $this->redirectToRoute('plugin_mail_magazine_history');
         }
 
-        // フラッシュスコープにIDを保持してリダイレクト後に送信処理を開始できるようにする
-        $this->session->getFlashBag()->add('eccube.mailmagazine.history', $sendId);
+        if (is_null($sendId)) {
+            $this->addError('admin.mailmagazine.send.register.failure', 'admin');
+        } else {
+            // フラッシュスコープにIDを保持してリダイレクト後に送信処理を開始できるようにする
+            $this->session->getFlashBag()->add('eccube.mailmagazine.history', $sendId);
+        }
 
         log_info('メルマガ配信前処理完了', ['sendId' => $sendId]);
 
@@ -315,6 +330,10 @@ class MailMagazineController extends AbstractController
 
         log_info('メルマガ配信処理開始', ['id' => $id, 'offset' => $offset, 'max' => $max]);
 
+        if (null === $this->mailMagazineSendHistoryRepository->find($id)) {
+            throw new NotFoundHttpException();
+        }
+
         /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $this->mailMagazineService->sendrMailMagazine($id, $offset, $max);
 
@@ -345,8 +364,33 @@ class MailMagazineController extends AbstractController
 
         log_info('テストメール配信処理開始');
 
-        $data = $request->request->all();
-        $this->mailMagazineService->sendTestMail($data);
+        // 配列などスカラー以外の値は InputBag が BadRequestException (400) にする
+        $data = [
+            'email' => $request->request->getString('email'),
+            'name' => $request->request->getString('name'),
+            'subject' => $request->request->getString('subject'),
+            'body' => $request->request->getString('body'),
+            'htmlBody' => $request->request->getString('htmlBody'),
+        ];
+
+        $errors = $this->validator->validate($data['email'], [
+            new Assert\NotBlank(),
+            new Assert\Email(null, null, $this->eccubeConfig['eccube_rfc_email_check'] ? 'strict' : null),
+        ]);
+        if (count($errors) > 0) {
+            log_info('テストメール配信先が不正');
+
+            return $this->json(['status' => false], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $this->mailMagazineService->sendTestMail($data);
+        } catch (RfcComplianceException) {
+            // Email 制約を通っても、Symfony Mailer の RFC 検証で拒否されるアドレスがある
+            log_info('テストメール配信先が不正');
+
+            return $this->json(['status' => false], Response::HTTP_BAD_REQUEST);
+        }
 
         log_info('テストメール配信処理完了');
 
