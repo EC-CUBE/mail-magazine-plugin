@@ -26,6 +26,7 @@ use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\CustomerRepository;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine44\Service\Exception\HistoryFileNotFoundException;
 use Plugin\MailMagazine44\Service\Exception\NoRecipientException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mailer\MailerInterface;
@@ -375,6 +376,8 @@ class MailMagazineService
      * @param int $max
      *
      * @return MailMagazineSendHistory
+     *
+     * @throws HistoryFileNotFoundException 未配信が残っているのに配信ファイルが無い場合
      */
     public function sendrMailMagazine(int $sendId, int $offset = 0, int $max = 100): MailMagazineSendHistory
     {
@@ -400,7 +403,7 @@ class MailMagazineService
         if (!file_exists($fileHistory)) {
             // 配信対象が 0 件の配信履歴を再送した場合など、未配信が残っていなければ配信ファイルが無くてもよい
             if ($offset < $sendHistory->getSendCount()) {
-                throw new \RuntimeException('The mail magazine history file was not found.');
+                throw new HistoryFileNotFoundException('The mail magazine history file was not found.');
             }
             $handleHistory = null;
         } else {

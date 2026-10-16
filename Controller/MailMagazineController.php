@@ -25,6 +25,7 @@ use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine44\Form\Type\MailMagazineType;
 use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
+use Plugin\MailMagazine44\Service\Exception\HistoryFileNotFoundException;
 use Plugin\MailMagazine44\Service\Exception\NoRecipientException;
 use Plugin\MailMagazine44\Service\MailMagazineService;
 use Symfony\Bridge\Twig\Attribute\Template;
@@ -324,8 +325,18 @@ class MailMagazineController extends AbstractController
         // デフォルトの設定ではメールをスプールしてからレスポンス後にメールを一括で送信する。
         // レスポンス後に一括送信した場合、メールのエラーをハンドリングできないのでスプールしないように設定。
 
-        $id = (int) $request->get('id');
-        $offset = (int) $request->get('offset', 0);
+        // DB の integer の範囲を超える ID を find() に渡すと PostgreSQL がエラーにするため、先に検証する
+        $rawId = $request->request->get('id');
+        if (!$this->isValidInteger($rawId, 1)) {
+            throw new NotFoundHttpException();
+        }
+        $rawOffset = $request->request->get('offset', '0');
+        if (!$this->isValidInteger($rawOffset, 0)) {
+            throw new BadRequestHttpException();
+        }
+
+        $id = (int) $rawId;
+        $offset = (int) $rawOffset;
         $max = (int) $request->get('max', 100);
 
         log_info('メルマガ配信処理開始', ['id' => $id, 'offset' => $offset, 'max' => $max]);
@@ -334,8 +345,16 @@ class MailMagazineController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        /** @var MailMagazineSendHistory $sendHistory */
-        $sendHistory = $this->mailMagazineService->sendrMailMagazine($id, $offset, $max);
+        try {
+            /** @var MailMagazineSendHistory $sendHistory */
+            $sendHistory = $this->mailMagazineService->sendrMailMagazine($id, $offset, $max);
+        } catch (HistoryFileNotFoundException) {
+            // 配信済みの配信履歴に小さい offset を指定した場合など、送れる配信先が無い。
+            // 配信履歴画面の JavaScript は失敗の応答で再送を止めるため、エラーを返して打ち切る
+            log_info('メルマガ配信ファイルなし', ['id' => $id, 'offset' => $offset]);
+
+            return $this->json(['status' => false, 'id' => $id], Response::HTTP_CONFLICT);
+        }
 
         if ($sendHistory->isComplete()) {
             $this->mailMagazineService->sendMailMagazineCompleateReportMail();
@@ -349,6 +368,20 @@ class MailMagazineController extends AbstractController
             'total' => $sendHistory->getSendCount(),
             'count' => $sendHistory->getCompleteCount(),
         ]);
+    }
+
+    /**
+     * DB の integer の範囲 (最大 2147483647) に収まる、$min 以上の整数として扱える値か.
+     */
+    private function isValidInteger(mixed $value, int $min): bool
+    {
+        if (!is_int($value) && !is_string($value)) {
+            return false;
+        }
+
+        return 1 === preg_match('/\A(0|[1-9][0-9]{0,9})\z/', (string) $value)
+            && (int) $value >= $min
+            && (int) $value <= 2147483647;
     }
 
     /**
