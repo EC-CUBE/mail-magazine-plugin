@@ -443,6 +443,41 @@ class MailMagazineControllerTest extends MailMagazineCommon
         $this->assertEmailCount(0);
     }
 
+    public function testIndex検索フォームを送らないPOSTは入力エラーの画面を返す(): void
+    {
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine'),
+            ['other' => 'value']
+        );
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testConfirmフォームを送らなければ確認画面にしない(): void
+    {
+        $MailTemplate = $this->createMagazineTemplate();
+
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_select', ['id' => $MailTemplate->getId()]),
+            ['mode' => 'confirm']
+        );
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testPrepareフォームを送らなければ400(): void
+    {
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_prepare'),
+            ['other' => 'value']
+        );
+
+        $this->assertSame(400, $this->client->getResponse()->getStatusCode());
+    }
+
     /**
      * @return array<string, string>
      */

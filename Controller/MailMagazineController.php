@@ -127,7 +127,7 @@ class MailMagazineController extends AbstractController
 
         if ('POST' === $request->getMethod()) {
             $searchForm->handleRequest($request);
-            if ($searchForm->isValid()) {
+            if ($searchForm->isSubmitted() && $searchForm->isValid()) {
                 $searchData = $searchForm->getData();
                 $pageNo = 1;
                 $session->set('mailmagazine.search', FormUtil::getViewData($searchForm));
@@ -230,7 +230,7 @@ class MailMagazineController extends AbstractController
                 ->createBuilder(MailMagazineType::class)
                 ->getForm();
             $form->handleRequest($request);
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 return $this->render('@MailMagazine44/admin/confirm.twig', [
                     'form' => $form->createView(),
                     'subject_itm' => $form['subject']->getData(),
@@ -273,7 +273,7 @@ class MailMagazineController extends AbstractController
         $form->handleRequest($request);
         $data = $form->getData();
 
-        if (!$form->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             throw new BadRequestHttpException();
         }
 
