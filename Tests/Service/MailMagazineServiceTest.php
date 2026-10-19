@@ -15,6 +15,7 @@ namespace Plugin\MailMagazine44\Tests\Service;
 
 use Eccube\Entity\Customer;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
+use Plugin\MailMagazine44\Service\Exception\NoRecipientException;
 use Plugin\MailMagazine44\Service\MailMagazineService;
 use Plugin\MailMagazine44\Tests\AbstractMailMagazineTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
@@ -123,6 +124,61 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
                     '0,'.$c2->getId().',2_create_mail_magazine_history@example.com,name01_2 name02_2'.PHP_EOL.
                     '0,'.$c3->getId().',3_create_mail_magazine_history@example.com,name01_3 name02_3'.PHP_EOL;
         self::assertEquals($expected, file_get_contents($fileName));
+    }
+
+    public function testCreateMailMagazineHistory配信対象が0件なら履歴を作らない(): void
+    {
+        $before = $this->mailMagazineSendHistoryRepository->count([]);
+
+        try {
+            $this->mailMagazineService->createMailMagazineHistory([
+                'subject' => 'subject',
+                'body' => 'body',
+                'multi' => 'no-such-customer-'.uniqid().'@example.com',
+            ]);
+            self::fail('NoRecipientException が発生しなかった');
+        } catch (NoRecipientException) {
+        }
+
+        self::assertSame($before, $this->mailMagazineSendHistoryRepository->count([]));
+    }
+
+    public function testSendrMailMagazine配信対象が0件の履歴は失敗0件で完了する(): void
+    {
+        // 配信準備で 0 件を弾く前に作られた配信履歴 (空の配信ファイル、結果ファイルなし) を想定する
+        $history = $this->createEmptyHistory();
+        $this->mailMagazineService->unlinkHistoryFiles($history->getId());
+        file_put_contents($this->mailMagazineService->getHistoryFileName($history->getId()), '');
+
+        $actual = $this->mailMagazineService->sendrMailMagazine($history->getId());
+
+        self::assertTrue($actual->isComplete());
+        self::assertSame(0, $actual->getCompleteCount());
+        self::assertSame(0, $actual->getErrorCount());
+        self::assertFalse(file_exists($this->mailMagazineService->getHistoryFileName($history->getId())));
+    }
+
+    public function testSendrMailMagazine配信対象が0件の履歴は再送しても完了する(): void
+    {
+        // 配信済み (配信ファイルも結果ファイルも無い) の 0 件の配信履歴を再送する
+        $history = $this->createEmptyHistory();
+        $this->mailMagazineService->unlinkHistoryFiles($history->getId());
+
+        $this->mailMagazineService->markRetry($history->getId());
+        $actual = $this->mailMagazineService->sendrMailMagazine($history->getId());
+
+        self::assertTrue($actual->isComplete());
+        self::assertSame(0, $actual->getErrorCount());
+    }
+
+    public function testSendrMailMagazine未配信が残っているのに配信ファイルが無ければ例外(): void
+    {
+        $historyId = $this->createHistory($this->createMailmagaCustomer());
+        $this->mailMagazineService->unlinkHistoryFiles($historyId);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The mail magazine history file was not found.');
+        $this->mailMagazineService->sendrMailMagazine($historyId);
     }
 
     public function testSendrMailMagazine送信成功時に送信完了件数が更新される(): void
@@ -617,6 +673,23 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
             'body' => 'body',
             'multi' => $Customer->getEmail(),
         ]);
+    }
+
+    private function createEmptyHistory(): MailMagazineSendHistory
+    {
+        $history = new MailMagazineSendHistory();
+        $history->setSubject('subject');
+        $history->setBody('body');
+        $history->setSendCount(0);
+        $history->setCompleteCount(0);
+        $history->setErrorCount(0);
+        $history->setCreateDate(new \DateTime());
+        $history->setStartDate(new \DateTime());
+        $history->setSearchData(base64_encode(serialize([])));
+        $this->mailMagazineSendHistoryRepository->save($history);
+        $this->entityManager->flush();
+
+        return $history;
     }
 
     /**

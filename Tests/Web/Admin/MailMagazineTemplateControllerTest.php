@@ -13,6 +13,7 @@
 
 namespace Plugin\MailMagazine44\Tests\Web\Admin;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
 use Plugin\MailMagazine44\Tests\Web\MailMagazineCommon;
@@ -101,16 +102,50 @@ class MailMagazineTemplateControllerTest extends MailMagazineCommon
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testCommitFormInvalid(): void
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function requiredFieldProvider(): iterable
     {
-        $this->expectNotToPerformAssertions();
+        yield '件名' => ['subject'];
+        yield '本文' => ['body'];
+    }
+
+    #[DataProvider('requiredFieldProvider')]
+    public function testCommitFormInvalid(string $field): void
+    {
         $form = $this->createFormData();
-        unset($form['subject']);
+        unset($form[$field]);
+        $count = $this->mailMagaTemplateRepository->count([]);
 
         $this->client->request('POST',
             $this->generateUrl('plugin_mail_magazine_template_commit'),
             ['mail_magazine_template_edit' => $form]
         );
+
+        // 必須項目が無ければ 500 にせず、入力エラーとして登録画面を表示する
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame($count, $this->mailMagaTemplateRepository->count([]));
+    }
+
+    #[DataProvider('requiredFieldProvider')]
+    public function testCommitEdit必須項目が無ければ更新しない(string $field): void
+    {
+        $MailTemplate = $this->createMagazineTemplate();
+        $expected = $MailTemplate->getSubject();
+        $form = $this->createFormData();
+        unset($form[$field]);
+
+        $this->client->request('POST',
+            $this->generateUrl('plugin_mail_magazine_template_commit', ['id' => $MailTemplate->getId()]),
+            ['mail_magazine_template_edit' => $form]
+        );
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->entityManager->clear();
+        $Saved = $this->mailMagaTemplateRepository->find($MailTemplate->getId());
+        self::assertInstanceOf(MailMagazineTemplate::class, $Saved);
+        $this->assertSame($expected, $Saved->getSubject());
     }
 
     public function testCommitEditIdIncorrect(): void

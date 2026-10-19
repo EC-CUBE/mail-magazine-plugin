@@ -36,6 +36,8 @@ class MailMagazineTemplateEditType extends AbstractType
             ->add('subject', TextType::class, [
                 'label' => 'mailmagazine.select.label_subject',
                 'required' => true,
+                // 未送信や空の値でも null をセッター (string 型) に渡さず、NotBlank の入力エラーにする
+                'empty_data' => '',
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],
@@ -43,6 +45,7 @@ class MailMagazineTemplateEditType extends AbstractType
             ->add('body', TextareaType::class, [
                 'label' => 'mailmagazine.select.label_body',
                 'required' => true,
+                'empty_data' => '',
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],

@@ -26,6 +26,8 @@ use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\CustomerRepository;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
+use Plugin\MailMagazine44\Service\Exception\HistoryFileNotFoundException;
+use Plugin\MailMagazine44\Service\Exception\NoRecipientException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -194,8 +196,10 @@ class MailMagazineService
      *
      * @param array<string, mixed> $formData
      *
-     * @return int 採番されたsend_id
-     *             エラー時はfalseを返す
+     * @return int|null 採番されたsend_id
+     *                  エラー時はnullを返す
+     *
+     * @throws NoRecipientException 配信条件に一致する会員が 1 件もない場合
      */
     public function createMailMagazineHistory(array $formData): ?int
     {
@@ -203,6 +207,11 @@ class MailMagazineService
         $formData['plg_mailmagazine_flg'] = Constant::ENABLED;
         $qb = $this->customerRepository->getQueryBuilderBySearchData($formData);
         $customerList = $qb->getQuery()->getResult();
+
+        // 配信対象が無い配信履歴は配信できないため作成しない
+        if ([] === $customerList) {
+            throw new NoRecipientException('No customers match the mail magazine search conditions.');
+        }
 
         // 配信ファイルの並びを決定的にするため会員IDの昇順に整列する。
         // (会員検索のデフォルト順は update_date/id の降順で、配信・再送・ページングの検証が不安定になるため)
@@ -367,6 +376,8 @@ class MailMagazineService
      * @param int $max
      *
      * @return MailMagazineSendHistory
+     *
+     * @throws HistoryFileNotFoundException 未配信が残っているのに配信ファイルが無い場合
      */
     public function sendrMailMagazine(int $sendId, int $offset = 0, int $max = 100): MailMagazineSendHistory
     {
@@ -389,9 +400,17 @@ class MailMagazineService
         $this->ensureMailMagazineDir();
         $fileHistory = $this->getHistoryFileName($sendId);
         $fileResult = $this->getHistoryFileName($sendId, false);
-        $handleHistory = fopen($fileHistory, 'r');
-        if (false === $handleHistory) {
-            throw new \RuntimeException('Could not open the mail magazine history file.');
+        if (!file_exists($fileHistory)) {
+            // 配信対象が 0 件の配信履歴を再送した場合など、未配信が残っていなければ配信ファイルが無くてもよい
+            if ($offset < $sendHistory->getSendCount()) {
+                throw new HistoryFileNotFoundException('The mail magazine history file was not found.');
+            }
+            $handleHistory = null;
+        } else {
+            $handleHistory = fopen($fileHistory, 'r');
+            if (false === $handleHistory) {
+                throw new \RuntimeException('Could not open the mail magazine history file.');
+            }
         }
 
         // スキップ数
@@ -399,7 +418,7 @@ class MailMagazineService
         // 処理数
         $processCount = 0;
 
-        while (false !== ($rawLine = fgets($handleHistory))) {
+        while (null !== $handleHistory && false !== ($rawLine = fgets($handleHistory))) {
             $line = rtrim($rawLine, "\r\n");
             if ($skipCount-- > 0) {
                 continue;
@@ -468,22 +487,29 @@ class MailMagazineService
 
             ++$processCount;
         }
-        fclose($handleHistory);
+        if (null !== $handleHistory) {
+            fclose($handleHistory);
+        }
 
         // 全部終わったら履歴ファイルを削除
         if ($offset + $processCount >= $sendHistory->getSendCount()) {
             $errorCount = 0;
-            $handleResult = fopen($fileResult, 'r');
-            if (false === $handleResult) {
-                throw new \RuntimeException('Could not open the mail magazine result file.');
-            }
-            while (false !== ($line = fgets($handleResult))) {
-                if (substr($line, 0, 1) == self::SEND_FLAG_FAILURE) {
-                    ++$errorCount;
+            // 1 件も処理していなければ結果ファイルは作られないため、失敗 0 件として扱う
+            if (file_exists($fileResult)) {
+                $handleResult = fopen($fileResult, 'r');
+                if (false === $handleResult) {
+                    throw new \RuntimeException('Could not open the mail magazine result file.');
                 }
+                while (false !== ($line = fgets($handleResult))) {
+                    if (substr($line, 0, 1) == self::SEND_FLAG_FAILURE) {
+                        ++$errorCount;
+                    }
+                }
+                fclose($handleResult);
             }
-            fclose($handleResult);
-            unlink($fileHistory);
+            if (file_exists($fileHistory)) {
+                unlink($fileHistory);
+            }
         }
 
         // 送信結果情報を更新する
