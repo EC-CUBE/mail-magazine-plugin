@@ -23,6 +23,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Plugin\MailMagazine44\Entity\MailMagazineSendHistory;
 use Plugin\MailMagazine44\Entity\MailMagazineTemplate;
 use Plugin\MailMagazine44\Form\Type\MailMagazineType;
+use Plugin\MailMagazine44\Repository\MailMagazineSendHistoryRepository;
 use Plugin\MailMagazine44\Repository\MailMagazineTemplateRepository;
 use Plugin\MailMagazine44\Service\MailMagazineService;
 use Symfony\Bridge\Twig\Attribute\Template;
@@ -60,6 +61,11 @@ class MailMagazineController extends AbstractController
     protected $mailMagazineService;
 
     /**
+     * @var MailMagazineSendHistoryRepository
+     */
+    protected $mailMagazineSendHistoryRepository;
+
+    /**
      * MailMagazineController constructor.
      *
      * @param PageMaxRepository $pageMaxRepository
@@ -72,12 +78,14 @@ class MailMagazineController extends AbstractController
         CustomerRepository $customerRepository,
         MailMagazineTemplateRepository $magazineTemplateRepository,
         MailMagazineService $mailMagazineService,
+        MailMagazineSendHistoryRepository $mailMagazineSendHistoryRepository,
         private readonly PaginatorInterface $paginator,
     ) {
         $this->pageMaxRepository = $pageMaxRepository;
         $this->customerRepository = $customerRepository;
         $this->mailMagazineTemplateRepository = $magazineTemplateRepository;
         $this->mailMagazineService = $mailMagazineService;
+        $this->mailMagazineSendHistoryRepository = $mailMagazineSendHistoryRepository;
     }
 
     /**
@@ -279,6 +287,9 @@ class MailMagazineController extends AbstractController
         $sendId = $service->createMailMagazineHistory($data);
         if (is_null($sendId)) {
             $this->addError('admin.mailmagazine.send.register.failure', 'admin');
+
+            // 配信対象が0件などで履歴を作成できなかった場合は検索画面に戻す
+            return $this->redirectToRoute('plugin_mail_magazine');
         }
 
         // フラッシュスコープにIDを保持してリダイレクト後に送信処理を開始できるようにする
@@ -314,6 +325,11 @@ class MailMagazineController extends AbstractController
         $max = (int) $request->get('max', 100);
 
         log_info('メルマガ配信処理開始', ['id' => $id, 'offset' => $offset, 'max' => $max]);
+
+        // 存在しない配信履歴IDの場合は404を返す
+        if (null === $this->mailMagazineSendHistoryRepository->find($id)) {
+            throw new NotFoundHttpException(sprintf('Mail magazine history %d was not found.', $id));
+        }
 
         /** @var MailMagazineSendHistory $sendHistory */
         $sendHistory = $this->mailMagazineService->sendrMailMagazine($id, $offset, $max);

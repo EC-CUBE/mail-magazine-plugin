@@ -172,6 +172,19 @@ class MailMagazineControllerTest extends MailMagazineCommon
         //        $this->cleanUpMailCatcherMessages();
     }
 
+    public function testCommit存在しない履歴IDは404(): void
+    {
+        $this->client->request(
+            'POST',
+            $this->generateUrl('plugin_mail_magazine_commit'),
+            ['id' => 999999],
+            [],
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
+        );
+
+        self::assertSame(404, $this->client->getResponse()->getStatusCode());
+    }
+
     public function testPagination(): void
     {
         for ($i = 0; $i < 30; ++$i) {

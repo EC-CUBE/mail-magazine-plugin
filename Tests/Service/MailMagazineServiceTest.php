@@ -125,6 +125,45 @@ class MailMagazineServiceTest extends AbstractMailMagazineTestCase
         self::assertEquals($expected, file_get_contents($fileName));
     }
 
+    public function testCreateMailMagazineHistory配信対象0件の場合は履歴を作成しない(): void
+    {
+        $actual = $this->mailMagazineService->createMailMagazineHistory([
+            'subject' => 'subject',
+            'body' => 'body',
+            'multi' => 'no_such_customer@example.com',
+        ]);
+
+        self::assertNull($actual);
+        self::assertCount(0, $this->mailMagazineSendHistoryRepository->findAll());
+    }
+
+    public function testSendrMailMagazine配信対象0件の履歴でも完了できる(): void
+    {
+        // 修正前に作成された配信対象0件の履歴を再現する(履歴ファイルは空)
+        $history = new MailMagazineSendHistory();
+        $history->setSubject('subject');
+        $history->setBody('body');
+        $history->setSendCount(0);
+        $history->setCompleteCount(0);
+        $history->setErrorCount(0);
+        $history->setSearchData(base64_encode(serialize([])));
+        $this->entityManager->persist($history);
+        $this->entityManager->flush();
+
+        $dir = $this->mailMagazineService->getMailMagazineDir();
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        $fileHistory = $this->mailMagazineService->getHistoryFileName($history->getId());
+        touch($fileHistory);
+
+        $actual = $this->mailMagazineService->sendrMailMagazine($history->getId());
+
+        self::assertSame(0, $actual->getCompleteCount());
+        self::assertSame(0, $actual->getErrorCount());
+        self::assertFalse(file_exists($fileHistory));
+    }
+
     public function testSendrMailMagazine送信成功時に送信完了件数が更新される(): void
     {
         $historyId = $this->createHistory($this->createMailmagaCustomer());

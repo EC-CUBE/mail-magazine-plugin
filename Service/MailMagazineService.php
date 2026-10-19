@@ -208,6 +208,13 @@ class MailMagazineService
         // (会員検索のデフォルト順は update_date/id の降順で、配信・再送・ページングの検証が不安定になるため)
         usort($customerList, static fn (Customer $a, Customer $b): int => $a->getId() <=> $b->getId());
 
+        // 配信対象が0件の場合は配信履歴を作成せずに終了する
+        if (0 === count($customerList)) {
+            log_info('メルマガ配信対象が0件のため配信履歴を作成しません');
+
+            return null;
+        }
+
         $currentDatetime = new \DateTime();
 
         // -----------------------------
@@ -473,16 +480,19 @@ class MailMagazineService
         // 全部終わったら履歴ファイルを削除
         if ($offset + $processCount >= $sendHistory->getSendCount()) {
             $errorCount = 0;
-            $handleResult = fopen($fileResult, 'r');
-            if (false === $handleResult) {
-                throw new \RuntimeException('Could not open the mail magazine result file.');
-            }
-            while (false !== ($line = fgets($handleResult))) {
-                if (substr($line, 0, 1) == self::SEND_FLAG_FAILURE) {
-                    ++$errorCount;
+            // 送信対象が0件の場合など結果ファイルが作られていないときは失敗0件として扱う
+            if (file_exists($fileResult)) {
+                $handleResult = fopen($fileResult, 'r');
+                if (false === $handleResult) {
+                    throw new \RuntimeException('Could not open the mail magazine result file.');
                 }
+                while (false !== ($line = fgets($handleResult))) {
+                    if (substr($line, 0, 1) == self::SEND_FLAG_FAILURE) {
+                        ++$errorCount;
+                    }
+                }
+                fclose($handleResult);
             }
-            fclose($handleResult);
             unlink($fileHistory);
         }
 
